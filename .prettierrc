@@ -1,0 +1,9 @@
+{
+  "singleQuote": true,
+  "trailingComma": "all",
+  "code": 140,
+  "tabWidth": 2,
+  "comments": 100,
+  "ignoreUrls": true,
+  "ignoreRegExpLiterals": true
+}
