@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { Routers } from '../../../configs/navigator';
+import { useRouter } from 'next/router';
 const Header: React.FC = () => {
+  const router = useRouter();
+  const [search, setSearch] = useState<string>('');
+  const handleSearchClick = () => {
+    router.push({ pathname: Routers.products.path, query: { search: search } });
+  };
   return (
     <>
       <header
@@ -512,9 +518,17 @@ const Header: React.FC = () => {
       <div className="brown--color box-search-content search_active block-bg close__top">
         <form id="search_mini_form" className="minisearch" action="#">
           <div className="field__search">
-            <input type="text" placeholder="Search entire store here..." />
-            <div className="action">
-              <a href="#">
+            <input
+              type="text"
+              placeholder="Search entire store here..."
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <div
+              className="action"
+              style={{ cursor: 'pointer' }}
+              onClick={handleSearchClick}
+            >
+              <a>
                 <i className="zmdi zmdi-search" />
               </a>
             </div>

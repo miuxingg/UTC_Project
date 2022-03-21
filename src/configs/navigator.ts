@@ -1,5 +1,3 @@
-import products from '../pages/products';
-
 type TRouterName = 'home' | 'products' | 'productsDetail';
 
 const baseUrl = '/';

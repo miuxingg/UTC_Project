@@ -1,36 +1,44 @@
+import Link from 'next/link';
 import React from 'react';
 
 export interface IBook {
+  id?: string;
   status?: string;
   name: string;
   price: number;
   priceUnDiscount?: number;
   image: string;
+  description?: string;
 }
 export const BookCart: React.FC<IBook> = ({
-  status,
-  name,
-  price,
-  priceUnDiscount,
-  image,
+  id = '',
+  status = '',
+  name = '',
+  price = 0,
+  priceUnDiscount = 0,
+  image = '',
 }) => {
   return (
     <>
       <div className="product product__style--3">
         {/* <div className="col-lg-3 col-md-4 col-sm-6 col-12"> */}
         <div className="product__thumb">
-          <a className="first__img" href="single-product.html">
-            <img
-              src={image ? image : 'images/books/1.jpg'}
-              alt="product image"
-            />
-          </a>
-          <a className="second__img animation1" href="single-product.html">
-            <img
-              src={image ? image : 'images/books/2.jpg'}
-              alt="product image"
-            />
-          </a>
+          <Link href={`/${id}`}>
+            <a className="first__img">
+              <img
+                src={image ? image : 'images/books/1.jpg'}
+                alt="product image"
+              />
+            </a>
+          </Link>
+          <Link href={`/${id}`}>
+            <a className="second__img animation1">
+              <img
+                src={image ? image : 'images/books/2.jpg'}
+                alt="product image"
+              />
+            </a>
+          </Link>
           {status && (
             <div className="hot__box">
               <span className="hot-label">{status}</span>
@@ -39,7 +47,9 @@ export const BookCart: React.FC<IBook> = ({
         </div>
         <div className="product__content content--center">
           <h4>
-            <a href="single-product.html">{name}</a>
+            <Link href={`/${id}`}>
+              <a>{name}</a>
+            </Link>
           </h4>
           <ul className="prize d-flex">
             <li>{price}</li>
@@ -49,29 +59,36 @@ export const BookCart: React.FC<IBook> = ({
             <div className="actions_inner">
               <ul className="add_to_links">
                 <li>
-                  <a className="cart" href="cart.html">
-                    <i className="bi bi-shopping-bag4" />
-                  </a>
+                  <Link href="/">
+                    <a className="cart">
+                      <i className="bi bi-shopping-bag4" />
+                    </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="wishlist" href="wishlist.html">
-                    <i className="bi bi-shopping-cart-full" />
-                  </a>
+                  <Link href="/">
+                    <a className="wishlist">
+                      <i className="bi bi-shopping-cart-full" />
+                    </a>
+                  </Link>
                 </li>
                 <li>
-                  <a className="compare" href="#">
-                    <i className="bi bi-heart-beat" />
-                  </a>
+                  <Link href="/">
+                    <a className="compare">
+                      <i className="bi bi-heart-beat" />
+                    </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    data-toggle="modal"
-                    title="Quick View"
-                    className="quickview modal-view detail-link"
-                    href="#productmodal"
-                  >
-                    <i className="bi bi-search" />
-                  </a>
+                  <Link href="/">
+                    <a
+                      data-toggle="modal"
+                      title="Quick View"
+                      className="quickview modal-view detail-link"
+                    >
+                      <i className="bi bi-search" />
+                    </a>
+                  </Link>
                 </li>
               </ul>
             </div>
