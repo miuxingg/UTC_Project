@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 import SimpleSlider from '../../elements/SimpleSlider';
 import BookCard, { IBook } from '../BookCard';
 
@@ -14,6 +14,23 @@ export const BooksSection: React.FC<IBookSection> = ({
   title,
 }) => {
   const newTitle = title.split(' ');
+  // const data = useMemo(() => {
+  //   const x = [];
+  //   for (let i = 0; i < listItem.length; i++) {
+  //     x.push(listItem[i]);
+  //   }
+  //   console.log(x);
+
+  //   return x;
+  // }, [listItem]);
+  const data = [
+    listItem[0],
+    listItem[1],
+    listItem[2],
+    listItem[3],
+    listItem[4],
+  ];
+
   return (
     <section className="wn__product__area brown--color pt--80  pb--30">
       <div className="container">
@@ -31,7 +48,7 @@ export const BooksSection: React.FC<IBookSection> = ({
         <Box mt={5}>
           {
             <SimpleSlider>
-              {listItem.map((item, index) => {
+              {data.map((item, index) => {
                 return (
                   <Box maxWidth={270} key={index}>
                     <BookCard {...item} />

@@ -1,6 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { bookDetailSelector } from '../../redux/book/selectors';
 
 const ProductDetailContainer: React.FC = () => {
+  const bookDetail = useSelector(bookDetailSelector);
+  console.log(bookDetail);
+
   return (
     <div className="wrapper" id="wrapper">
       {/* Start Bradcaump area */}
@@ -28,44 +33,54 @@ const ProductDetailContainer: React.FC = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-9 col-12">
-              <div className="wn__single__product">
+              <div
+                className="wn__single__product"
+                style={{ height: '414px !important' }}
+              >
                 <div className="row">
-                  <div className="col-lg-6 col-12">
+                  <div
+                    className="col-lg-6 col-12"
+                    style={{ height: '414px !important' }}
+                  >
                     <div className="wn__fotorama__wrapper">
                       <div
                         className="fotorama wn__fotorama__action"
                         data-nav="thumbs"
                       >
-                        <a href="1.jpg">
-                          <img src="images/product/1.jpg" alt="" />
-                        </a>
-                        <a href="2.jpg">
-                          <img src="images/product/2.jpg" alt="" />
-                        </a>
-                        <a href="3.jpg">
-                          <img src="images/product/3.jpg" alt="" />
-                        </a>
-                        <a href="4.jpg">
-                          <img src="images/product/4.jpg" alt="" />
-                        </a>
                         <a href="5.jpg">
-                          <img src="images/product/5.jpg" alt="" />
+                          <img
+                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
+                            alt=""
+                            style={{ height: '414px' }}
+                          />
                         </a>
                         <a href="6.jpg">
-                          <img src="images/product/6.jpg" alt="" />
+                          <img
+                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
+                            alt=""
+                            style={{ height: '414px' }}
+                          />
                         </a>
                         <a href="7.jpg">
-                          <img src="images/product/7.jpg" alt="" />
+                          <img
+                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
+                            alt=""
+                            style={{ height: '414px' }}
+                          />
                         </a>
                         <a href="8.jpg">
-                          <img src="images/product/8.jpg" alt="" />
+                          <img
+                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
+                            alt=""
+                            style={{ height: '414px' }}
+                          />
                         </a>
                       </div>
                     </div>
                   </div>
                   <div className="col-lg-6 col-12">
                     <div className="product__info__main">
-                      <h1>Chaz Kangeroo Hoodie</h1>
+                      <h1>{bookDetail.name}</h1>
                       <div className="product-reviews-summary d-flex">
                         <ul className="rating-summary d-flex">
                           <li>
@@ -86,20 +101,10 @@ const ProductDetailContainer: React.FC = () => {
                         </ul>
                       </div>
                       <div className="price-box">
-                        <span>$52.00</span>
+                        <span>{bookDetail.price}</span>
                       </div>
                       <div className="product__overview">
-                        <p>
-                          Ideal for cold-weather training or work outdoors, the
-                          Chaz Hoodie promises superior warmth with every wear.
-                          Thick material blocks out the wind as ribbed cuffs and
-                          bottom band seal in body heat.
-                        </p>
-                        <p>
-                          Ideal for cold-weather training or work outdoors, the
-                          Chaz Hoodie promises superior warmth with every wear.
-                          {}
-                        </p>
+                        <p>{bookDetail.description}</p>
                       </div>
                       <div className="box-tocart d-flex">
                         <span>Qty</span>
@@ -191,23 +196,7 @@ const ProductDetailContainer: React.FC = () => {
                     role="tabpanel"
                   >
                     <div className="description__attribute">
-                      <p>
-                        Ideal for cold-weather training or work outdoors, the
-                        Chaz Hoodie promises superior warmth with every wear.
-                        Thick material blocks out the wind as ribbed cuffs and
-                        bottom band seal in body heat.Ideal for cold-weather
-                        training or work outdoors, the Chaz Hoodie promises
-                        superior warmth with every wear. Thick material blocks
-                        out the wind as ribbed cuffs and bottom band seal in
-                        body heat.Ideal for cold-weather training or work
-                        outdoors, the Chaz Hoodie promises superior warmth with
-                        every wear. Thick material blocks out the wind as ribbed
-                        cuffs and bottom band seal in body heat.Ideal for
-                        cold-weather training or work outdoors, the Chaz Hoodie
-                        promises superior warmth with every wear. Thick material
-                        blocks out the wind as ribbed cuffs and bottom band seal
-                        in body heat.
-                      </p>
+                      <p>{bookDetail.description}</p>
                       <ul>
                         <li>• Two-tone gray heather hoodie.</li>
                         <li>• Drawstring-adjustable hood. </li>
