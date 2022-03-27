@@ -1,26 +1,44 @@
-import { Box, Pagination } from '@mui/material';
+import { Box, Button, Pagination } from '@mui/material';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ITEM_PER_PAGE } from '../../configs';
+import { BookQueries } from '../../libs/utils/buildQueries';
 import { allBooksByFilter } from '../../redux/book';
 import { transformBookCart } from '../../redux/book/dto';
-import { allBookByFilter } from '../../redux/book/selectors';
+import { allBookByFilter, allCloudtag } from '../../redux/book/selectors';
 import { allCategories } from '../../redux/categories/selectors';
 import BooksSectionGrid from './BooksSectionGrid';
 import BooksSectionLine from './BooksSectionLine';
-import SliderRange from './SliderRange';
+import SliderRange, { max, min } from './SliderRange';
 
 const ProductsContainer: React.FC = () => {
+  const router = useRouter();
+  const { search } = router.query;
   const dispatch = useDispatch();
-  const [queries, setQueries] = useState({
+  // const [filterPrice, setFilterPrice] = useState<{
+  //   startPrice: number;
+  //   endPrice: number;
+  // }>({
+  //   startPrice: 0,
+  //   endPrice: 0,
+  // });
+  const [queries, setQueries] = useState<BookQueries>({
+    search: (search as string) ?? '',
     category: '',
     limit: ITEM_PER_PAGE,
+    offset: 0,
+    cloudTag: '',
   });
+
+  const cloudtag = useSelector(allCloudtag);
   const listCategories = useSelector(allCategories);
   const listBook = useSelector(allBookByFilter);
+
   useEffect(() => {
     dispatch(allBooksByFilter(queries));
   }, [queries]);
+
   const handleCategoryClick = (id?: string) => {
     if (id) {
       setQueries((pre) => {
@@ -32,6 +50,46 @@ const ProductsContainer: React.FC = () => {
       });
     }
   };
+
+  const handleSlideRange = (startPrice: number, endPrice: number) => {
+    if (endPrice !== max) {
+      setQueries((pre) => {
+        return {
+          ...pre,
+          ...{
+            startPrice,
+            endPrice,
+          },
+        };
+      });
+    } else {
+      setQueries((pre) => {
+        delete pre['endPrice'];
+        return {
+          ...pre,
+          ...{
+            startPrice,
+          },
+        };
+      });
+    }
+  };
+
+  const handlePaginationChange = (
+    e: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    setQueries((pre) => {
+      return { ...pre, offset: (value - 1) * ITEM_PER_PAGE };
+    });
+  };
+
+  const handleClickCloudTag = (value: string) => {
+    setQueries((pre) => {
+      return { ...pre, cloudTag: value };
+    });
+  };
+
   return (
     <div className="wrapper" id="wrapper">
       {/* Start Bradcaump area */}
@@ -66,16 +124,16 @@ const ProductsContainer: React.FC = () => {
                     <li style={{ cursor: 'pointer' }}>
                       <Box onClick={() => handleCategoryClick()}>
                         <a>
-                          Tất cả <span>({listBook.total})</span>
+                          Tất cả <span></span>
                         </a>
                       </Box>
                     </li>
-                    {listCategories.items.map((item, index) => {
+                    {listCategories.items.map((item) => {
                       return (
-                        <li key={item._id} style={{ cursor: 'pointer' }}>
-                          <Box onClick={() => handleCategoryClick(item._id)}>
+                        <li key={item.id} style={{ cursor: 'pointer' }}>
+                          <Box onClick={() => handleCategoryClick(item.id)}>
                             <a>
-                              {item.name} <span>({index})</span>
+                              {item.name} <span></span>
                             </a>
                           </Box>
                         </li>
@@ -100,55 +158,27 @@ const ProductsContainer: React.FC = () => {
                           </div>
                         </div>
                       </form> */}
-                      <SliderRange />
-                      <div className="price--filter">
-                        <a href="#">Filter</a>
-                      </div>
+                      <SliderRange onFilter={handleSlideRange} />
+                      {/* <div className="price--filter"> */}
+
+                      {/* </div> */}
                     </div>
                   </div>
                 </aside>
                 <aside className="wedget__categories poroduct--tag">
                   <h3 className="wedget__title">Product Tags</h3>
                   <ul>
-                    <li>
-                      <a href="#">Biography</a>
-                    </li>
-                    <li>
-                      <a href="#">Business</a>
-                    </li>
-                    <li>
-                      <a href="#">Cookbooks</a>
-                    </li>
-                    <li>
-                      <a href="#">Health &amp; Fitness</a>
-                    </li>
-                    <li>
-                      <a href="#">History</a>
-                    </li>
-                    <li>
-                      <a href="#">Mystery</a>
-                    </li>
-                    <li>
-                      <a href="#">Inspiration</a>
-                    </li>
-                    <li>
-                      <a href="#">Religion</a>
-                    </li>
-                    <li>
-                      <a href="#">Fiction</a>
-                    </li>
-                    <li>
-                      <a href="#">Fantasy</a>
-                    </li>
-                    <li>
-                      <a href="#">Music</a>
-                    </li>
-                    <li>
-                      <a href="#">Toys</a>
-                    </li>
-                    <li>
-                      <a href="#">Hoodies</a>
-                    </li>
+                    {cloudtag.items.map((item, i) => {
+                      return (
+                        <li
+                          style={{ cursor: 'pointer' }}
+                          key={i}
+                          onClick={() => handleClickCloudTag(item)}
+                        >
+                          <a>{item}</a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </aside>
                 {/* <aside className="wedget__categories sidebar--banner">
@@ -221,6 +251,7 @@ const ProductsContainer: React.FC = () => {
                     <Pagination
                       count={Math.ceil(listBook.total / ITEM_PER_PAGE)}
                       shape="rounded"
+                      onChange={handlePaginationChange}
                     />
                   </Box>
                 </div>

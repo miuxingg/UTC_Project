@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { BooksSection } from '../../components/collecttions';
 import MultipleBookSlider from '../../components/collecttions/MultipleBookSlider';
@@ -10,37 +11,39 @@ import { newBook } from '../../redux/book/selectors';
 import { MOCK } from './mock';
 
 const HomePageContainer: React.FC = () => {
+  const { t } = useTranslation();
   const newBookSelector = useSelector(newBook);
+
   return (
     <>
       <Slider />
       <BooksSection
         listItem={transformBookCart(newBookSelector.items)}
         // listItem={MOCK}
-        title="New Products"
+        title={t('home.title.newProduct')}
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid
                 form"
       />
       <NewsLetter />
 
-      {/* <MultipleBookSlider
-        // listItem={transformBookCart(newBookSelector.items)}
-        listItem={MOCK}
-        title="All Products"
+      <MultipleBookSlider
+        listItem={transformBookCart(newBookSelector.items)}
+        // listItem={MOCK}
+        title={t('home.title.allProduct')}
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid
                 form"
-      /> */}
+      />
       <OurBlog />
-      {/* <BooksSection
-        // listItem={transformBookCart(newBookSelector.items)}
-        listItem={MOCK}
+      <BooksSection
+        listItem={transformBookCart(newBookSelector.items)}
+        // listItem={MOCK}
         title="Best Seller"
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid
                 form"
-      /> */}
+      />
     </>
   );
 };

@@ -27,6 +27,11 @@ export const bookById = createAsyncThunk('bookById', async (id: string) => {
   return data;
 });
 
+export const cloudtag = createAsyncThunk('cloudtag', async () => {
+  const data = await apiSdk.bookApis.getCloundTag();
+  return data;
+});
+
 export const bookSlice = createGenericSlice({
   name: 'books',
   initialState,
@@ -48,6 +53,10 @@ export const bookSlice = createGenericSlice({
 
     builder.addCase(bookById.fulfilled, (state, action) => {
       state.bookDetail = action.payload;
+    });
+
+    builder.addCase(cloudtag.fulfilled, (state, action) => {
+      state.cloudtag = action.payload;
     });
   },
 });

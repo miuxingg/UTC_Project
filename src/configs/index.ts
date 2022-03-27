@@ -1,7 +1,12 @@
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-export const ITEM_PER_PAGE = 9;
+export const ITEM_PER_PAGE = 3;
+
+export enum Language {
+  VI = 'vi',
+  EN = 'en',
+}
 // export enum HTTP_STATUS {
 //   OK = 200,
 //   CREATED = 201,

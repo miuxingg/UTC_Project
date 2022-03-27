@@ -97,7 +97,7 @@ export const SimpleSlider: React.FC = ({ children }) => {
   };
   return (
     <Box width="100%" display="flex" justifyContent="center">
-      <Box maxWidth={1190}>
+      <Box width="100%" maxWidth={1190}>
         <Slider {...settings}>{children}</Slider>
 
         {/* {children} */}

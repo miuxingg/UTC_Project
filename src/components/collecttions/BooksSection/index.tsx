@@ -1,12 +1,12 @@
 import { Box } from '@mui/material';
-import React, { useMemo } from 'react';
+import React from 'react';
 import SimpleSlider from '../../elements/SimpleSlider';
 import BookCard, { IBook } from '../BookCard';
 
 export interface IBookSection {
   listItem: IBook[];
   title: string;
-  description: string;
+  description?: string;
 }
 export const BooksSection: React.FC<IBookSection> = ({
   listItem,
@@ -30,7 +30,10 @@ export const BooksSection: React.FC<IBookSection> = ({
     listItem[3],
     listItem[4],
   ];
-
+  // const [data, setData] = useState(listItem);
+  // useEffect(() => {
+  //   setData(listItem);
+  // }, [listItem]);
   return (
     <section className="wn__product__area brown--color pt--80  pb--30">
       <div className="container">

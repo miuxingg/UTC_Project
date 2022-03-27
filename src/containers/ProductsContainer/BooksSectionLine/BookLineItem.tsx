@@ -3,8 +3,8 @@ import React from 'react';
 export interface IBookLineItem {
   name: string;
   image: string;
-  price: number;
-  priceUnDiscount: number;
+  price: number | string;
+  priceUnDiscount?: number | string;
   description?: string;
 }
 
@@ -51,7 +51,7 @@ const BookLineItem: React.FC<IBookLineItem> = ({
         </ul>
         <ul className="prize__box">
           <li>{price}</li>
-          <li className="old__prize">$220.00</li>
+          <li className="old__prize">{priceUnDiscount}</li>
         </ul>
         <p>{description}</p>
         <ul className="cart__action d-flex">

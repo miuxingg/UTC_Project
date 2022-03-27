@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IBook } from '..';
 import MultipleSlider from '../../elements/MultipleSlider';
 import BookCard from '../BookCard';
@@ -15,6 +15,31 @@ const MultipleBookSlider: React.FC<IBookSection> = ({
   description,
 }) => {
   const newTitle = title.split(' ');
+  // const [data, setData] = useState(listItem);
+  // useEffect(() => {
+  //   setData(listItem);
+  // }, [listItem]);
+  const data = [
+    listItem[0],
+    listItem[1],
+    listItem[2],
+    listItem[3],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+    listItem[4],
+  ];
   return (
     <section className="wn__product__area brown--color pt--80  pb--30">
       <div className="container">
@@ -31,9 +56,9 @@ const MultipleBookSlider: React.FC<IBookSection> = ({
         </div>
         <Box mt={5}>
           <MultipleSlider>
-            {listItem.map((item, index) => {
+            {data.map((item, index) => {
               return (
-                <Box maxWidth={270} key={index}>
+                <Box maxWidth={270} width={270} key={index}>
                   <BookCard {...item} />
                 </Box>
               );

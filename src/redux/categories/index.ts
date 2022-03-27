@@ -10,6 +10,15 @@ export const getAllCategory = createAsyncThunk('getAllCategory', async () => {
   return data;
 });
 
+export const getCategoryByIds = createAsyncThunk(
+  'getCategoryByIds',
+  async (ids: string[]) => {
+    const data = await apiSdk.categoryApis.getCategoryByIds(ids);
+    console.log(data);
+    return data;
+  },
+);
+
 export const categorySlice = createGenericSlice({
   name: 'books',
   initialState,
@@ -20,6 +29,9 @@ export const categorySlice = createGenericSlice({
         items: action.payload.items,
         total: action.payload.total,
       };
+    });
+    builder.addCase(getCategoryByIds.fulfilled, (state, action) => {
+      state.currentCategories = action.payload;
     });
   },
 });

@@ -1,10 +1,33 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { bookDetailSelector } from '../../redux/book/selectors';
+import { Box } from '@mui/material';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { BooksSection } from '../../components/collecttions';
+import { transformBookCart } from '../../redux/book/dto';
+import {
+  allCloudtag,
+  bookDetailSelector,
+  newBook,
+} from '../../redux/book/selectors';
+import { getCategoryByIds } from '../../redux/categories';
+import {
+  allCategories,
+  currentCategories,
+} from '../../redux/categories/selectors';
+import SliderRange from '../ProductsContainer/SliderRange';
 
 const ProductDetailContainer: React.FC = () => {
+  const dispatch = useDispatch();
   const bookDetail = useSelector(bookDetailSelector);
-  console.log(bookDetail);
+  const newBookSelector = useSelector(newBook);
+  const listCategories = useSelector(allCategories);
+  const cloudtag = useSelector(allCloudtag);
+  const currentCategoryList = useSelector(currentCategories);
+
+  useEffect(() => {
+    dispatch(getCategoryByIds(bookDetail?.category || []));
+  }, [dispatch, bookDetail]);
+
+  const handleSlideRange = (startPrice: number, endPrice: number) => {};
 
   return (
     <div className="wrapper" id="wrapper">
@@ -13,7 +36,7 @@ const ProductDetailContainer: React.FC = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
-              <div className="bradcaump__inner text-center">
+              {/* <div className="bradcaump__inner text-center">
                 <h2 className="bradcaump-title">Shop Single</h2>
                 <nav className="bradcaump-content">
                   <a className="breadcrumb_item" href="index.html">
@@ -22,7 +45,7 @@ const ProductDetailContainer: React.FC = () => {
                   <span className="brd-separetor">/</span>
                   <span className="breadcrumb_item active">Shop Single</span>
                 </nav>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -33,15 +56,9 @@ const ProductDetailContainer: React.FC = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-9 col-12">
-              <div
-                className="wn__single__product"
-                style={{ height: '414px !important' }}
-              >
+              <div className="wn__single__product">
                 <div className="row">
-                  <div
-                    className="col-lg-6 col-12"
-                    style={{ height: '414px !important' }}
-                  >
+                  <div className="col-lg-6 col-12">
                     <div className="wn__fotorama__wrapper">
                       <div
                         className="fotorama wn__fotorama__action"
@@ -51,28 +68,24 @@ const ProductDetailContainer: React.FC = () => {
                           <img
                             src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
                             alt=""
-                            style={{ height: '414px' }}
                           />
                         </a>
                         <a href="6.jpg">
                           <img
                             src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
                             alt=""
-                            style={{ height: '414px' }}
                           />
                         </a>
                         <a href="7.jpg">
                           <img
                             src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
                             alt=""
-                            style={{ height: '414px' }}
                           />
                         </a>
                         <a href="8.jpg">
                           <img
                             src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
                             alt=""
-                            style={{ height: '414px' }}
                           />
                         </a>
                       </div>
@@ -104,7 +117,17 @@ const ProductDetailContainer: React.FC = () => {
                         <span>{bookDetail.price}</span>
                       </div>
                       <div className="product__overview">
-                        <p>{bookDetail.description}</p>
+                        <aside className="wedget__categories poroduct--tag">
+                          <ul>
+                            {bookDetail.cloudTag?.map((item, i) => {
+                              return (
+                                <li key={i}>
+                                  <a>{item}</a>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        </aside>
                       </div>
                       <div className="box-tocart d-flex">
                         <span>Qty</span>
@@ -133,8 +156,17 @@ const ProductDetailContainer: React.FC = () => {
                       </div>
                       <div className="product_meta">
                         <span className="posted_in">
-                          Categories:
-                          <a href="#">Adventure</a>,<a href="#">Kids Music</a>
+                          Categories:&nbsp;
+                          {currentCategoryList.map((item, i) => {
+                            return (
+                              <a key={item.id}>
+                                {item.name}&nbsp;
+                                {i !== currentCategoryList.length - 1
+                                  ? ', '
+                                  : null}
+                              </a>
+                            );
+                          })}
                         </span>
                       </div>
                       <div className="product-share">
@@ -197,11 +229,11 @@ const ProductDetailContainer: React.FC = () => {
                   >
                     <div className="description__attribute">
                       <p>{bookDetail.description}</p>
-                      <ul>
+                      {/* <ul>
                         <li>• Two-tone gray heather hoodie.</li>
                         <li>• Drawstring-adjustable hood. </li>
                         <li>• Machine wash/dry.</li>
-                      </ul>
+                      </ul> */}
                     </div>
                   </div>
                   {/* End Single Tab Content */}
@@ -381,126 +413,51 @@ const ProductDetailContainer: React.FC = () => {
                   {/* End Single Tab Content */}
                 </div>
               </div>
-              <div className="wn__related__product pt--80 pb--50">
-                <div className="section__title text-center">
-                  <h2 className="title__be--2">Related Products</h2>
-                </div>
+              {/* <div className="wn__related__product pt--40 pb--30">
+                <Box width="700px">
+                  <BooksSection
+                    listItem={transformBookCart(newBookSelector.items)}
+                    title="RELATED PRODUCTS"
+                  />
+                </Box>
               </div>
               <div className="wn__related__product">
-                <div className="section__title text-center">
-                  <h2 className="title__be--2">upsell products</h2>
-                </div>
-              </div>
+                <Box width="700px">
+                  <BooksSection
+                    listItem={transformBookCart(newBookSelector.items)}
+                    title="UPSELL PRODUCTS"
+                  />
+                </Box>
+              </div> */}
             </div>
             <div className="col-lg-3 col-12 md-mt-40 sm-mt-40">
               <div className="shop__sidebar">
                 <aside className="wedget__categories poroduct--cat">
                   <h3 className="wedget__title">Product Categories</h3>
                   <ul>
-                    <li>
-                      <a href="#">
-                        Biography <span>(3)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Business <span>(4)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Cookbooks <span>(6)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Health &amp; Fitness <span>(7)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        History <span>(8)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Mystery <span>(9)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Inspiration <span>(13)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Romance <span>(20)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Fiction/Fantasy <span>(22)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Self-Improvement <span>(13)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Humor Books <span>(17)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Harry Potter <span>(20)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Land of Stories <span>(34)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Kids Music <span>(60)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        Toys &amp; Games <span>(3)</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="#">
-                        hoodies <span>(3)</span>
-                      </a>
-                    </li>
+                    {listCategories.items.map((item) => {
+                      return (
+                        <li key={item.id}>
+                          <a>
+                            {item.name} <span></span>
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </aside>
                 <aside className="wedget__categories pro--range">
                   <h3 className="wedget__title">Filter by price</h3>
                   <div className="content-shopby">
                     <div className="price_filter s-filter clear">
-                      <form action="#" method="GET">
-                        <div id="slider-range" />
-                        <div className="slider__range--output">
-                          <div className="price__output--wrap">
-                            <div className="price--output">
-                              <span>Price :</span>
-                              <input type="text" id="amount" />
-                            </div>
-                            <div className="price--filter">
-                              <a href="#">Filter</a>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
+                      <SliderRange onFilter={handleSlideRange} />
+                      {/* <div className="price--filter">
+                        <a href="#">Filter</a>
+                      </div> */}
                     </div>
                   </div>
                 </aside>
-                <aside className="wedget__categories poroduct--compare">
+                {/* <aside className="wedget__categories poroduct--compare">
                   <h3 className="wedget__title">Compare</h3>
                   <ul>
                     <li>
@@ -516,49 +473,17 @@ const ProductDetailContainer: React.FC = () => {
                       <a href="#">Dignissim venenatis</a>
                     </li>
                   </ul>
-                </aside>
+                </aside> */}
                 <aside className="wedget__categories poroduct--tag">
                   <h3 className="wedget__title">Product Tags</h3>
                   <ul>
-                    <li>
-                      <a href="#">Biography</a>
-                    </li>
-                    <li>
-                      <a href="#">Business</a>
-                    </li>
-                    <li>
-                      <a href="#">Cookbooks</a>
-                    </li>
-                    <li>
-                      <a href="#">Health &amp; Fitness</a>
-                    </li>
-                    <li>
-                      <a href="#">History</a>
-                    </li>
-                    <li>
-                      <a href="#">Mystery</a>
-                    </li>
-                    <li>
-                      <a href="#">Inspiration</a>
-                    </li>
-                    <li>
-                      <a href="#">Religion</a>
-                    </li>
-                    <li>
-                      <a href="#">Fiction</a>
-                    </li>
-                    <li>
-                      <a href="#">Fantasy</a>
-                    </li>
-                    <li>
-                      <a href="#">Music</a>
-                    </li>
-                    <li>
-                      <a href="#">Toys</a>
-                    </li>
-                    <li>
-                      <a href="#">Hoodies</a>
-                    </li>
+                    {cloudtag.items.map((item, index) => {
+                      return (
+                        <li key={index}>
+                          <a>{item}</a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </aside>
               </div>
