@@ -15,7 +15,7 @@ const BooksSectionGrid: React.FC<IBookSectionGrid> = ({ listItem }) => {
               {...item}
               name={item.name}
               price={item.price}
-              image={item.image}
+              thumbnail={item.thumbnail}
               status={'HOT'}
             />
           </Box>

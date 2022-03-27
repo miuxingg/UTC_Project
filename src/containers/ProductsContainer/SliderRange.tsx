@@ -1,11 +1,13 @@
-import { Box, Slider, styled } from '@mui/material';
+import { Box, Button as ButtonMui, Slider, styled } from '@mui/material';
+import { height } from '@mui/system';
 import React from 'react';
+import { moneyFormat } from '../../libs/utils';
 
 const valuetext = (value: number) => {
-  return `${value * 1000}đ`;
+  return `${value / 10000}đ`;
 };
-const min = 0;
-const max = 10000000;
+export const min = 0;
+export const max = 1000000;
 const minDistance = 0;
 
 const SliderRangeMui = styled(Slider)({
@@ -46,7 +48,20 @@ const SliderRangeMui = styled(Slider)({
   },
 });
 
-const SliderRange: React.FC = () => {
+export const Button = styled(ButtonMui)({
+  width: 110,
+  height: 30,
+  backgroundColor: '#222',
+  color: '#fff',
+  ':hover': { backgroundColor: '#222' },
+  ':focus': { outline: 'none' },
+});
+
+export interface ISlideRange {
+  onFilter: (min: number, max: number) => void;
+}
+
+const SliderRange: React.FC<ISlideRange> = ({ onFilter }) => {
   const [value1, setValue1] = React.useState<number[]>([min, max]);
 
   const handleChange1 = (
@@ -65,8 +80,23 @@ const SliderRange: React.FC = () => {
     }
   };
 
+  const marks = [
+    {
+      value: min,
+      label: moneyFormat(value1[0]),
+    },
+    {
+      value: max,
+      label: `${moneyFormat(value1[1])}${value1[1] === max ? '+' : ''}`,
+    },
+  ];
+
+  const handleFilterPrice = () => {
+    onFilter(value1[0], value1[1]);
+  };
+
   return (
-    <Box width={'270px'}>
+    <Box width={'250px'}>
       <SliderRangeMui
         getAriaLabel={() => 'Minimum distance'}
         value={value1}
@@ -75,8 +105,10 @@ const SliderRange: React.FC = () => {
         getAriaValueText={valuetext}
         min={min}
         max={max}
+        marks={marks}
         disableSwap
       />
+      <Button onClick={handleFilterPrice}>Filter</Button>
     </Box>
   );
 };

@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import React from 'react';
+import { Routers } from '../../../configs/navigator';
 
 export const Slider: React.FC = () => {
   return (
@@ -19,9 +21,9 @@ export const Slider: React.FC = () => {
                   <h2>
                     from <span>Here </span>
                   </h2>
-                  <a className="shopbtn" href="#">
-                    shop now
-                  </a>
+                  <Link href={Routers.products.path}>
+                    <a className="shopbtn">shop now</a>
+                  </Link>
                 </div>
               </div>
             </div>

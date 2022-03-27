@@ -13,10 +13,10 @@ const BooksSectionLine: React.FC<IBookSectionLine> = ({ listItem }) => {
         return (
           <Box my={2} key={item.id}>
             <BookLineItem
+              {...item}
               name={item.name}
-              image={item.image}
+              image={item.thumbnail}
               price={item.price}
-              priceUnDiscount={0}
               description={item.description}
             />
           </Box>

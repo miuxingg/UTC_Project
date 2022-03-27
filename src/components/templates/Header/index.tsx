@@ -2,12 +2,22 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Routers } from '../../../configs/navigator';
 import { useRouter } from 'next/router';
+import { t } from 'i18next';
+import { Language } from '../../../configs';
+import i18n from '../../../languages/i18n';
+import { setItemStorage } from '../../../libs/utils/localStorage';
 const Header: React.FC = () => {
   const router = useRouter();
   const [search, setSearch] = useState<string>('');
   const handleSearchClick = () => {
     router.push({ pathname: Routers.products.path, query: { search: search } });
   };
+
+  const handleChangeLanguage = (language: Language) => {
+    i18n.changeLanguage(language);
+    setItemStorage('language', language);
+  };
+
   return (
     <>
       <header
@@ -205,8 +215,8 @@ const Header: React.FC = () => {
             </div>
             <div className="col-md-6 col-sm-6 col-6 col-lg-2">
               <ul className="header__sidebar__right d-flex justify-content-end align-items-center">
-                <li className="shop_search">
-                  <a className="search__active" href="#" />
+                <li className="shop_search" style={{ cursor: 'pointer' }}>
+                  <a className="search__active" />
                 </li>
                 <li className="wishlist">
                   <a href="#" />
@@ -349,7 +359,7 @@ const Header: React.FC = () => {
                   <a className="setting__active" href="#" />
                   <div className="searchbar__content setting__block">
                     <div className="content-inner">
-                      <div className="switcher-currency">
+                      {/* <div className="switcher-currency">
                         <strong className="label switcher-label">
                           <span>Currency</span>
                         </strong>
@@ -364,20 +374,31 @@ const Header: React.FC = () => {
                             </ul>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="switcher-currency">
                         <strong className="label switcher-label">
                           <span>Language</span>
                         </strong>
                         <div className="switcher-options">
                           <div className="switcher-currency-trigger">
-                            <span className="currency-trigger">English01</span>
-                            <ul className="switcher-dropdown">
+                            <span
+                              className="currency-trigger"
+                              onClick={() => handleChangeLanguage(Language.EN)}
+                            >
+                              {t('header.language.en')}
+                            </span>
+                            <span
+                              className="currency-trigger"
+                              onClick={() => handleChangeLanguage(Language.VI)}
+                            >
+                              {t('header.language.vi')}
+                            </span>
+                            {/* <ul className="switcher-dropdown">
                               <li>English02</li>
                               <li>English03</li>
                               <li>English04</li>
                               <li>English05</li>
-                            </ul>
+                            </ul> */}
                           </div>
                         </div>
                       </div>

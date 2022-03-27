@@ -5,13 +5,14 @@ import Layout from '../../components/templates/Layout';
 import { ITEM_PER_PAGE } from '../../configs';
 import ProductsContainer from '../../containers/ProductsContainer';
 import { BookQueries } from '../../libs/utils/buildQueries';
-import { allBooksByFilter } from '../../redux/book';
+import { allBooksByFilter, cloudtag } from '../../redux/book';
 import { getAllCategory } from '../../redux/categories';
 
 export const ProductPage: React.FC = () => {
   const router = useRouter();
   const { search } = router.query;
   const dispatch = useDispatch();
+
   useEffect(() => {
     const queries: BookQueries = { limit: ITEM_PER_PAGE };
     if (search) {
@@ -19,6 +20,7 @@ export const ProductPage: React.FC = () => {
     }
     dispatch(getAllCategory());
     dispatch(allBooksByFilter({ ...queries }));
+    dispatch(cloudtag());
   }, []);
   return (
     <Layout>

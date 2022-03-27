@@ -5,10 +5,15 @@ export interface IBook {
   id?: string;
   status?: string;
   name: string;
-  price: number;
-  priceUnDiscount?: number;
-  image: string;
+  price: number | string;
+  priceUnDiscount?: number | string;
+  thumbnail: string;
+  images: string[];
   description?: string;
+  author?: string;
+  category?: string[];
+  cloudTag?: string[];
+  quantity?: number;
 }
 export const BookCart: React.FC<IBook> = ({
   id = '',
@@ -16,7 +21,7 @@ export const BookCart: React.FC<IBook> = ({
   name = '',
   price = 0,
   priceUnDiscount = 0,
-  image = '',
+  thumbnail = '',
 }) => {
   return (
     <>
@@ -26,7 +31,7 @@ export const BookCart: React.FC<IBook> = ({
           <Link href={`/${id}`}>
             <a className="first__img">
               <img
-                src={image ? image : 'images/books/1.jpg'}
+                src={thumbnail ? thumbnail : 'images/books/1.jpg'}
                 alt="product image"
               />
             </a>
@@ -34,7 +39,7 @@ export const BookCart: React.FC<IBook> = ({
           <Link href={`/${id}`}>
             <a className="second__img animation1">
               <img
-                src={image ? image : 'images/books/2.jpg'}
+                src={thumbnail ? thumbnail : 'images/books/2.jpg'}
                 alt="product image"
               />
             </a>

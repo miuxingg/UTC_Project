@@ -5,4 +5,7 @@ export interface BaseQuery {
 }
 export interface BookQueries extends BaseQuery {
   category?: string;
+  startPrice?: number;
+  endPrice?: number;
+  cloudTag?: string;
 }

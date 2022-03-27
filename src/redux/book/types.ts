@@ -5,4 +5,5 @@ export interface IBookState {
   newBook?: IPaginationOutput<IBookApi>;
   allBooks?: IPaginationOutput<IBookApi>;
   bookDetail?: IBookApi;
+  cloudtag?: IPaginationOutput<string>;
 }
