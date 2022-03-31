@@ -1,15 +1,23 @@
-/* eslint-disable require-jsdoc */
 import { AxiosInstance } from 'axios';
-import { ResponseDto } from './types';
+import { IAuthenticated, IAuthLocal, IVerifyEmail } from './types';
 
 export class AuthApi {
   constructor(private axiosInstance: AxiosInstance) {}
 
-  async register(email: string, password: string): Promise<ResponseDto> {
-    const { data } = await this.axiosInstance.post('/auth', {
-      email,
-      password,
-    });
+  async loginLocal(user: IAuthLocal): Promise<IAuthenticated> {
+    const { data } = await this.axiosInstance.post('/auth/login', user);
     return data;
+  }
+
+  async logout(): Promise<void> {
+    await this.axiosInstance.post('/auth/logout');
+  }
+
+  async registerLocal(user: IAuthLocal): Promise<void> {
+    await this.axiosInstance.post('/auth/register', user);
+  }
+
+  async verifyEmail(data: IVerifyEmail): Promise<void> {
+    await this.axiosInstance.post('/auth/verify-email', data);
   }
 }

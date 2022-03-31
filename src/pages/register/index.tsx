@@ -6,7 +6,8 @@ import RegisterContainer from '../../containers/RegisterContainer';
 const Register: NextPage = () => {
   return (
     <Layout>
-      <RegisterContainer />
+      {/* <RegisterContainer /> */}
+      ashd
     </Layout>
   );
 };

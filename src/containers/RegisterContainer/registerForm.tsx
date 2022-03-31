@@ -2,6 +2,8 @@ import React from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Input from '../../components/elements/Input';
+import { useDispatch } from 'react-redux';
+import { registerLocal } from '../../redux/auth';
 
 const Schema = Yup.object().shape({
   email: Yup.string().required('Email không được để trống'),
@@ -14,8 +16,10 @@ const Schema = Yup.object().shape({
 const initialValues = { email: '', password: '', confirmPassword: '' };
 
 const LoginForm: React.FC = () => {
+  const dispatch = useDispatch();
   const handleFormSubmit = (values: any) => {
     console.log(values);
+    // dispatch(registerLocal({ email: values.email, password: values.password }));
   };
   return (
     <Formik
