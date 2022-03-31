@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
+import { ICategoryApi } from '../../../libs/apis/category/types';
 
 export interface IBook {
   id?: string;
@@ -11,7 +12,7 @@ export interface IBook {
   images: string[];
   description?: string;
   author?: string;
-  category?: string[];
+  category?: ICategoryApi[];
   cloudTag?: string[];
   quantity?: number;
 }

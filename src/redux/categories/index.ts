@@ -14,7 +14,6 @@ export const getCategoryByIds = createAsyncThunk(
   'getCategoryByIds',
   async (ids: string[]) => {
     const data = await apiSdk.categoryApis.getCategoryByIds(ids);
-    console.log(data);
     return data;
   },
 );

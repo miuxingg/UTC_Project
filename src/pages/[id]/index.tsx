@@ -15,7 +15,7 @@ const ProductDetail: React.FC = () => {
       dispatch(getAllCategory());
       dispatch(cloudtag());
     }
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   return (
     <Layout>

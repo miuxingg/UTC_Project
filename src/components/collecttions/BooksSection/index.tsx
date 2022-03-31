@@ -14,26 +14,16 @@ export const BooksSection: React.FC<IBookSection> = ({
   title,
 }) => {
   const newTitle = title.split(' ');
-  // const data = useMemo(() => {
-  //   const x = [];
-  //   for (let i = 0; i < listItem.length; i++) {
-  //     x.push(listItem[i]);
-  //   }
-  //   console.log(x);
-
-  //   return x;
-  // }, [listItem]);
-  const data = [
-    listItem[0],
-    listItem[1],
-    listItem[2],
-    listItem[3],
-    listItem[4],
-  ];
-  // const [data, setData] = useState(listItem);
-  // useEffect(() => {
-  //   setData(listItem);
-  // }, [listItem]);
+  const data = listItem.map((item) => {
+    return item;
+  });
+  // const data = [
+  //   listItem[0],
+  //   listItem[1],
+  //   listItem[2],
+  //   listItem[3],
+  //   listItem[4],
+  // ];
   return (
     <section className="wn__product__area brown--color pt--80  pb--30">
       <div className="container">

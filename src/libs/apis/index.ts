@@ -2,6 +2,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { GetServerSidePropsContext } from 'next';
 import { API_BASE_URL } from '../../configs';
+import { AuthApi } from './auth';
 import { BookApi } from './book';
 import { CategoryApi } from './category';
 
@@ -33,6 +34,7 @@ const { instance, setApiContext } = new BookStoreApi();
 export namespace apiSdk {
   export const bookApis = new BookApi(instance);
   export const categoryApis = new CategoryApi(instance);
+  export const authApis = new AuthApi(instance);
 }
 
 export { setApiContext };
