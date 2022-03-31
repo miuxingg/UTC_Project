@@ -16,16 +16,16 @@ import {
 import SliderRange from '../ProductsContainer/SliderRange';
 
 const ProductDetailContainer: React.FC = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const bookDetail = useSelector(bookDetailSelector);
   const newBookSelector = useSelector(newBook);
   const listCategories = useSelector(allCategories);
   const cloudtag = useSelector(allCloudtag);
   const currentCategoryList = useSelector(currentCategories);
 
-  useEffect(() => {
-    dispatch(getCategoryByIds(bookDetail?.category || []));
-  }, [dispatch, bookDetail]);
+  // useEffect(() => {
+  //   dispatch(getCategoryByIds(bookDetail?.category || []));
+  // }, [dispatch, bookDetail]);
 
   const handleSlideRange = (startPrice: number, endPrice: number) => {};
 
@@ -157,16 +157,18 @@ const ProductDetailContainer: React.FC = () => {
                       <div className="product_meta">
                         <span className="posted_in">
                           Categories:&nbsp;
-                          {currentCategoryList.map((item, i) => {
-                            return (
-                              <a key={item.id}>
-                                {item.name}&nbsp;
-                                {i !== currentCategoryList.length - 1
-                                  ? ', '
-                                  : null}
-                              </a>
-                            );
-                          })}
+                          {bookDetail?.category
+                            ? bookDetail.category.map((item, i) => {
+                                return (
+                                  <a key={item.id}>
+                                    {item.name}&nbsp;
+                                    {i !== currentCategoryList.length - 1
+                                      ? ', '
+                                      : null}
+                                  </a>
+                                );
+                              })
+                            : null}
                         </span>
                       </div>
                       <div className="product-share">

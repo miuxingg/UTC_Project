@@ -1,3 +1,5 @@
+import { ICategoryApi } from '../category/types';
+
 export interface IBookApi {
   id: string;
   name: string;
@@ -5,7 +7,7 @@ export interface IBookApi {
   priceUnDiscount: number;
   description: string;
   author: string;
-  category: string[];
+  category: ICategoryApi[];
   cloudtag: string[];
   thumbnail: string;
   images: string[];

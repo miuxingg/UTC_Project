@@ -1,3 +1,4 @@
+import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -8,7 +9,7 @@ import { BookQueries } from '../../libs/utils/buildQueries';
 import { allBooksByFilter, cloudtag } from '../../redux/book';
 import { getAllCategory } from '../../redux/categories';
 
-export const ProductPage: React.FC = () => {
+export const ProductPage: NextPage = () => {
   const router = useRouter();
   const { search } = router.query;
   const dispatch = useDispatch();
