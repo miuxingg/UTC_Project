@@ -2,23 +2,28 @@ import type { AppProps } from 'next/app';
 import React, { useEffect } from 'react';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { theme } from '../libs/theme';
-import { applyMiddleware, createStore } from '@reduxjs/toolkit';
-import rootReducer from '../redux/rootReducer';
-import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
+import { useDispatch, useSelector } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../languages/i18n';
 import { getItemStorage } from '../libs/utils/localStorage';
+import { notificationSelector } from '../redux/app/selectors';
+import { clearMessage } from '../redux/app';
+import { wrapper } from '../redux';
+import { authSelector } from '../redux/auth/selectors';
+import Snackbar from '../components/elements/Snackbar';
+import { getCookies } from '../libs/utils/cookies';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function BookStoreApplication({ Component, pageProps }: AppProps) {
+  const dispatch = useDispatch();
+  const notification = useSelector(notificationSelector);
+
   useEffect(() => {
     const jssStyles = document.querySelector('#jss-server-side');
     if (jssStyles) {
       jssStyles.parentElement?.removeChild(jssStyles);
     }
   }, []);
-  const store = createStore(rootReducer, applyMiddleware(thunk));
-
+  // const store = createStore(rootReducer, applyMiddleware(thunk));
   useEffect(() => {
     const lang = getItemStorage('language');
     if (lang) i18n.changeLanguage(lang);
@@ -30,13 +35,19 @@ function MyApp({ Component, pageProps }: AppProps) {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Provider store={store}>
-            <Component {...pageProps} />
-          </Provider>
+          {/* <Provider store={store}> */}
+          <Component {...pageProps} />
+          <Snackbar
+            open={notification.open}
+            message={notification.message}
+            onClose={() => dispatch(clearMessage())}
+            type={notification.type}
+          />
+          {/* </Provider> */}
         </ThemeProvider>
       </I18nextProvider>
     </React.Fragment>
   );
 }
 
-export default MyApp;
+export default wrapper.withRedux(BookStoreApplication);

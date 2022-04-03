@@ -2,7 +2,7 @@ import { styled } from '@mui/material';
 import React, { memo } from 'react';
 import Typography from '../Typography';
 
-const Error = styled(Typography)({
+export const Error = styled(Typography)({
   fontSize: '12px',
   marginTop: 8,
   color: 'red',

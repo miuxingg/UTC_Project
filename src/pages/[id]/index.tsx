@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Layout from '../../components/templates/Layout';
 import ProductDetailContainer from '../../containers/ProductDetails';
+import { getServerSideWithPublicRoute } from '../../libs/hocs/getServerSideWithPublicRoute';
 import { bookById, cloudtag } from '../../redux/book';
 import { getAllCategory, getCategoryByIds } from '../../redux/categories';
 const ProductDetail: React.FC = () => {
@@ -24,4 +25,11 @@ const ProductDetail: React.FC = () => {
   );
 };
 
+export const getServerSideProps = getServerSideWithPublicRoute(
+  async (_, store) => {
+    return {
+      props: {},
+    };
+  },
+);
 export default ProductDetail;

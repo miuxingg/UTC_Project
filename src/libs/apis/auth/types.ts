@@ -1,6 +1,7 @@
 export interface ResponseDto {
   statusCode: number;
   message: string;
+  field?: string;
 }
 
 export interface IProfile {
@@ -17,9 +18,9 @@ export interface IAuthLocal {
 
 export interface IAuthenticated {
   access_token: string;
-  refresh_token: string;
+  refresh_token?: string;
   expires_in: number;
-  refresh_expires_in: number;
+  refresh_expires_in?: number;
 }
 
 export interface IVerifyEmail {

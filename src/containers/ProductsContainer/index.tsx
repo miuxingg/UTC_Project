@@ -35,6 +35,8 @@ const ProductsContainer: React.FC = () => {
   const listCategories = useSelector(allCategories);
   const listBook = useSelector(allBookByFilter);
 
+  // console.log(listBook);
+
   useEffect(() => {
     dispatch(allBooksByFilter(queries));
   }, [queries]);

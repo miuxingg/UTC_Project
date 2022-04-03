@@ -1,6 +1,48 @@
-import React from 'react';
+import { Box, styled } from '@mui/material';
+import { Formik } from 'formik';
+import React, { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { moneyFormat } from '../../libs/utils';
+import { removeItem } from '../../redux/cart';
+import { allCart } from '../../redux/cart/selectors';
+import * as Yup from 'yup';
+import CartLine from './CartLine';
+import { useRouter } from 'next/router';
+import { Routers } from '../../configs/navigator';
+
+export const Button = styled('button')({
+  background: '#fff none repeat scroll 0 0',
+  borderRadius: '5px',
+  display: 'block',
+  fontSize: '16px',
+  fontWeight: 400,
+  height: '50px',
+  lineHeight: '50px',
+  padding: '0 26px',
+  textTransform: 'capitalize',
+  transition: 'all 0.3s ease 0s',
+  border: 'none',
+  ':hover': {
+    background: '#e59285 none repeat scroll 0 0',
+  },
+  ':focus': {
+    outline: 'none',
+  },
+});
 
 const CartContainer: React.FC = () => {
+  const router = useRouter();
+  const cartItem = useSelector(allCart);
+  const totalMoney = useMemo(() => {
+    return cartItem.items.reduce((total, current) => {
+      return total + current.item.price * current.quantity;
+    }, 0);
+  }, [cartItem]);
+
+  const handleCheckout = () => {
+    router.push(`/${Routers.checkout.path}`);
+  };
+
   return (
     <div className="wrapper" id="wrapper">
       {/* Start Bradcaump area */}
@@ -28,109 +70,54 @@ const CartContainer: React.FC = () => {
         <div className="container">
           <div className="row">
             <div className="col-md-12 col-sm-12 ol-lg-12">
-              <form action="#">
-                <div className="table-content wnro__table table-responsive">
-                  <table>
-                    <thead>
-                      <tr className="title-top">
-                        <th className="product-thumbnail">Image</th>
-                        <th className="product-name">Product</th>
-                        <th className="product-price">Price</th>
-                        <th className="product-quantity">Quantity</th>
-                        <th className="product-subtotal">Total</th>
-                        <th className="product-remove">Remove</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="product-thumbnail">
-                          <a href="#">
-                            <img
-                              src="images/product/sm-3/1.jpg"
-                              alt="product img"
+              <>
+                <form>
+                  <div className="table-content wnro__table table-responsive">
+                    <table>
+                      <thead>
+                        <tr className="title-top">
+                          <th className="product-thumbnail">Image</th>
+                          <th className="product-name">Product</th>
+                          <th className="product-price">Price</th>
+                          <th className="product-quantity">Quantity</th>
+                          <th className="product-subtotal">Total</th>
+                          <th className="product-remove">Remove</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cartItem.items.map(({ id, item, quantity }) => {
+                          return (
+                            <CartLine
+                              key={id}
+                              item={item}
+                              quantity={quantity}
+                              id={id}
                             />
-                          </a>
-                        </td>
-                        <td className="product-name">
-                          <a href="#">Natoque penatibus</a>
-                        </td>
-                        <td className="product-price">
-                          <span className="amount">$165.00</span>
-                        </td>
-                        <td className="product-quantity">
-                          <input type="number" defaultValue={1} />
-                        </td>
-                        <td className="product-subtotal">$165.00</td>
-                        <td className="product-remove">
-                          <a href="#">X</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="product-thumbnail">
-                          <a href="#">
-                            <img
-                              src="images/product/sm-3/2.jpg"
-                              alt="product img"
-                            />
-                          </a>
-                        </td>
-                        <td className="product-name">
-                          <a href="#">Quisque fringilla</a>
-                        </td>
-                        <td className="product-price">
-                          <span className="amount">$50.00</span>
-                        </td>
-                        <td className="product-quantity">
-                          <input type="number" defaultValue={1} />
-                        </td>
-                        <td className="product-subtotal">$50.00</td>
-                        <td className="product-remove">
-                          <a href="#">X</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="product-thumbnail">
-                          <a href="#">
-                            <img
-                              src="images/product/sm-3/3.jpg"
-                              alt="product img"
-                            />
-                          </a>
-                        </td>
-                        <td className="product-name">
-                          <a href="#">Vestibulum suscipit</a>
-                        </td>
-                        <td className="product-price">
-                          <span className="amount">$50.00</span>
-                        </td>
-                        <td className="product-quantity">
-                          <input type="number" defaultValue={1} />
-                        </td>
-                        <td className="product-subtotal">$50.00</td>
-                        <td className="product-remove">
-                          <a href="#">X</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </form>
-              <div className="cartbox__btn">
-                <ul className="cart__btn__list d-flex flex-wrap flex-md-nowrap flex-lg-nowrap justify-content-between">
-                  <li>
-                    <a href="#">Coupon Code</a>
-                  </li>
-                  <li>
-                    <a href="#">Apply Code</a>
-                  </li>
-                  <li>
-                    <a href="#">Update Cart</a>
-                  </li>
-                  <li>
-                    <a href="#">Check Out</a>
-                  </li>
-                </ul>
-              </div>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div className="cartbox__btn">
+                    <ul className="cart__btn__list d-flex flex-wrap flex-md-nowrap flex-lg-nowrap justify-content-between">
+                      <li>
+                        <Button>Coupon Code</Button>
+                      </li>
+                      <li>
+                        <Button>Apply Code</Button>
+                      </li>
+                      <li>
+                        <Button>Update Cart</Button>
+                      </li>
+                      <li>
+                        <Button type="button" onClick={handleCheckout}>
+                          Check Out
+                        </Button>
+                      </li>
+                    </ul>
+                  </div>
+                </form>
+              </>
             </div>
           </div>
           <div className="row">
@@ -142,7 +129,7 @@ const CartContainer: React.FC = () => {
                     <li>Sub Total</li>
                   </ul>
                   <ul className="cart__total__tk">
-                    <li>$70</li>
+                    <li>{moneyFormat(totalMoney)}</li>
                     <li>$70</li>
                   </ul>
                 </div>

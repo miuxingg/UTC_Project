@@ -1,9 +1,13 @@
 import Link from 'next/link';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { Routers } from '../../../configs/navigator';
 import { ICategoryApi } from '../../../libs/apis/category/types';
+import { setSuccess, setError } from '../../../redux/app';
+import { createCartItem } from '../../../redux/cart';
 
 export interface IBook {
-  id?: string;
+  id: string;
   status?: string;
   name: string;
   price: number | string;
@@ -24,12 +28,27 @@ export const BookCart: React.FC<IBook> = ({
   priceUnDiscount = 0,
   thumbnail = '',
 }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    if (id) {
+      dispatch(
+        createCartItem({
+          bookId: id,
+          quantity: 1,
+        }),
+      );
+      dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+    } else {
+      dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
+    }
+  };
   return (
     <>
       <div className="product product__style--3">
         {/* <div className="col-lg-3 col-md-4 col-sm-6 col-12"> */}
         <div className="product__thumb">
-          <Link href={`/${id}`}>
+          <Link href={`${Routers.products.path}/${id}`}>
             <a className="first__img">
               <img
                 src={thumbnail ? thumbnail : 'images/books/1.jpg'}
@@ -37,7 +56,7 @@ export const BookCart: React.FC<IBook> = ({
               />
             </a>
           </Link>
-          <Link href={`/${id}`}>
+          <Link href={`${Routers.products.path}/${id}`}>
             <a className="second__img animation1">
               <img
                 src={thumbnail ? thumbnail : 'images/books/2.jpg'}
@@ -53,7 +72,7 @@ export const BookCart: React.FC<IBook> = ({
         </div>
         <div className="product__content content--center">
           <h4>
-            <Link href={`/${id}`}>
+            <Link href={`${Routers.products.path}/${id}`}>
               <a>{name}</a>
             </Link>
           </h4>
@@ -66,21 +85,21 @@ export const BookCart: React.FC<IBook> = ({
               <ul className="add_to_links">
                 <li>
                   <Link href="/">
-                    <a className="cart">
+                    <a className="cart" title="chua biet">
                       <i className="bi bi-shopping-bag4" />
                     </a>
                   </Link>
                 </li>
                 <li>
-                  <Link href="/">
-                    <a className="wishlist">
+                  <div onClick={handleAddToCart}>
+                    <a className="wishlist" title="Add To Cart">
                       <i className="bi bi-shopping-cart-full" />
                     </a>
-                  </Link>
+                  </div>
                 </li>
                 <li>
                   <Link href="/">
-                    <a className="compare">
+                    <a className="compare" title="Favorite">
                       <i className="bi bi-heart-beat" />
                     </a>
                   </Link>

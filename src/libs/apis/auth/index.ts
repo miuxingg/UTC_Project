@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { IAuthenticated, IAuthLocal, IVerifyEmail } from './types';
+import { IAuthenticated, IAuthLocal, IVerifyEmail, ResponseDto } from './types';
 
 export class AuthApi {
   constructor(private axiosInstance: AxiosInstance) {}
@@ -13,8 +13,9 @@ export class AuthApi {
     await this.axiosInstance.post('/auth/logout');
   }
 
-  async registerLocal(user: IAuthLocal): Promise<void> {
-    await this.axiosInstance.post('/auth/register', user);
+  async registerLocal(user: IAuthLocal): Promise<ResponseDto> {
+    const { data } = await this.axiosInstance.post('/auth/register', user);
+    return data;
   }
 
   async verifyEmail(data: IVerifyEmail): Promise<void> {

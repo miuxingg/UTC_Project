@@ -10,7 +10,6 @@ const UploadFile: React.FC = () => {
     setImages(e.target.files[0]);
   };
   const handleButtonClick = () => {
-    console.log(images);
     if (!images) return;
     const storageRef = ref(storage, `/files/${images.name}`);
     const uploadTask = uploadBytesResumable(storageRef, images);

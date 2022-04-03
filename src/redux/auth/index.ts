@@ -8,9 +8,7 @@ import {
 } from './action';
 import { IAuthState } from './types';
 
-export const initialState: IAuthState = {
-  isUpdateProfileSuccess: false,
-};
+export const initialState: IAuthState = {};
 
 const authSlice = createGenericSlice({
   name: 'auth',
@@ -21,7 +19,7 @@ const authSlice = createGenericSlice({
       console.error('Login Failed');
     });
 
-    builder.addCase(authorized, (state) => {
+    builder.addCase(authorized.fulfilled, (state) => {
       state.isAuthenticated = true;
     });
 

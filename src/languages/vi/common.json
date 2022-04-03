@@ -2,5 +2,13 @@
   "home.title.allProduct": "Sản phẩm mới",
   "home.title.newProduct": "Tất cả sản phẩm",
   "header.language.vi": "Việt Nam",
-  "header.language.en": "Tiếng Anh"
+  "header.language.en": "Tiếng Anh",
+  "login.email": "Email",
+  "login.password": "Mật khẩu",
+  "login.login": "Đăng nhập",
+  "login.remember": "Ghi nhớ",
+  "login.lost-password": "Quên mật khẩu?",
+  "login.sign-in": "Đăng kí",
+  "incorrect.email": "Email không tồn tại",
+  "incorrect.password": "Mật khẩu không chính xác"
 }

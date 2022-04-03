@@ -19,7 +19,7 @@ export const getCategoryByIds = createAsyncThunk(
 );
 
 export const categorySlice = createGenericSlice({
-  name: 'books',
+  name: 'category',
   initialState,
   reducers: {},
   extraReducers: (builder) => {

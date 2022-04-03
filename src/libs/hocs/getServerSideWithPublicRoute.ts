@@ -1,6 +1,6 @@
 import { COOKIE_KEYS, HTTP_STATUS } from '../../configs';
 import { wrapper } from '../../redux';
-import { authorized } from '../../redux/auth';
+import { authorized } from '../../redux/auth/action';
 import { setApiContext } from '../apis';
 import { TWithSSRFn } from '../types';
 import { getCookies } from '../utils/cookies';
@@ -17,6 +17,7 @@ export const getServerSideWithPublicRoute: TWithSSRFn = (
 
       const cookies = getCookies(ctx);
       setApiContext(ctx);
+
       if (cookies[COOKIE_KEYS.ACCESS_TOKEN]) {
         store.dispatch(authorized());
       }
