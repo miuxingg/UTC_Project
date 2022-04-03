@@ -15,19 +15,17 @@ const MultipleBookSlider: React.FC<IBookSection> = ({
   description,
 }) => {
   const newTitle = title.split(' ');
-  // const [data, setData] = useState(listItem);
-  // useEffect(() => {
-  //   setData(listItem);
-  // }, [listItem]);
+  // const data = [...listItem, ...listItem].map((item) => {
+  //   return item;
+  // });
   const data = [
     listItem[0],
     listItem[1],
     listItem[2],
     listItem[3],
     listItem[4],
-    listItem[4],
-    listItem[4],
-    listItem[4],
+    listItem[5],
+    listItem[6],
     listItem[4],
     listItem[4],
     listItem[4],

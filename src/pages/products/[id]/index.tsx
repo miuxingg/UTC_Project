@@ -6,6 +6,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Layout from '../../../components/templates/Layout';
 import ProductDetailContainer from '../../../containers/ProductDetails';
+import { getServerSideWithPublicRoute } from '../../../libs/hocs/getServerSideWithPublicRoute';
 import { bookById, cloudtag } from '../../../redux/book';
 import { getAllCategory } from '../../../redux/categories';
 
@@ -23,7 +24,7 @@ const ProductDetail: NextPage = () => {
 
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>Home | Bookshop Responsive Bootstrap4 Template</title>
         <meta name="description" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -46,7 +47,7 @@ const ProductDetail: NextPage = () => {
         <link rel="stylesheet" href="style.css" />
         <link rel="stylesheet" href="css/custom.css" />
         <script src="js/vendor/modernizr-3.5.0.min.js"></script>
-      </Head>
+      </Head> */}
 
       <Layout>
         <ProductDetailContainer />
@@ -54,5 +55,13 @@ const ProductDetail: NextPage = () => {
     </>
   );
 };
+
+export const getServerSideProps = getServerSideWithPublicRoute(
+  async (_, store) => {
+    return {
+      props: {},
+    };
+  },
+);
 
 export default ProductDetail;

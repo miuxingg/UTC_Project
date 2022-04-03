@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import Layout from '../../components/templates/Layout';
 import { ITEM_PER_PAGE } from '../../configs';
 import ProductsContainer from '../../containers/ProductsContainer';
+import { getServerSideWithPublicRoute } from '../../libs/hocs/getServerSideWithPublicRoute';
 import { BookQueries } from '../../libs/utils/buildQueries';
 import { allBooksByFilter, cloudtag } from '../../redux/book';
 import { getAllCategory } from '../../redux/categories';
@@ -22,12 +23,20 @@ export const ProductPage: NextPage = () => {
     dispatch(getAllCategory());
     dispatch(allBooksByFilter({ ...queries }));
     dispatch(cloudtag());
-  }, []);
+  }, [dispatch]);
   return (
     <Layout>
       <ProductsContainer />
     </Layout>
   );
 };
+
+export const getServerSideProps = getServerSideWithPublicRoute(
+  async (_, store) => {
+    return {
+      props: {},
+    };
+  },
+);
 
 export default ProductPage;

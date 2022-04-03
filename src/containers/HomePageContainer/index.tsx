@@ -6,6 +6,7 @@ import MultipleBookSlider from '../../components/collecttions/MultipleBookSlider
 import NewsLetter from '../../components/collecttions/NewsLetter';
 import { Slider } from '../../components/collecttions/Slider';
 import OurBlog from '../../components/templates/OurBlog';
+import Authenticated from '../../libs/hocs/Authenticated';
 import { transformBookCart } from '../../redux/book/dto';
 import { newBook } from '../../redux/book/selectors';
 import { MOCK } from './mock';

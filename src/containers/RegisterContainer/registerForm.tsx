@@ -1,21 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Input from '../../components/elements/Input';
+import { useDispatch } from 'react-redux';
+import { registerLocal } from '../../redux/auth';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { ResponseDto } from '../../libs/apis/auth/types';
+import { HTTP_STATUS } from '../../configs';
 
 const Schema = Yup.object().shape({
   email: Yup.string().required('Email không được để trống'),
-  password: Yup.string().required('Mật khẩu không được để trống'),
-  confirmPassword: Yup.string().required(
-    'Xác nhận mật khẩu không được để trống',
-  ),
+  password: Yup.string()
+    .required('Mật khẩu không được để trống')
+    .min(6, 'Mật khẩu quá ngắn'),
+  confirmPassword: Yup.string()
+    .required('Xác nhận mật khẩu không được để trống')
+    .oneOf([Yup.ref('password')], 'Xác nhận mật khẩu không chính xác'),
 });
 
 const initialValues = { email: '', password: '', confirmPassword: '' };
 
-const LoginForm: React.FC = () => {
-  const handleFormSubmit = (values: any) => {
-    console.log(values);
+const RegisterForm: React.FC = () => {
+  const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState({
+    email: '',
+    password: '',
+  });
+  const handleFormSubmit = async (values: any) => {
+    const profileResult = await dispatch(
+      registerLocal({ email: values.email, password: values.password }),
+    );
+    const originalProfileResult: ResponseDto = unwrapResult(
+      profileResult as any,
+    );
+    if (originalProfileResult.statusCode === HTTP_STATUS.BAD_REQUEST) {
+      setErrorMessage((pre) => {
+        return {
+          ...pre,
+          [originalProfileResult.field!]: originalProfileResult.message,
+        };
+      });
+    }
   };
   return (
     <Formik
@@ -40,7 +65,7 @@ const LoginForm: React.FC = () => {
                       name="email"
                       value={values.email}
                       onChange={handleChange}
-                      error={errors.email}
+                      error={errors.email || errorMessage.email || ''}
                     />
                   </div>
                   <div className="input__box">
@@ -52,7 +77,7 @@ const LoginForm: React.FC = () => {
                       name="password"
                       onChange={handleChange}
                       value={values.password}
-                      error={errors.password}
+                      error={errors.password || errorMessage.password || ''}
                     />
                   </div>
                   <div className="input__box">
@@ -80,4 +105,4 @@ const LoginForm: React.FC = () => {
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

@@ -1,6 +1,6 @@
+import { Box } from '@mui/material';
 import React from 'react';
-import LoginForm from './registerForm';
-import RegisterForm from './loginForm';
+import RegisterForm from './registerForm';
 
 // export const
 
@@ -30,10 +30,9 @@ const RegisterContainer: React.FC = () => {
       {/* End Bradcaump area */}
       <section className="my_account_area pt--80 pb--55 bg--white">
         <div className="container">
-          <div className="row">
+          <Box display="flex" justifyContent="center">
             <RegisterForm />
-            <LoginForm />
-          </div>
+          </Box>
         </div>
       </section>
     </>

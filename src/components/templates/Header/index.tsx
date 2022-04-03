@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Routers } from '../../../configs/navigator';
 import { useRouter } from 'next/router';
@@ -6,8 +6,33 @@ import { t } from 'i18next';
 import { Language } from '../../../configs';
 import i18n from '../../../languages/i18n';
 import { setItemStorage } from '../../../libs/utils/localStorage';
+import { useDispatch, useSelector } from 'react-redux';
+import { authSelector } from '../../../redux/auth/selectors';
+import { allCart } from '../../../redux/cart/selectors';
+import { moneyFormat } from '../../../libs/utils';
+import { removeItem } from '../../../redux/cart';
+import { Box, styled } from '@mui/material';
+
+const Image = styled('img')({
+  width: '75px',
+  height: '94px',
+});
+
 const Header: React.FC = () => {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const [isShowCart, setIsShowCart] = useState<boolean>(false);
+  const [isShowProfile, setIsShowProfile] = useState<boolean>(false);
+  const [isSearch, setIsSearch] = useState<boolean>(false);
+  const isAuthenticated = useSelector(authSelector);
+  const cartItem = useSelector(allCart);
+
+  const totalMoney = useMemo(() => {
+    return cartItem.items.reduce((total, current) => {
+      return total + current.item.price * current.quantity;
+    }, 0);
+  }, [cartItem]);
+
   const [search, setSearch] = useState<string>('');
   const handleSearchClick = () => {
     router.push({ pathname: Routers.products.path, query: { search: search } });
@@ -16,6 +41,10 @@ const Header: React.FC = () => {
   const handleChangeLanguage = (language: Language) => {
     i18n.changeLanguage(language);
     setItemStorage('language', language);
+  };
+
+  const handleRemoveItemCart = (id: string) => {
+    dispatch(removeItem(id));
   };
 
   return (
@@ -49,360 +78,184 @@ const Header: React.FC = () => {
                     </Link>
                   </li>
                   <li className="drop">
-                    <a href="shop-grid.html">Books</a>
-                    <div className="megamenu mega03">
-                      <ul className="item item03">
-                        <li className="title">Categories</li>
-                        <li>
-                          <a href="shop-grid.html">Biography </a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Business </a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Cookbooks </a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Health &amp; Fitness </a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">History </a>
-                        </li>
-                      </ul>
-                      <ul className="item item03">
-                        <li className="title">Customer Favourite</li>
-                        <li>
-                          <a href="shop-grid.html">Mystery</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">
-                            Religion &amp; Inspiration
-                          </a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Romance</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Fiction/Fantasy</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Sleeveless</a>
-                        </li>
-                      </ul>
-                      <ul className="item item03">
-                        <li className="title">Collections</li>
-                        <li>
-                          <a href="shop-grid.html">Science </a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Fiction/Fantasy</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Self-Improvemen</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Home &amp; Garden</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Humor Books</a>
-                        </li>
-                      </ul>
-                    </div>
+                    <Link href={Routers.products.path}>
+                      <a>Books</a>
+                    </Link>
                   </li>
                   <li className="drop">
-                    <a href="shop-grid.html">Kids</a>
-                    <div className="megamenu mega02">
-                      <ul className="item item02">
-                        <li className="title">Top Collections</li>
-                        <li>
-                          <a href="shop-grid.html">American Girl</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Diary Wimpy Kid</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Finding Dory</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Harry Potter</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Land of Stories</a>
-                        </li>
-                      </ul>
-                      <ul className="item item02">
-                        <li className="title">More For Kids</li>
-                        <li>
-                          <a href="shop-grid.html">B&amp;N Educators</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">B&amp;N Kids Club</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Kids Music</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Toys &amp; Games</a>
-                        </li>
-                        <li>
-                          <a href="shop-grid.html">Hoodies</a>
-                        </li>
-                      </ul>
-                    </div>
+                    <Link href={Routers.cart.path}>
+                      <a>Cart</a>
+                    </Link>
                   </li>
                   <li className="drop">
-                    <a href="#">Pages</a>
-                    <div className="megamenu dropdown">
-                      <ul className="item item01">
-                        <li>
-                          <a href="about.html">About Page</a>
-                        </li>
-                        <li className="label2">
-                          <a href="portfolio.html">Portfolio</a>
-                          <ul>
-                            <li>
-                              <a href="portfolio.html">Portfolio</a>
-                            </li>
-                            <li>
-                              <a href="portfolio-details.html">
-                                Portfolio Details
-                              </a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li>
-                          <a href="my-account.html">My Account</a>
-                        </li>
-                        <li>
-                          <a href="cart.html">Cart Page</a>
-                        </li>
-                        <li>
-                          <a href="checkout.html">Checkout Page</a>
-                        </li>
-                        <li>
-                          <a href="wishlist.html">Wishlist Page</a>
-                        </li>
-                        <li>
-                          <a href="error404.html">404 Page</a>
-                        </li>
-                        <li>
-                          <a href="faq.html">Faq Page</a>
-                        </li>
-                        <li>
-                          <a href="team.html">Team Page</a>
-                        </li>
-                      </ul>
-                    </div>
+                    <Link href={Routers.checkout.path}>
+                      <a>Checkout</a>
+                    </Link>
                   </li>
                   <li className="drop">
-                    <a href="blog.html">Blog</a>
-                    <div className="megamenu dropdown">
-                      <ul className="item item01">
-                        <li>
-                          <a href="blog.html">Blog Page</a>
-                        </li>
-                        <li>
-                          <a href="blog-details.html">Blog Details</a>
-                        </li>
-                      </ul>
-                    </div>
+                    <Link href={Routers.products.path}>
+                      <a>Blog</a>
+                    </Link>
                   </li>
                   <li>
-                    <a href="contact.html">Contact</a>
+                    <Link href={Routers.products.path}>
+                      <a>Contact</a>
+                    </Link>
                   </li>
                 </ul>
               </nav>
             </div>
             <div className="col-md-6 col-sm-6 col-6 col-lg-2">
               <ul className="header__sidebar__right d-flex justify-content-end align-items-center">
-                <li className="shop_search" style={{ cursor: 'pointer' }}>
+                <li
+                  className="shop_search"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setIsSearch((pre) => !pre)}
+                >
                   <a className="search__active" />
                 </li>
-                <li className="wishlist">
-                  <a href="#" />
+                <li className="wishlist" style={{ cursor: 'pointer' }}>
+                  <a />
                 </li>
-                <li className="shopcart">
-                  <a className="cartbox_active" href="#">
-                    <span className="product_qun">3</span>
+                <li
+                  className="shopcart"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    setIsShowCart((pre) => !pre);
+                  }}
+                >
+                  <a>
+                    <span className="product_qun">{cartItem.total}</span>
                   </a>
                   {/* Start Shopping Cart */}
-                  <div className="block-minicart minicart__active">
-                    <div className="minicart-content-wrapper">
-                      <div className="micart__close">
-                        <span>close</span>
-                      </div>
-                      <div className="items-total d-flex justify-content-between">
-                        <span>3 items</span>
-                        <span>Cart Subtotal</span>
-                      </div>
-                      <div className="total_amount text-right">
-                        <span>$66.00</span>
-                      </div>
-                      <div className="mini_action checkout">
-                        <a className="checkout__btn" href="cart.html">
-                          Go to Checkout
-                        </a>
-                      </div>
-                      <div className="single__items">
-                        <div className="miniproduct">
-                          <div className="item01 d-flex">
-                            <div className="thumb">
-                              <a href="product-details.html">
-                                <img
-                                  src="images/product/sm-img/1.jpg"
-                                  alt="product images"
-                                />
-                              </a>
-                            </div>
-                            <div className="content">
-                              <h6>
-                                <a href="product-details.html">
-                                  Voyage Yoga Bag
-                                </a>
-                              </h6>
-                              <span className="prize">$30.00</span>
-                              <div className="product_prize d-flex justify-content-between">
-                                <span className="qun">Qty: 01</span>
-                                <ul className="d-flex justify-content-end">
-                                  <li>
-                                    <a href="#">
-                                      <i className="zmdi zmdi-settings" />
-                                    </a>
-                                  </li>
-                                  <li>
-                                    <a href="#">
-                                      <i className="zmdi zmdi-delete" />
-                                    </a>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="item01 d-flex mt--20">
-                            <div className="thumb">
-                              <a href="product-details.html">
-                                <img
-                                  src="images/product/sm-img/3.jpg"
-                                  alt="product images"
-                                />
-                              </a>
-                            </div>
-                            <div className="content">
-                              <h6>
-                                <a href="product-details.html">
-                                  Impulse Duffle
-                                </a>
-                              </h6>
-                              <span className="prize">$40.00</span>
-                              <div className="product_prize d-flex justify-content-between">
-                                <span className="qun">Qty: 03</span>
-                                <ul className="d-flex justify-content-end">
-                                  <li>
-                                    <a href="#">
-                                      <i className="zmdi zmdi-settings" />
-                                    </a>
-                                  </li>
-                                  <li>
-                                    <a href="#">
-                                      <i className="zmdi zmdi-delete" />
-                                    </a>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="item01 d-flex mt--20">
-                            <div className="thumb">
-                              <a href="product-details.html">
-                                <img
-                                  src="images/product/sm-img/2.jpg"
-                                  alt="product images"
-                                />
-                              </a>
-                            </div>
-                            <div className="content">
-                              <h6>
-                                <a href="product-details.html">
-                                  Compete Track Tote
-                                </a>
-                              </h6>
-                              <span className="prize">$40.00</span>
-                              <div className="product_prize d-flex justify-content-between">
-                                <span className="qun">Qty: 03</span>
-                                <ul className="d-flex justify-content-end">
-                                  <li>
-                                    <a href="#">
-                                      <i className="zmdi zmdi-settings" />
-                                    </a>
-                                  </li>
-                                  <li>
-                                    <a href="#">
-                                      <i className="zmdi zmdi-delete" />
-                                    </a>
-                                  </li>
-                                </ul>
-                              </div>
-                            </div>
+                  {isShowCart ? (
+                    <div
+                      className={`block-minicart minicart__active ${
+                        isShowCart ? 'is-visible' : null
+                      }`}
+                    >
+                      <div className="minicart-content-wrapper">
+                        <div className="micart__close">
+                          <span>close</span>
+                        </div>
+                        <div className="items-total d-flex justify-content-between">
+                          <span>{cartItem.total} items</span>
+                          <span>Cart Subtotal</span>
+                        </div>
+                        <div className="total_amount text-right">
+                          <span>{moneyFormat(totalMoney)}</span>
+                        </div>
+                        <div className="mini_action checkout">
+                          <a className="checkout__btn">Go to Checkout</a>
+                        </div>
+                        <div className="single__items">
+                          <div className="miniproduct">
+                            {cartItem.items.map(({ id, item, quantity }) => {
+                              return (
+                                <Box key={id} my={2}>
+                                  <div className="item01 d-flex">
+                                    <div className="thumb">
+                                      <a>
+                                        <Image
+                                          src={item.thumbnail}
+                                          alt="product images"
+                                        />
+                                      </a>
+                                    </div>
+                                    <div className="content">
+                                      <h6>
+                                        <a>{item.name}</a>
+                                      </h6>
+                                      <span className="prize">
+                                        {moneyFormat(item.price)}
+                                      </span>
+                                      <div className="product_prize d-flex justify-content-between">
+                                        <span className="qun">
+                                          Qty: {quantity}
+                                        </span>
+                                        <ul className="d-flex justify-content-end">
+                                          <li>
+                                            <a>
+                                              <i className="zmdi zmdi-settings" />
+                                            </a>
+                                          </li>
+                                          <li
+                                            onClick={() =>
+                                              handleRemoveItemCart(id)
+                                            }
+                                          >
+                                            <a>
+                                              <i className="zmdi zmdi-delete" />
+                                            </a>
+                                          </li>
+                                        </ul>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </Box>
+                              );
+                            })}
                           </div>
                         </div>
-                      </div>
-                      <div className="mini_action cart">
-                        <a className="cart__btn" href="cart.html">
-                          View and edit cart
-                        </a>
+                        <div className="mini_action cart">
+                          <a className="cart__btn">View and edit cart</a>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : null}
+
                   {/* End Shopping Cart */}
                 </li>
-                <li className="setting__bar__icon">
-                  <a className="setting__active" href="#" />
-                  <div className="searchbar__content setting__block">
-                    <div className="content-inner">
-                      {/* <div className="switcher-currency">
-                        <strong className="label switcher-label">
-                          <span>Currency</span>
-                        </strong>
-                        <div className="switcher-options">
-                          <div className="switcher-currency-trigger">
-                            <span className="currency-trigger">
-                              USD - US Dollar
-                            </span>
-                            <ul className="switcher-dropdown">
-                              <li>GBP - British Pound Sterling</li>
-                              <li>EUR - Euro</li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div> */}
-                      <div className="switcher-currency">
-                        <strong className="label switcher-label">
-                          <span>Language</span>
-                        </strong>
-                        <div className="switcher-options">
-                          <div className="switcher-currency-trigger">
-                            <span
-                              className="currency-trigger"
-                              onClick={() => handleChangeLanguage(Language.EN)}
-                            >
-                              {t('header.language.en')}
-                            </span>
-                            <span
-                              className="currency-trigger"
-                              onClick={() => handleChangeLanguage(Language.VI)}
-                            >
-                              {t('header.language.vi')}
-                            </span>
-                            {/* <ul className="switcher-dropdown">
+
+                <li
+                  className="setting__bar__icon"
+                  onClick={() => {
+                    setIsShowProfile((pre) => !pre);
+                  }}
+                >
+                  <a className="setting__active" />
+                  {isShowProfile ? (
+                    <>
+                      <div
+                        className={`searchbar__content ${
+                          isShowProfile
+                            ? 'setting__block is-visible'
+                            : 'setting__block'
+                        }`}
+                      >
+                        <div className="content-inner">
+                          <div className="switcher-currency">
+                            <strong className="label switcher-label">
+                              <span>Language</span>
+                            </strong>
+                            <div className="switcher-options">
+                              <div className="switcher-currency-trigger">
+                                <span
+                                  className="currency-trigger"
+                                  onClick={() =>
+                                    handleChangeLanguage(Language.EN)
+                                  }
+                                >
+                                  {t('header.language.en')}
+                                </span>
+                                <span
+                                  className="currency-trigger"
+                                  onClick={() =>
+                                    handleChangeLanguage(Language.VI)
+                                  }
+                                >
+                                  {t('header.language.vi')}
+                                </span>
+                                {/* <ul className="switcher-dropdown">
                               <li>English02</li>
                               <li>English03</li>
                               <li>English04</li>
                               <li>English05</li>
                             </ul> */}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </div>
-                      <div className="switcher-currency">
+                          {/* <div className="switcher-currency">
                         <strong className="label switcher-label">
                           <span>Select Store</span>
                         </strong>
@@ -419,35 +272,42 @@ const Header: React.FC = () => {
                             </ul>
                           </div>
                         </div>
-                      </div>
-                      <div className="switcher-currency">
-                        <strong className="label switcher-label">
-                          <span>My Account</span>
-                        </strong>
-                        <div className="switcher-options">
-                          <div className="switcher-currency-trigger">
-                            <div className="setting__menu">
-                              <span>
-                                <a href="#">Compare Product</a>
-                              </span>
-                              <span>
-                                <a href="#">My Account</a>
-                              </span>
-                              <span>
-                                <a href="#">My Wishlist</a>
-                              </span>
-                              <span>
-                                <a href="#">Sign In</a>
-                              </span>
-                              <span>
-                                <a href="#">Create An Account</a>
-                              </span>
+                      </div> */}
+                          <div className="switcher-currency">
+                            <strong className="label switcher-label">
+                              <span>My Account</span>
+                            </strong>
+                            <div className="switcher-options">
+                              <div className="switcher-currency-trigger">
+                                <div className="setting__menu">
+                                  {isAuthenticated ? (
+                                    <span>
+                                      <Link href={Routers.register.path}>
+                                        <a>Logout</a>
+                                      </Link>
+                                    </span>
+                                  ) : (
+                                    <>
+                                      <span>
+                                        <Link href={Routers.login.path}>
+                                          <a>Login</a>
+                                        </Link>
+                                      </span>
+                                      <span>
+                                        <Link href={Routers.register.path}>
+                                          <a>Register</a>
+                                        </Link>
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </>
+                  ) : null}
                 </li>
               </ul>
             </div>
@@ -458,74 +318,19 @@ const Header: React.FC = () => {
               <nav className="mobilemenu__nav">
                 <ul className="meninmenu">
                   <li>
-                    <a href="index.html">Home</a>
+                    <a>Home</a>
                   </li>
                   <li>
-                    <a href="#">Pages</a>
-                    <ul>
-                      <li>
-                        <a href="about.html">About Page</a>
-                      </li>
-                      <li>
-                        <a href="portfolio.html">Portfolio</a>
-                        <ul>
-                          <li>
-                            <a href="portfolio.html">Portfolio</a>
-                          </li>
-                          <li>
-                            <a href="portfolio-details.html">
-                              Portfolio Details
-                            </a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li>
-                        <a href="my-account.html">My Account</a>
-                      </li>
-                      <li>
-                        <a href="cart.html">Cart Page</a>
-                      </li>
-                      <li>
-                        <a href="checkout.html">Checkout Page</a>
-                      </li>
-                      <li>
-                        <a href="wishlist.html">Wishlist Page</a>
-                      </li>
-                      <li>
-                        <a href="error404.html">404 Page</a>
-                      </li>
-                      <li>
-                        <a href="faq.html">Faq Page</a>
-                      </li>
-                      <li>
-                        <a href="team.html">Team Page</a>
-                      </li>
-                    </ul>
+                    <a>Pages</a>
                   </li>
                   <li>
-                    <a href="shop-grid.html">Shop</a>
-                    <ul>
-                      <li>
-                        <a href="shop-grid.html">Shop Grid</a>
-                      </li>
-                      <li>
-                        <a href="single-product.html">Single Product</a>
-                      </li>
-                    </ul>
+                    <a>Shop</a>
                   </li>
                   <li>
-                    <a href="blog.html">Blog</a>
-                    <ul>
-                      <li>
-                        <a href="blog.html">Blog Page</a>
-                      </li>
-                      <li>
-                        <a href="blog-details.html">Blog Details</a>
-                      </li>
-                    </ul>
+                    <a>Blog</a>
                   </li>
                   <li>
-                    <a href="contact.html">Contact</a>
+                    <a>Contact</a>
                   </li>
                 </ul>
               </nav>
@@ -536,7 +341,11 @@ const Header: React.FC = () => {
           {/* Mobile Menu */}
         </div>
       </header>
-      <div className="brown--color box-search-content search_active block-bg close__top">
+      <div
+        className={`brown--color box-search-content ${
+          isSearch ? 'search__active is-visible' : 'search_active'
+        }  block-bg close__top`}
+      >
         <form id="search_mini_form" className="minisearch" action="#">
           <div className="field__search">
             <input
@@ -555,7 +364,7 @@ const Header: React.FC = () => {
             </div>
           </div>
         </form>
-        <div className="close__wrap">
+        <div className="close__wrap" onClick={() => setIsSearch(false)}>
           <span>close</span>
         </div>
       </div>

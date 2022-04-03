@@ -1,31 +1,44 @@
 import { Box } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BooksSection } from '../../components/collecttions';
+import { setError, setSuccess } from '../../redux/app';
 import { transformBookCart } from '../../redux/book/dto';
 import {
   allCloudtag,
   bookDetailSelector,
   newBook,
 } from '../../redux/book/selectors';
+import { createCartItem } from '../../redux/cart';
 import { getCategoryByIds } from '../../redux/categories';
 import {
   allCategories,
   currentCategories,
 } from '../../redux/categories/selectors';
 import SliderRange from '../ProductsContainer/SliderRange';
+import ImageSlide from './ImageSlide.tsx';
 
 const ProductDetailContainer: React.FC = () => {
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const [quantity, setQuantity] = useState<number>(1);
   const bookDetail = useSelector(bookDetailSelector);
   const newBookSelector = useSelector(newBook);
   const listCategories = useSelector(allCategories);
   const cloudtag = useSelector(allCloudtag);
   const currentCategoryList = useSelector(currentCategories);
-
-  // useEffect(() => {
-  //   dispatch(getCategoryByIds(bookDetail?.category || []));
-  // }, [dispatch, bookDetail]);
+  const handleAddToCart = () => {
+    if (bookDetail.id && quantity) {
+      dispatch(
+        createCartItem({
+          bookId: bookDetail.id,
+          quantity: quantity,
+        }),
+      );
+      dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+    } else {
+      dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
+    }
+  };
 
   const handleSlideRange = (startPrice: number, endPrice: number) => {};
 
@@ -59,37 +72,7 @@ const ProductDetailContainer: React.FC = () => {
               <div className="wn__single__product">
                 <div className="row">
                   <div className="col-lg-6 col-12">
-                    <div className="wn__fotorama__wrapper">
-                      <div
-                        className="fotorama wn__fotorama__action"
-                        data-nav="thumbs"
-                      >
-                        <a href="5.jpg">
-                          <img
-                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <a href="6.jpg">
-                          <img
-                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <a href="7.jpg">
-                          <img
-                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <a href="8.jpg">
-                          <img
-                            src="https://kenh14cdn.com/thumb_w/600/27fc8f4935/2015/09/17/TTHVTCXHVCX%20(14)-d720a.jpg"
-                            alt=""
-                          />
-                        </a>
-                      </div>
-                    </div>
+                    <ImageSlide listImage={bookDetail.images} />
                   </div>
                   <div className="col-lg-6 col-12">
                     <div className="product__info__main">
@@ -139,12 +122,14 @@ const ProductDetailContainer: React.FC = () => {
                           defaultValue={1}
                           title="Qty"
                           type="number"
+                          onChange={(e) => setQuantity(+e.target.value)}
                         />
                         <div className="addtocart__actions">
                           <button
                             className="tocart"
-                            type="submit"
+                            type="button"
                             title="Add to Cart"
+                            onClick={() => handleAddToCart()}
                           >
                             Add to Cart
                           </button>

@@ -1,4 +1,11 @@
-type TRouterName = 'home' | 'products' | 'productsDetail';
+type TRouterName =
+  | 'home'
+  | 'products'
+  | 'productsDetail'
+  | 'login'
+  | 'register'
+  | 'checkout'
+  | 'cart';
 
 const baseUrl = '/';
 export const Routers: Record<TRouterName, { title: string; path: string }> = {
@@ -8,4 +15,8 @@ export const Routers: Record<TRouterName, { title: string; path: string }> = {
     title: 'page.home.product.details',
     path: `${baseUrl}[id]`,
   },
+  login: { title: 'page.login', path: `${baseUrl}login` },
+  register: { title: 'page.register', path: `${baseUrl}register` },
+  checkout: { title: 'page.checkout', path: `${baseUrl}check-out` },
+  cart: { title: 'page.cart', path: `${baseUrl}cart` },
 };

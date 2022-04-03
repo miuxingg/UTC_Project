@@ -2,5 +2,13 @@
   "home.title.allProduct": "All Products",
   "home.title.newProduct": "All Products",
   "header.language.vi": "Vietnamese",
-  "header.language.en": "English"
+  "header.language.en": "English",
+  "login.email": "Email",
+  "login.password": "Password",
+  "login.login": "Login",
+  "login.remember": "Remember me",
+  "login.lost-password": "Lost your password?",
+  "login.sign-in": "Sign in",
+  "incorrect.email": "Incorrect Email",
+  "incorrect.password": "Incorrect Password"
 }
