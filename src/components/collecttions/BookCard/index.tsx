@@ -1,10 +1,16 @@
 import Link from 'next/link';
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Routers } from '../../../configs/navigator';
 import { ICategoryApi } from '../../../libs/apis/category/types';
-import { setSuccess, setError } from '../../../redux/app';
-import { createCartItem } from '../../../redux/cart';
+import {
+  getItemDataStorage,
+  LocalStorageKey,
+  setItemDataStorage,
+} from '../../../libs/utils/localStorage';
+import { setSuccess, setError, setWarning } from '../../../redux/app';
+import { authSelector } from '../../../redux/auth/selectors';
+import { addItemToCart, createCartItem } from '../../../redux/cart';
 
 export interface IBook {
   id: string;
@@ -29,18 +35,51 @@ export const BookCart: React.FC<IBook> = ({
   thumbnail = '',
 }) => {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(authSelector);
 
   const handleAddToCart = () => {
-    if (id) {
-      dispatch(
-        createCartItem({
+    if (isAuthenticated) {
+      if (id) {
+        dispatch(
+          createCartItem({
+            bookId: id,
+            quantity: 1,
+          }),
+        );
+        dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+      } else {
+        dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
+      }
+    } else {
+      const cartLocal = getItemDataStorage(LocalStorageKey.BookStoreCart);
+      const currentCart = cartLocal ? JSON.parse(cartLocal) : [];
+      const isBookOnCart = currentCart.find((item: any) => item.bookId === id);
+      if (!isBookOnCart) {
+        currentCart.push({
           bookId: id,
           quantity: 1,
-        }),
-      );
-      dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
-    } else {
-      dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
+        });
+        setItemDataStorage(
+          LocalStorageKey.BookStoreCart,
+          JSON.stringify(currentCart),
+        );
+        dispatch(
+          addItemToCart({
+            id: id,
+            quantity: 1,
+            item: {
+              id: id,
+              name: name,
+              thumbnail: thumbnail,
+              price: price,
+              priceUnDiscount: priceUnDiscount,
+            },
+          }),
+        );
+        dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+      } else {
+        dispatch(setWarning({ message: 'Sản phẩm đã tồn tại' }));
+      }
     }
   };
   return (

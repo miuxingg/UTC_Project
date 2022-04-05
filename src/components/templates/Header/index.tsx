@@ -2,23 +2,63 @@ import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Routers } from '../../../configs/navigator';
 import { useRouter } from 'next/router';
-import { t } from 'i18next';
 import { Language } from '../../../configs';
 import i18n from '../../../languages/i18n';
-import { setItemStorage } from '../../../libs/utils/localStorage';
+import {
+  LocalStorageKey,
+  setItemDataStorage,
+  setItemStorage,
+} from '../../../libs/utils/localStorage';
 import { useDispatch, useSelector } from 'react-redux';
 import { authSelector } from '../../../redux/auth/selectors';
 import { allCart } from '../../../redux/cart/selectors';
 import { moneyFormat } from '../../../libs/utils';
-import { removeItem } from '../../../redux/cart';
+import { deleteItem, removeItem } from '../../../redux/cart';
 import { Box, styled } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { logout } from '../../../redux/auth/action';
+import { allBookOnCart } from '../../../redux/book/selectors';
+import { IBookApi } from '../../../libs/apis/book/types';
+import { ICartApi } from '../../../libs/apis/cart/types';
 
 const Image = styled('img')({
   width: '75px',
   height: '94px',
 });
 
-const Header: React.FC = () => {
+export const transformDataToCart = (
+  item: IBookApi[],
+  cartLocal: string | null,
+): ICartApi[] => {
+  if (cartLocal) {
+    let obj: { [key: string]: number } = {};
+    const data = JSON.parse(cartLocal);
+    data.forEach((item: any) => {
+      obj = { ...obj, [item.bookId]: item.quantity };
+    });
+    return item.map((item) => {
+      return {
+        id: item.id,
+        item: {
+          id: item.id,
+          name: item.name,
+          thumbnail: item.thumbnail,
+          price: item.price,
+          priceUnDiscount: item.priceUnDiscount,
+        },
+        quantity: obj[item.id] ?? 1,
+      };
+    });
+  }
+  return [];
+};
+
+interface IHeader {
+  bookCartLocal: string | null;
+}
+
+const Header: React.FC<IHeader> = ({ bookCartLocal }) => {
+  const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch();
   const [isShowCart, setIsShowCart] = useState<boolean>(false);
@@ -44,7 +84,23 @@ const Header: React.FC = () => {
   };
 
   const handleRemoveItemCart = (id: string) => {
-    dispatch(removeItem(id));
+    if (isAuthenticated) {
+      dispatch(removeItem(id));
+    } else {
+      dispatch(deleteItem({ id }));
+      const newCartlocal = cartItem.items.filter((item) => item.id !== id);
+      const transformCartLocal = newCartlocal.map((item) => {
+        return { bookId: item.item.id, total: item.quantity };
+      });
+      setItemDataStorage(
+        LocalStorageKey.BookStoreCart,
+        JSON.stringify(transformCartLocal),
+      );
+    }
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
   };
 
   return (
@@ -69,37 +125,37 @@ const Header: React.FC = () => {
                 <ul className="meninmenu d-flex justify-content-start">
                   <li className="drop with--one--item">
                     <Link href={Routers.home.path}>
-                      <a>Home</a>
+                      <a>{t('header.home')}</a>
                     </Link>
                   </li>
                   <li className="drop">
                     <Link href={Routers.products.path}>
-                      <a>Shop</a>
+                      <a>{t('header.shop')}</a>
                     </Link>
                   </li>
                   <li className="drop">
                     <Link href={Routers.products.path}>
-                      <a>Books</a>
+                      <a>{t('header.books')}</a>
                     </Link>
                   </li>
                   <li className="drop">
                     <Link href={Routers.cart.path}>
-                      <a>Cart</a>
+                      <a>{t('header.cart')}</a>
                     </Link>
                   </li>
                   <li className="drop">
                     <Link href={Routers.checkout.path}>
-                      <a>Checkout</a>
+                      <a>{t('header.checkout')}</a>
                     </Link>
                   </li>
                   <li className="drop">
                     <Link href={Routers.products.path}>
-                      <a>Blog</a>
+                      <a>{t('header.blog')}</a>
                     </Link>
                   </li>
                   <li>
                     <Link href={Routers.products.path}>
-                      <a>Contact</a>
+                      <a>{t('header.contact')}</a>
                     </Link>
                   </li>
                 </ul>
@@ -125,7 +181,7 @@ const Header: React.FC = () => {
                   }}
                 >
                   <a>
-                    <span className="product_qun">{cartItem.total}</span>
+                    <span className="product_qun">{cartItem.items.length}</span>
                   </a>
                   {/* Start Shopping Cart */}
                   {isShowCart ? (
@@ -136,17 +192,23 @@ const Header: React.FC = () => {
                     >
                       <div className="minicart-content-wrapper">
                         <div className="micart__close">
-                          <span>close</span>
+                          <span>{t('header.close')}</span>
                         </div>
                         <div className="items-total d-flex justify-content-between">
-                          <span>{cartItem.total} items</span>
-                          <span>Cart Subtotal</span>
+                          <span>
+                            {cartItem.items.length} {t('header.cart.item')}
+                          </span>
+                          <span>{t('header.cart.subtotal')}</span>
                         </div>
                         <div className="total_amount text-right">
                           <span>{moneyFormat(totalMoney)}</span>
                         </div>
                         <div className="mini_action checkout">
-                          <a className="checkout__btn">Go to Checkout</a>
+                          <Link href={Routers.checkout.path}>
+                            <a className="checkout__btn">
+                              {t('header.cart.go-checkout')}
+                            </a>
+                          </Link>
                         </div>
                         <div className="single__items">
                           <div className="miniproduct">
@@ -164,14 +226,18 @@ const Header: React.FC = () => {
                                     </div>
                                     <div className="content">
                                       <h6>
-                                        <a>{item.name}</a>
+                                        <Link
+                                          href={`${Routers.products.path}/${item.id}`}
+                                        >
+                                          <a>{item.name}</a>
+                                        </Link>
                                       </h6>
                                       <span className="prize">
                                         {moneyFormat(item.price)}
                                       </span>
                                       <div className="product_prize d-flex justify-content-between">
                                         <span className="qun">
-                                          Qty: {quantity}
+                                          {t('header.cart.qty')}: {quantity}
                                         </span>
                                         <ul className="d-flex justify-content-end">
                                           <li>
@@ -198,7 +264,9 @@ const Header: React.FC = () => {
                           </div>
                         </div>
                         <div className="mini_action cart">
-                          <a className="cart__btn">View and edit cart</a>
+                          <a className="cart__btn">
+                            {t('header.cart.view-cart')}
+                          </a>
                         </div>
                       </div>
                     </div>
@@ -226,7 +294,7 @@ const Header: React.FC = () => {
                         <div className="content-inner">
                           <div className="switcher-currency">
                             <strong className="label switcher-label">
-                              <span>Language</span>
+                              <span>{t('header.profile.language')}</span>
                             </strong>
                             <div className="switcher-options">
                               <div className="switcher-currency-trigger">
@@ -275,27 +343,27 @@ const Header: React.FC = () => {
                       </div> */}
                           <div className="switcher-currency">
                             <strong className="label switcher-label">
-                              <span>My Account</span>
+                              <span>{t('header.profile.my-account')}</span>
                             </strong>
                             <div className="switcher-options">
                               <div className="switcher-currency-trigger">
                                 <div className="setting__menu">
                                   {isAuthenticated ? (
-                                    <span>
-                                      <Link href={Routers.register.path}>
-                                        <a>Logout</a>
-                                      </Link>
+                                    <span onClick={handleLogout}>
+                                      {/* <Link href={Routers.register.path}> */}
+                                      <a>{t('header.profile.logout')}</a>
+                                      {/* </Link> */}
                                     </span>
                                   ) : (
                                     <>
                                       <span>
                                         <Link href={Routers.login.path}>
-                                          <a>Login</a>
+                                          <a>{t('header.profile.login')}</a>
                                         </Link>
                                       </span>
                                       <span>
                                         <Link href={Routers.register.path}>
-                                          <a>Register</a>
+                                          <a>{t('header.profile.register')}</a>
                                         </Link>
                                       </span>
                                     </>
@@ -317,20 +385,40 @@ const Header: React.FC = () => {
             <div className="col-lg-12 d-none">
               <nav className="mobilemenu__nav">
                 <ul className="meninmenu">
-                  <li>
-                    <a>Home</a>
+                  <li className="drop with--one--item">
+                    <Link href={Routers.home.path}>
+                      <a>{t('header.home')}</a>
+                    </Link>
+                  </li>
+                  <li className="drop">
+                    <Link href={Routers.products.path}>
+                      <a>{t('header.shop')}</a>
+                    </Link>
+                  </li>
+                  <li className="drop">
+                    <Link href={Routers.products.path}>
+                      <a>{t('header.books')}</a>
+                    </Link>
+                  </li>
+                  <li className="drop">
+                    <Link href={Routers.cart.path}>
+                      <a>{t('header.cart')}</a>
+                    </Link>
+                  </li>
+                  <li className="drop">
+                    <Link href={Routers.checkout.path}>
+                      <a>{t('header.checkout')}</a>
+                    </Link>
+                  </li>
+                  <li className="drop">
+                    <Link href={Routers.products.path}>
+                      <a>{t('header.blog')}</a>
+                    </Link>
                   </li>
                   <li>
-                    <a>Pages</a>
-                  </li>
-                  <li>
-                    <a>Shop</a>
-                  </li>
-                  <li>
-                    <a>Blog</a>
-                  </li>
-                  <li>
-                    <a>Contact</a>
+                    <Link href={Routers.products.path}>
+                      <a>{t('header.contact')}</a>
+                    </Link>
                   </li>
                 </ul>
               </nav>

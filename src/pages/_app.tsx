@@ -9,9 +9,8 @@ import { getItemStorage } from '../libs/utils/localStorage';
 import { notificationSelector } from '../redux/app/selectors';
 import { clearMessage } from '../redux/app';
 import { wrapper } from '../redux';
-import { authSelector } from '../redux/auth/selectors';
 import Snackbar from '../components/elements/Snackbar';
-import { getCookies } from '../libs/utils/cookies';
+import { AuthContainer } from '../containers/AuthContainer';
 
 function BookStoreApplication({ Component, pageProps }: AppProps) {
   const dispatch = useDispatch();
@@ -36,13 +35,16 @@ function BookStoreApplication({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           {/* <Provider store={store}> */}
-          <Component {...pageProps} />
-          <Snackbar
-            open={notification.open}
-            message={notification.message}
-            onClose={() => dispatch(clearMessage())}
-            type={notification.type}
-          />
+
+          <AuthContainer>
+            <Component {...pageProps} />
+            <Snackbar
+              open={notification.open}
+              message={notification.message}
+              onClose={() => dispatch(clearMessage())}
+              type={notification.type}
+            />
+          </AuthContainer>
           {/* </Provider> */}
         </ThemeProvider>
       </I18nextProvider>

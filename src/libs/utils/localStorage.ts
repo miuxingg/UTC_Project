@@ -1,5 +1,9 @@
 export type TKey = 'language';
 
+export enum LocalStorageKey {
+  BookStoreCart = 'book_store_cart',
+}
+
 export const setItemStorage = (key: TKey, value: string): void => {
   if (!process.browser) return;
   localStorage.setItem(key, value);
