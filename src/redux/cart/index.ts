@@ -1,8 +1,9 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
+import { createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { apiSdk } from '../../libs/apis';
 import { ICartApiUpload } from '../../libs/apis/cart/types';
 import { BaseQuery } from '../../libs/utils/buildQueries';
 import { createGenericSlice } from '../../libs/utils/createGenericSlice';
+import { IAppMessage } from '../app';
 import { ICartState } from './types';
 
 export const initialState: ICartState = {};
@@ -29,7 +30,38 @@ export const removeItem = createAsyncThunk('removeItem', async (id: string) => {
 export const categorySlice = createGenericSlice({
   name: 'cart',
   initialState,
-  reducers: {},
+  reducers: {
+    deleteCart(state, action: PayloadAction<{ message: string }>) {
+      state.cartItems = {
+        items: [],
+        total: 0,
+      };
+    },
+
+    setCart(state, action) {
+      state.cartItems = action.payload;
+    },
+
+    addItemToCart(state, action) {
+      const current = state.cartItems?.items.filter((item) => {
+        return item.id !== action.payload.id;
+      });
+      state.cartItems = {
+        items: [...(current ?? []), action.payload],
+        total: [...(current ?? []), action.payload].length,
+      };
+    },
+
+    deleteItem(state, action) {
+      state.cartItems = {
+        items:
+          state.cartItems?.items.filter(
+            (item) => item.id !== action.payload.id,
+          ) ?? [],
+        total: state.cartItems?.total ?? 0,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(createCartItem.fulfilled, (state, action) => {
       const currentItem = state.cartItems?.items.filter(
@@ -56,6 +88,7 @@ export const categorySlice = createGenericSlice({
   },
 });
 
-// export const {} = bookSlice.actions;
+export const { deleteCart, setCart, deleteItem, addItemToCart } =
+  categorySlice.actions;
 
 export default categorySlice.reducer;

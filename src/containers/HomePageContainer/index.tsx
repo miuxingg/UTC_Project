@@ -6,10 +6,8 @@ import MultipleBookSlider from '../../components/collecttions/MultipleBookSlider
 import NewsLetter from '../../components/collecttions/NewsLetter';
 import { Slider } from '../../components/collecttions/Slider';
 import OurBlog from '../../components/templates/OurBlog';
-import Authenticated from '../../libs/hocs/Authenticated';
 import { transformBookCart } from '../../redux/book/dto';
 import { newBook } from '../../redux/book/selectors';
-import { MOCK } from './mock';
 
 const HomePageContainer: React.FC = () => {
   const { t } = useTranslation();
@@ -20,7 +18,6 @@ const HomePageContainer: React.FC = () => {
       <Slider />
       <BooksSection
         listItem={transformBookCart(newBookSelector.items)}
-        // listItem={MOCK}
         title={t('home.title.newProduct')}
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid
@@ -30,7 +27,6 @@ const HomePageContainer: React.FC = () => {
 
       <MultipleBookSlider
         listItem={transformBookCart(newBookSelector.items)}
-        // listItem={MOCK}
         title={t('home.title.allProduct')}
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid
@@ -39,7 +35,6 @@ const HomePageContainer: React.FC = () => {
       <OurBlog />
       <BooksSection
         listItem={transformBookCart(newBookSelector.items)}
-        // listItem={MOCK}
         title="Best Seller"
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid

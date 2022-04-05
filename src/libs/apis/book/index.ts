@@ -22,6 +22,13 @@ export class BookApi {
     return data;
   }
 
+  async getBookByIds(ids: string[]): Promise<IPaginationOutput<IBookApi>> {
+    const { data } = await this.axiosInstance.get('/books/ids', {
+      params: { ids: JSON.stringify(ids) },
+    });
+    return data;
+  }
+
   async getCloundTag(): Promise<IPaginationOutput<string>> {
     const { data } = await this.axiosInstance.get('/books/cloudtag');
     return data;

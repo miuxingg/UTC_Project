@@ -1,5 +1,6 @@
 import { unwrapResult } from '@reduxjs/toolkit';
 import { Formik } from 'formik';
+import { t } from 'i18next';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +12,10 @@ import { loginLocal } from '../../redux/auth';
 // import ReCAPTCHA from 'react-google-recaptcha';
 
 const Schema = Yup.object().shape({
-  email: Yup.string().required('Email không được để trống'),
+  email: Yup.string().required('yup.empty'),
   password: Yup.string()
-    .required('Mật khẩu không được để trống')
-    .min(6, 'Mật khẩu quá ngắn'),
+    .required('yup.empty')
+    .min(6, 'yup.password.not.length'),
 });
 const initialValues = { email: '', password: '' };
 
@@ -79,7 +80,11 @@ const LoginForm: React.FC = () => {
                       name="email"
                       value={values.email}
                       onChange={handleChange}
-                      error={errors.email || t(errorMessage.email) || ''}
+                      error={
+                        errors.email
+                          ? t(errors.email, { field: 'Email' })
+                          : null || t(errorMessage.email) || ''
+                      }
                     />
                   </div>
                   <div className="input__box">
@@ -92,7 +97,11 @@ const LoginForm: React.FC = () => {
                       name="password"
                       value={values.password}
                       onChange={handleChange}
-                      error={errors.password || t(errorMessage.password) || ''}
+                      error={
+                        errors.password
+                          ? t(errors.password, { field: t('password') })
+                          : null || t(errorMessage.password) || ''
+                      }
                     />
                   </div>
                   {/* <ReCAPTCHA

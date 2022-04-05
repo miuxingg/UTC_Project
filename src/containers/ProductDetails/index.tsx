@@ -2,14 +2,20 @@ import { Box } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BooksSection } from '../../components/collecttions';
+import {
+  getItemDataStorage,
+  LocalStorageKey,
+  setItemDataStorage,
+} from '../../libs/utils/localStorage';
 import { setError, setSuccess } from '../../redux/app';
+import { authSelector } from '../../redux/auth/selectors';
 import { transformBookCart } from '../../redux/book/dto';
 import {
   allCloudtag,
   bookDetailSelector,
   newBook,
 } from '../../redux/book/selectors';
-import { createCartItem } from '../../redux/cart';
+import { addItemToCart, createCartItem } from '../../redux/cart';
 import { getCategoryByIds } from '../../redux/categories';
 import {
   allCategories,
@@ -20,6 +26,7 @@ import ImageSlide from './ImageSlide.tsx';
 
 const ProductDetailContainer: React.FC = () => {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(authSelector);
   const [quantity, setQuantity] = useState<number>(1);
   const bookDetail = useSelector(bookDetailSelector);
   const newBookSelector = useSelector(newBook);
@@ -28,13 +35,56 @@ const ProductDetailContainer: React.FC = () => {
   const currentCategoryList = useSelector(currentCategories);
   const handleAddToCart = () => {
     if (bookDetail.id && quantity) {
-      dispatch(
-        createCartItem({
-          bookId: bookDetail.id,
-          quantity: quantity,
-        }),
-      );
-      dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+      if (isAuthenticated) {
+        dispatch(
+          createCartItem({
+            bookId: bookDetail.id,
+            quantity: quantity,
+          }),
+        );
+        dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+      } else {
+        const cartLocal = getItemDataStorage(LocalStorageKey.BookStoreCart);
+        const currentCart = cartLocal ? JSON.parse(cartLocal) : [];
+        const isBookOnCart = currentCart.find(
+          (item: any) => item.bookId === bookDetail.id,
+        );
+        if (!isBookOnCart) {
+          currentCart.push({
+            bookId: bookDetail.id,
+            quantity: quantity,
+          });
+          setItemDataStorage(
+            LocalStorageKey.BookStoreCart,
+            JSON.stringify(currentCart),
+          );
+        } else {
+          setItemDataStorage(
+            LocalStorageKey.BookStoreCart,
+            JSON.stringify(
+              currentCart.map((item: any) => {
+                return item.bookId === isBookOnCart.bookId
+                  ? { ...item, quantity: quantity }
+                  : item;
+              }),
+            ),
+          );
+        }
+        dispatch(
+          addItemToCart({
+            id: bookDetail.id,
+            quantity: quantity,
+            item: {
+              id: bookDetail.id,
+              name: bookDetail.name,
+              thumbnail: bookDetail.thumbnail,
+              price: bookDetail.price,
+              priceUnDiscount: bookDetail.priceUnDiscount,
+            },
+          }),
+        );
+        dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+      }
     } else {
       dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
     }

@@ -1,8 +1,16 @@
 import { styled } from '@mui/material';
+import Link from 'next/link';
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Routers } from '../../../configs/navigator';
 import { moneyFormat } from '../../../libs/utils';
-import { removeItem } from '../../../redux/cart';
+import {
+  LocalStorageKey,
+  setItemDataStorage,
+} from '../../../libs/utils/localStorage';
+import { authSelector } from '../../../redux/auth/selectors';
+import { deleteItem, removeItem } from '../../../redux/cart';
+import { allCart } from '../../../redux/cart/selectors';
 
 export const Image = styled('img')({
   width: '80px',
@@ -16,11 +24,25 @@ export interface ICartline {
 }
 const CartLine: React.FC<ICartline> = ({ id, item, quantity }) => {
   const dispatch = useDispatch();
+  const isAuthenticated = useSelector(authSelector);
+  const cartItem = useSelector(allCart);
 
   const [quantityLine, setQuantityLine] = useState<number>(quantity);
 
   const handleRemoveItemCart = (id: string) => {
-    dispatch(removeItem(id));
+    if (isAuthenticated) {
+      dispatch(removeItem(id));
+    } else {
+      dispatch(deleteItem({ id }));
+      const newCartlocal = cartItem.items.filter((item) => item.id !== id);
+      const transformCartLocal = newCartlocal.map((item) => {
+        return { bookId: item.item.id, total: item.quantity };
+      });
+      setItemDataStorage(
+        LocalStorageKey.BookStoreCart,
+        JSON.stringify(transformCartLocal),
+      );
+    }
   };
   return (
     <tr key={id}>
@@ -30,7 +52,9 @@ const CartLine: React.FC<ICartline> = ({ id, item, quantity }) => {
         </a>
       </td>
       <td className="product-name">
-        <a>{item.name}</a>
+        <Link href={`${Routers.products.path}/${item.id}`}>
+          <a>{item.name}</a>
+        </Link>
       </td>
       <td className="product-price">
         <span className="amount">{moneyFormat(item.price)}</span>

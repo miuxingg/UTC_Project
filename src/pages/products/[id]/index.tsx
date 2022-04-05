@@ -20,7 +20,7 @@ const ProductDetail: NextPage = () => {
       dispatch(getAllCategory());
       dispatch(cloudtag());
     }
-  }, [dispatch]);
+  }, [dispatch, id]);
 
   return (
     <>

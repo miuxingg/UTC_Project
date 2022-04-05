@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import CartLine from './CartLine';
 import { useRouter } from 'next/router';
 import { Routers } from '../../configs/navigator';
+import { useTranslation } from 'react-i18next';
 
 export const Button = styled('button')({
   background: '#fff none repeat scroll 0 0',
@@ -31,6 +32,7 @@ export const Button = styled('button')({
 });
 
 const CartContainer: React.FC = () => {
+  const { t } = useTranslation();
   const router = useRouter();
   const cartItem = useSelector(allCart);
   const totalMoney = useMemo(() => {
@@ -76,12 +78,24 @@ const CartContainer: React.FC = () => {
                     <table>
                       <thead>
                         <tr className="title-top">
-                          <th className="product-thumbnail">Image</th>
-                          <th className="product-name">Product</th>
-                          <th className="product-price">Price</th>
-                          <th className="product-quantity">Quantity</th>
-                          <th className="product-subtotal">Total</th>
-                          <th className="product-remove">Remove</th>
+                          <th className="product-thumbnail">
+                            {t('cart.title.image')}
+                          </th>
+                          <th className="product-name">
+                            {t('cart.title.product')}
+                          </th>
+                          <th className="product-price">
+                            {t('cart.title.price')}
+                          </th>
+                          <th className="product-quantity">
+                            {t('cart.title.quantity')}
+                          </th>
+                          <th className="product-subtotal">
+                            {t('cart.title.total')}
+                          </th>
+                          <th className="product-remove">
+                            {t('cart.title.remove')}
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -101,17 +115,17 @@ const CartContainer: React.FC = () => {
                   <div className="cartbox__btn">
                     <ul className="cart__btn__list d-flex flex-wrap flex-md-nowrap flex-lg-nowrap justify-content-between">
                       <li>
-                        <Button>Coupon Code</Button>
+                        <Button>{t('cart.title.coupon.code')}</Button>
                       </li>
                       <li>
-                        <Button>Apply Code</Button>
+                        <Button>{t('cart.title.apply.code')}</Button>
                       </li>
                       <li>
-                        <Button>Update Cart</Button>
+                        <Button>{t('cart.title.update.cart')}</Button>
                       </li>
                       <li>
                         <Button type="button" onClick={handleCheckout}>
-                          Check Out
+                          {t('cart.title.checkout')}
                         </Button>
                       </li>
                     </ul>
@@ -125,8 +139,8 @@ const CartContainer: React.FC = () => {
               <div className="cartbox__total__area">
                 <div className="cartbox-total d-flex justify-content-between">
                   <ul className="cart__total__list">
-                    <li>Cart total</li>
-                    <li>Sub Total</li>
+                    <li>{t('cart.title.cart.total')}</li>
+                    <li>{t('cart.title.sub.total')}</li>
                   </ul>
                   <ul className="cart__total__tk">
                     <li>{moneyFormat(totalMoney)}</li>
@@ -134,7 +148,7 @@ const CartContainer: React.FC = () => {
                   </ul>
                 </div>
                 <div className="cart__total__amount">
-                  <span>Grand Total</span>
+                  <span>{t('cart.title.grand.total')}</span>
                   <span>$140</span>
                 </div>
               </div>

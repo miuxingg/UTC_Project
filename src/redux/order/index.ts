@@ -11,8 +11,6 @@ export const createOrder = createAsyncThunk(
   async (orderInput: IOrderInput) => {
     try {
       const data = await apiSdk.orderApis.createOrder(orderInput);
-      console.log(data);
-
       return data;
     } catch (error) {
       console.log(error);

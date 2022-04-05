@@ -15,6 +15,11 @@ import { Button, styled } from '@mui/material';
 import Input from '../../components/elements/Input';
 import { createOrder } from '../../redux/order';
 import { IPaymentMethod, IPaymentStatus } from '../../libs/apis/order/types';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { setError, setSuccess } from '../../redux/app';
+import { Routers } from '../../configs/navigator';
+import { useRouter } from 'next/router';
+import { deleteCart } from '../../redux/cart';
 
 const ButtonSubmit = styled(Button)({
   width: '100%',
@@ -60,8 +65,15 @@ const initialValues = {
   phone: '',
   email: '',
 };
+
+const findNamebyCode = (address: any[], code: number) => {
+  const dataFind = address.find((item) => item.code === code);
+  return dataFind?.name || '';
+};
+
 const CheckoutContainer: React.FC = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [address, setAddress] = useState({
     provice: 1,
     district: 1,
@@ -71,6 +83,7 @@ const CheckoutContainer: React.FC = () => {
   const provices = useSelector(getProvices);
   const districts = useSelector(getDistricts);
   const wards = useSelector(getWards);
+
   const totalMoney = useMemo(() => {
     return cartItem.items.reduce((total, current) => {
       return total + current.item.price * current.quantity;
@@ -100,32 +113,45 @@ const CheckoutContainer: React.FC = () => {
     });
   };
 
-  const handleFormSubmit = (values: FormikValues) => {
-    console.log(cartItem);
+  const handleFormSubmit = async (values: FormikValues) => {
     const orderLines = cartItem.items.map(
       ({ item: { id, price }, quantity }) => {
         return { bookId: id, price, quantity };
       },
     );
-    dispatch(
-      createOrder({
-        totalMoney: totalMoney,
-        discount: 0,
-        status: IPaymentStatus.Pending,
-        paymentMethod: IPaymentMethod.COD,
-        shippingMethod: {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          provice: values.provice,
-          district: values.district,
-          wards: values.wards,
-          privateHome: values.privateHome,
-          phoneNumber: values.phone,
-          email: values.email,
-        },
-        orderLines,
-      }),
-    );
+    if (!orderLines.length) {
+      dispatch(setError({ message: 'Không có sản phẩm nào để thanh toán' }));
+    } else {
+      const response = await dispatch(
+        createOrder({
+          totalMoney: totalMoney,
+          discount: 0,
+          status: IPaymentStatus.Pending,
+          paymentMethod: IPaymentMethod.COD,
+          shippingMethod: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            provice: findNamebyCode(provices, values.provice),
+            district: findNamebyCode(districts, values.district),
+            wards: findNamebyCode(wards, values.ward),
+            privateHome: values.privateHome,
+            phoneNumber: values.phone,
+            email: values.email,
+          },
+          orderLines,
+        }),
+      );
+
+      const dataResult: any = unwrapResult(response as any);
+
+      if (dataResult) {
+        dispatch(deleteCart({ message: 'remove' }));
+        dispatch(setSuccess({ message: 'Mua hàng thành công' }));
+        // router.push(Routers.home.path);
+      } else {
+        dispatch(setError({ message: 'Mua hàng thất bại' }));
+      }
+    }
   };
 
   return (
