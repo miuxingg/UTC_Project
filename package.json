@@ -23,6 +23,8 @@
     "@mui/material": "^5.4.2",
     "@mui/styles": "^5.4.2",
     "@reduxjs/toolkit": "^1.8.0",
+    "@stripe/react-stripe-js": "^1.7.0",
+    "@stripe/stripe-js": "^1.26.0",
     "@types/cookie": "^0.4.1",
     "@types/react-google-recaptcha": "^2.1.5",
     "@types/react-slick": "^0.23.8",

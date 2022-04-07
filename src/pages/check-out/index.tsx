@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Layout from '../../components/templates/Layout';
 import CheckoutContainer from '../../containers/CheckoutContainer';
+import StripeContainer from '../../containers/Payment/StripeContainer';
+import StripeContainerWrapper from '../../containers/StripeContainer';
 import { getServerSideWithPublicRoute } from '../../libs/hocs/getServerSideWithPublicRoute';
 import {
   getDistrictsThunk,
@@ -18,7 +20,9 @@ const CheckOutPage: React.FC = () => {
   }, [dispatch]);
   return (
     <Layout>
-      <CheckoutContainer />
+      <StripeContainerWrapper>
+        <CheckoutContainer />
+      </StripeContainerWrapper>
     </Layout>
   );
 };
