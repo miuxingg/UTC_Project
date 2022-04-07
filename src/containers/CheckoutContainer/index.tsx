@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SelectBox from '../../components/elements/SelectBox';
 import { moneyFormat } from '../../libs/utils';
@@ -14,12 +14,22 @@ import { Formik, FormikValues } from 'formik';
 import { Button, styled } from '@mui/material';
 import Input from '../../components/elements/Input';
 import { createOrder } from '../../redux/order';
-import { IPaymentMethod, IPaymentStatus } from '../../libs/apis/order/types';
+import {
+  IOrderInput,
+  IPaymentMethod,
+  IPaymentStatus,
+} from '../../libs/apis/order/types';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { setError, setSuccess } from '../../redux/app';
 import { Routers } from '../../configs/navigator';
 import { useRouter } from 'next/router';
 import { deleteCart } from '../../redux/cart';
+import PaymentGatewayCart from './PaymentGatewayCart';
+
+import { loadStripe } from '@stripe/stripe-js';
+import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import { apiSdk } from '../../libs/apis';
+import PaymentForm from '../Payment/PaymentForm';
 
 const ButtonSubmit = styled(Button)({
   width: '100%',
@@ -74,6 +84,7 @@ const findNamebyCode = (address: any[], code: number) => {
 const CheckoutContainer: React.FC = () => {
   const dispatch = useDispatch();
   const router = useRouter();
+  const [isStripePayment, setIsStripePayment] = useState<boolean>(true);
   const [address, setAddress] = useState({
     provice: 1,
     district: 1,
@@ -113,6 +124,54 @@ const CheckoutContainer: React.FC = () => {
     });
   };
 
+  /**
+   *
+   * Start stripe func
+   */
+  const stripe = useStripe();
+  const elements = useElements();
+
+  const handleStripeSubmit = async (
+    amount: number,
+    orderDetail: IOrderInput,
+  ) => {
+    if (stripe && elements) {
+      const cardElement = await elements.getElement(CardElement);
+
+      if (cardElement) {
+        const token = await stripe.createToken(cardElement);
+
+        const { error, paymentMethod } = await stripe.createPaymentMethod({
+          type: 'card',
+          card: cardElement,
+        });
+        if (!error && paymentMethod) {
+          try {
+            const { id } = paymentMethod;
+            const response = await apiSdk.payment.createPayment({
+              amount,
+              id,
+              orderDetail,
+            });
+            if (response) {
+              dispatch(setSuccess({ message: 'Thanh toán thành công' }));
+              return true;
+            }
+          } catch (err) {
+            console.log('Err: ', err);
+          }
+        } else {
+          console.log(error?.message);
+        }
+      }
+    }
+    return false;
+  };
+  /**
+   *
+   * End stripe func
+   */
+
   const handleFormSubmit = async (values: FormikValues) => {
     const orderLines = cartItem.items.map(
       ({ item: { id, price }, quantity }) => {
@@ -122,34 +181,51 @@ const CheckoutContainer: React.FC = () => {
     if (!orderLines.length) {
       dispatch(setError({ message: 'Không có sản phẩm nào để thanh toán' }));
     } else {
-      const response = await dispatch(
-        createOrder({
-          totalMoney: totalMoney,
-          discount: 0,
-          status: IPaymentStatus.Pending,
-          paymentMethod: IPaymentMethod.COD,
-          shippingMethod: {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            provice: findNamebyCode(provices, values.provice),
-            district: findNamebyCode(districts, values.district),
-            wards: findNamebyCode(wards, values.ward),
-            privateHome: values.privateHome,
-            phoneNumber: values.phone,
-            email: values.email,
-          },
-          orderLines,
-        }),
-      );
-
-      const dataResult: any = unwrapResult(response as any);
-
-      if (dataResult) {
-        dispatch(deleteCart({ message: 'remove' }));
-        dispatch(setSuccess({ message: 'Mua hàng thành công' }));
-        // router.push(Routers.home.path);
+      const orderDetail: IOrderInput = {
+        totalMoney: totalMoney,
+        discount: 0,
+        status: IPaymentStatus.Pending,
+        paymentMethod: IPaymentMethod.COD,
+        shippingMethod: {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          provice: findNamebyCode(provices, values.provice),
+          district: findNamebyCode(districts, values.district),
+          wards: findNamebyCode(wards, values.ward),
+          privateHome: values.privateHome,
+          phoneNumber: values.phone,
+          email: values.email,
+        },
+        orderLines,
+      };
+      if (isStripePayment) {
+        if (totalMoney <= 10000) {
+          dispatch(
+            setError({
+              message:
+                'Số tiền thanh toán quá nhỏ để thực hiện bằng phương thức thanh toán này',
+            }),
+          );
+        }
+        const stripePayment = await handleStripeSubmit(totalMoney, orderDetail);
+        console.log(stripePayment);
+        if (stripePayment) {
+          dispatch(deleteCart({ message: 'remove cart' }));
+        } else {
+          dispatch(setError({ message: 'Mua hàng thất bại' }));
+        }
       } else {
-        dispatch(setError({ message: 'Mua hàng thất bại' }));
+        const response = await dispatch(createOrder(orderDetail));
+        const dataResult: any = unwrapResult(response as any);
+        console.log(dataResult);
+
+        if (dataResult) {
+          dispatch(deleteCart({ message: 'remove cart' }));
+          dispatch(setSuccess({ message: 'Mua hàng thành công' }));
+          // router.push(Routers.home.path);
+        } else {
+          dispatch(setError({ message: 'Mua hàng thất bại' }));
+        }
       }
     }
   };
@@ -253,7 +329,6 @@ const CheckoutContainer: React.FC = () => {
                     <div className="col-lg-6 col-12">
                       <div className="customer_details">
                         <h3>Shipping details</h3>
-
                         <div className="customar__field">
                           <div className="margin_between">
                             <div className="input_box space_between">
@@ -362,248 +437,20 @@ const CheckoutContainer: React.FC = () => {
                             </div>
                           </div>
                         </div>
-
-                        {/* <div className="create__account">
-                  <div className="wn__accountbox">
-                    <input
-                      className="input-checkbox"
-                      name="createaccount"
-                      defaultValue={1}
-                      type="checkbox"
-                    />
-                    <span>Create an account ?</span>
-                  </div>
-                  <div className="account__field">
-                    <form action="#">
-                      <label>
-                        Account password <span>*</span>
-                      </label>
-                      <input type="text" placeholder="password" />
-                    </form>
-                  </div>
-                </div> */}
                       </div>
                       <div
                         id="accordion"
                         className="checkout_accordion mt--30"
                         role="tablist"
                       >
-                        <div className="payment">
-                          <div
-                            className="che__header"
-                            role="tab"
-                            id="headingOne"
-                          >
-                            <a
-                              className="checkout__title"
-                              data-toggle="collapse"
-                              href="#collapseOne"
-                              aria-expanded="true"
-                              aria-controls="collapseOne"
-                            >
-                              <span>Direct Bank Transfer</span>
-                            </a>
-                          </div>
-                          <div
-                            id="collapseOne"
-                            className="collapse show"
-                            role="tabpanel"
-                            aria-labelledby="headingOne"
-                            data-parent="#accordion"
-                          >
-                            <div className="payment-body">
-                              Make your payment directly into our bank account.
-                              Please use your Order ID as the payment reference.
-                              Your order won’t be shipped until the funds have
-                              cleared in our account.
-                            </div>
-                          </div>
-                        </div>
-                        <div className="payment">
-                          <div
-                            className="che__header"
-                            role="tab"
-                            id="headingTwo"
-                          >
-                            <a
-                              className="collapsed checkout__title"
-                              data-toggle="collapse"
-                              href="#collapseTwo"
-                              aria-expanded="false"
-                              aria-controls="collapseTwo"
-                            >
-                              <span>Cheque Payment</span>
-                            </a>
-                          </div>
-                          <div
-                            id="collapseTwo"
-                            className="collapse"
-                            role="tabpanel"
-                            aria-labelledby="headingTwo"
-                            data-parent="#accordion"
-                          >
-                            <div className="payment-body">
-                              Please send your cheque to Store Name, Store
-                              Street, Store Town, Store State / County, Store
-                              Postcode.
-                            </div>
-                          </div>
-                        </div>
-                        <div className="payment">
-                          <div
-                            className="che__header"
-                            role="tab"
-                            id="headingThree"
-                          >
-                            <a
-                              className="collapsed checkout__title"
-                              data-toggle="collapse"
-                              href="#collapseThree"
-                              aria-expanded="false"
-                              aria-controls="collapseThree"
-                            >
-                              <span>Cash on Delivery</span>
-                            </a>
-                          </div>
-                          <div
-                            id="collapseThree"
-                            className="collapse"
-                            role="tabpanel"
-                            aria-labelledby="headingThree"
-                            data-parent="#accordion"
-                          >
-                            <div className="payment-body">
-                              Pay with cash upon delivery.
-                            </div>
-                          </div>
-                        </div>
-                        <div className="payment">
-                          <div
-                            className="che__header"
-                            role="tab"
-                            id="headingFour"
-                          >
-                            <a
-                              className="collapsed checkout__title"
-                              data-toggle="collapse"
-                              href="#collapseFour"
-                              aria-expanded="false"
-                              aria-controls="collapseFour"
-                            >
-                              <span>
-                                PayPal{' '}
-                                <img
-                                  src="images/icons/payment.png"
-                                  alt="payment images"
-                                />{' '}
-                              </span>
-                            </a>
-                          </div>
-                          <div
-                            id="collapseFour"
-                            className="collapse"
-                            role="tabpanel"
-                            aria-labelledby="headingFour"
-                            data-parent="#accordion"
-                          >
-                            <div className="payment-body">
-                              Pay with cash upon delivery.
-                            </div>
-                          </div>
-                        </div>
+                        <PaymentGatewayCart
+                          name="Paypal"
+                          onChange={(state: boolean) =>
+                            setIsStripePayment(state)
+                          }
+                          content={<PaymentForm />}
+                        />
                       </div>
-                      {/* <div className="customer_details mt--20">
-                <div className="differt__address">
-                  <input
-                    name="ship_to_different_address"
-                    defaultValue={1}
-                    type="checkbox"
-                  />
-                  <span>Ship to a different address ?</span>
-                </div>
-                <div className="customar__field differt__form mt--40">
-                  <div className="margin_between">
-                    <div className="input_box space_between">
-                      <label>
-                        First name <span>*</span>
-                      </label>
-                      <input type="text" />
-                    </div>
-                    <div className="input_box space_between">
-                      <label>
-                        last name <span>*</span>
-                      </label>
-                      <input type="text" />
-                    </div>
-                  </div>
-                  <div className="input_box">
-                    <label>
-                      Company name <span>*</span>
-                    </label>
-                    <input type="text" />
-                  </div>
-                  <div className="input_box">
-                    <label>
-                      Country<span>*</span>
-                    </label>
-                    <select className="select__option">
-                      <option>Select a country…</option>
-                      <option>Afghanistan</option>
-                      <option>American Samoa</option>
-                      <option>Anguilla</option>
-                      <option>American Samoa</option>
-                      <option>Antarctica</option>
-                      <option>Antigua and Barbuda</option>
-                    </select>
-                  </div>
-                  <div className="input_box">
-                    <label>
-                      Address <span>*</span>
-                    </label>
-                    <input type="text" placeholder="Street address" />
-                  </div>
-                  <div className="input_box">
-                    <input
-                      type="text"
-                      placeholder="Apartment, suite, unit etc. (optional)"
-                    />
-                  </div>
-                  <div className="input_box">
-                    <label>
-                      District<span>*</span>
-                    </label>
-                    <select className="select__option">
-                      <option>Select a country…</option>
-                      <option>Afghanistan</option>
-                      <option>American Samoa</option>
-                      <option>Anguilla</option>
-                      <option>American Samoa</option>
-                      <option>Antarctica</option>
-                      <option>Antigua and Barbuda</option>
-                    </select>
-                  </div>
-                  <div className="input_box">
-                    <label>
-                      Postcode / ZIP <span>*</span>
-                    </label>
-                    <input type="text" />
-                  </div>
-                  <div className="margin_between">
-                    <div className="input_box space_between">
-                      <label>
-                        Phone <span>*</span>
-                      </label>
-                      <input type="text" />
-                    </div>
-                    <div className="input_box space_between">
-                      <label>
-                        Email address <span>*</span>
-                      </label>
-                      <input type="email" />
-                    </div>
-                  </div>
-                </div>
-              </div> */}
                     </div>
                     <div className="col-lg-6 col-12 md-mt-40 sm-mt-40">
                       <div className="wn__order__box">
