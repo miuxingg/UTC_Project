@@ -23,6 +23,11 @@ export const allBooksByFilter = createAsyncThunk(
   },
 );
 
+export const bookBestSaler = createAsyncThunk('bookBestSaler', async () => {
+  const data = await apiSdk.bookApis.getBestSalerBooks();
+  return data;
+});
+
 export const bookById = createAsyncThunk('bookById', async (id: string) => {
   const data = await apiSdk.bookApis.getBookById(id);
   return data;
@@ -70,6 +75,13 @@ export const bookSlice = createGenericSlice({
 
     builder.addCase(cloudtag.fulfilled, (state, action) => {
       state.cloudtag = action.payload;
+    });
+
+    builder.addCase(bookBestSaler.fulfilled, (state, action) => {
+      state.bookBestSaler = {
+        items: action.payload.items,
+        total: action.payload.total,
+      };
     });
   },
 });

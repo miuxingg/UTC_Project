@@ -1,10 +1,12 @@
 import { createGenericSlice } from '../../libs/utils/createGenericSlice';
 import {
   authorized,
+  getProfile,
   handleVerifyEmail,
   loginLocal,
   logout,
   registerLocal,
+  updateProfile,
 } from './action';
 import { IAuthState } from './types';
 
@@ -27,6 +29,14 @@ const authSlice = createGenericSlice({
 
     builder.addCase(handleVerifyEmail.fulfilled, (state) => {
       state.isVerifyEmailSuccess = true;
+    });
+
+    builder.addCase(updateProfile.fulfilled, (state, action) => {
+      state.profile = action.payload;
+    });
+
+    builder.addCase(getProfile.fulfilled, (state, action) => {
+      state.profile = action.payload;
     });
   },
 });

@@ -349,11 +349,18 @@ const Header: React.FC<IHeader> = ({ bookCartLocal }) => {
                               <div className="switcher-currency-trigger">
                                 <div className="setting__menu">
                                   {isAuthenticated ? (
-                                    <span onClick={handleLogout}>
-                                      {/* <Link href={Routers.register.path}> */}
-                                      <a>{t('header.profile.logout')}</a>
-                                      {/* </Link> */}
-                                    </span>
+                                    <>
+                                      <span>
+                                        <Link href={Routers.profile.path}>
+                                          <a>{t('header.profile.profile')}</a>
+                                        </Link>
+                                      </span>
+                                      <span onClick={handleLogout}>
+                                        {/* <Link href={Routers.register.path}> */}
+                                        <a>{t('header.profile.logout')}</a>
+                                        {/* </Link> */}
+                                      </span>
+                                    </>
                                   ) : (
                                     <>
                                       <span>

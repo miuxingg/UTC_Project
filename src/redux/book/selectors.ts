@@ -9,6 +9,10 @@ export const allBookByFilter = (state: TRootState) => {
   return state.books.allBooks ?? { total: 0, items: [] };
 };
 
+export const bookBestSaler = (state: TRootState) => {
+  return state.books.bookBestSaler ?? { total: 0, items: [] };
+};
+
 export const allBookOnCart = (state: TRootState) => {
   return state.books.bookonCart ?? { total: 0, items: [] };
 };

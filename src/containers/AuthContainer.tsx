@@ -5,6 +5,7 @@ import { COOKIE_KEYS } from '../configs';
 import { getCookies } from '../libs/utils/cookies';
 // import { Layout } from '../components/templates';
 import { authorized } from '../redux/auth';
+import { getProfile } from '../redux/auth/action';
 import { authSelector } from '../redux/auth/selectors';
 // import { fetchNotifications } from '../redux/notification';
 
@@ -27,7 +28,7 @@ export const AuthContainer = React.memo(function AuthContainer({ children }) {
 
   useEffect(() => {
     if (isAuthenticated) {
-      // dispatch(getProfile());
+      dispatch(getProfile());
       // dispatch(fetchNotifications());
     }
   }, [dispatch, isAuthenticated]);

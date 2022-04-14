@@ -18,6 +18,8 @@
   "register.register": "Register",
   "register.comfirm": "Comfirm password",
   "register.submit": "Register",
+  "register.first-name": "First name",
+  "register.last-name": "Last name",
   "cart.title.image": "Image",
   "cart.title.product": "Product",
   "cart.title.price": "Price",
@@ -48,5 +50,6 @@
   "header.profile.my-account": "My Account",
   "header.profile.logout": "Logout",
   "header.profile.login": "Login",
-  "header.profile.register": "Register"
+  "header.profile.register": "Register",
+  "header.profile.profile": "Profile"
 }

@@ -5,7 +5,8 @@ type TRouterName =
   | 'login'
   | 'register'
   | 'checkout'
-  | 'cart';
+  | 'cart'
+  | 'profile';
 
 const baseUrl = '/';
 export const Routers: Record<TRouterName, { title: string; path: string }> = {
@@ -19,4 +20,5 @@ export const Routers: Record<TRouterName, { title: string; path: string }> = {
   register: { title: 'page.register', path: `${baseUrl}register` },
   checkout: { title: 'page.checkout', path: `${baseUrl}check-out` },
   cart: { title: 'page.cart', path: `${baseUrl}cart` },
+  profile: { title: 'page.profile', path: `${baseUrl}profile` },
 };

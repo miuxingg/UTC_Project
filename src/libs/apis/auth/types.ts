@@ -1,3 +1,5 @@
+import { IAddressApi } from '../address/types';
+
 export interface ResponseDto {
   statusCode: number;
   message: string;
@@ -5,8 +7,16 @@ export interface ResponseDto {
 }
 
 export interface IProfile {
-  id: string;
+  id?: string;
   email?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  avatar?: string;
+  province?: IAddressApi;
+  district?: IAddressApi;
+  ward?: IAddressApi;
+  privateHome?: string;
 }
 
 export interface IAuthLocal {

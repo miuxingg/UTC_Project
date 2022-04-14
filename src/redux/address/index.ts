@@ -32,7 +32,7 @@ export const categorySlice = createGenericSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(getProvices.fulfilled, (state, action) => {
-      state.provices = action.payload;
+      state.provinces = action.payload;
     });
 
     builder.addCase(getDistrictsThunk.fulfilled, (state, action) => {
