@@ -7,11 +7,17 @@ import NewsLetter from '../../components/collecttions/NewsLetter';
 import { Slider } from '../../components/collecttions/Slider';
 import OurBlog from '../../components/templates/OurBlog';
 import { transformBookCart } from '../../redux/book/dto';
-import { newBook } from '../../redux/book/selectors';
+import {
+  allBookByFilter,
+  bookBestSaler,
+  newBook,
+} from '../../redux/book/selectors';
 
 const HomePageContainer: React.FC = () => {
   const { t } = useTranslation();
   const newBookSelector = useSelector(newBook);
+  const listBook = useSelector(allBookByFilter);
+  const booksBestSaler = useSelector(bookBestSaler);
 
   return (
     <>
@@ -26,7 +32,7 @@ const HomePageContainer: React.FC = () => {
       <NewsLetter />
 
       <MultipleBookSlider
-        listItem={transformBookCart(newBookSelector.items)}
+        listItem={transformBookCart(listBook.items)}
         title={t('home.title.allProduct')}
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid
@@ -34,7 +40,7 @@ const HomePageContainer: React.FC = () => {
       />
       <OurBlog />
       <BooksSection
-        listItem={transformBookCart(newBookSelector.items)}
+        listItem={transformBookCart(booksBestSaler.items)}
         title="Best Seller"
         description="There are many variations of passages of Lorem Ipsum available,
                 but the majority have suffered lebmid alteration in some ledmid

@@ -11,6 +11,8 @@ import { useTranslation } from 'react-i18next';
 
 const Schema = Yup.object().shape({
   email: Yup.string().required('yup.empty'),
+  firstName: Yup.string().required('yup.empty'),
+  lastName: Yup.string().required('yup.empty'),
   password: Yup.string()
     .required('yup.empty')
     .min(6, 'yup.password.not.length'),
@@ -19,7 +21,13 @@ const Schema = Yup.object().shape({
     .oneOf([Yup.ref('password')], 'yup.password.comfirm'),
 });
 
-const initialValues = { email: '', password: '', confirmPassword: '' };
+const initialValues = {
+  email: '',
+  password: '',
+  confirmPassword: '',
+  firstName: '',
+  lastName: '',
+};
 
 const RegisterForm: React.FC = () => {
   const dispatch = useDispatch();
@@ -27,10 +35,17 @@ const RegisterForm: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState({
     email: '',
     password: '',
+    firstName: '',
+    lastName: '',
   });
   const handleFormSubmit = async (values: any) => {
     const profileResult = await dispatch(
-      registerLocal({ email: values.email, password: values.password }),
+      registerLocal({
+        email: values.email,
+        password: values.password,
+        firstName: values.firstName,
+        lastName: values.lastName,
+      }),
     );
     const originalProfileResult: ResponseDto = unwrapResult(
       profileResult as any,
@@ -76,6 +91,42 @@ const RegisterForm: React.FC = () => {
                   </div>
                   <div className="input__box">
                     <label>
+                      {t('register.first-name')} <span>*</span>
+                    </label>
+                    <Input
+                      type="text"
+                      name="firstName"
+                      value={values.firstName}
+                      onChange={handleChange}
+                      error={
+                        errors.firstName
+                          ? t(errors.firstName, {
+                              field: t('register.first-name'),
+                            })
+                          : null || errorMessage.firstName || ''
+                      }
+                    />
+                  </div>
+                  <div className="input__box">
+                    <label>
+                      {t('register.last-name')} <span>*</span>
+                    </label>
+                    <Input
+                      type="text"
+                      name="lastName"
+                      value={values.lastName}
+                      onChange={handleChange}
+                      error={
+                        errors.lastName
+                          ? t(errors.lastName, {
+                              field: t('register.last-name'),
+                            })
+                          : null || errorMessage.lastName || ''
+                      }
+                    />
+                  </div>
+                  <div className="input__box">
+                    <label>
                       {t('password')}
                       <span>*</span>
                     </label>
@@ -86,7 +137,7 @@ const RegisterForm: React.FC = () => {
                       value={values.password}
                       error={
                         errors.password
-                          ? t(errors.password, { field: 'Password' })
+                          ? t(errors.password, { field: t('password') })
                           : null || errorMessage.password || ''
                       }
                     />
@@ -104,7 +155,7 @@ const RegisterForm: React.FC = () => {
                       error={
                         errors.confirmPassword
                           ? t(errors.confirmPassword, {
-                              field: 'Confirm Password',
+                              field: t('register.comfirm'),
                             })
                           : ''
                       }

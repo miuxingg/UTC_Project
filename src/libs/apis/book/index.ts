@@ -33,4 +33,9 @@ export class BookApi {
     const { data } = await this.axiosInstance.get('/books/cloudtag');
     return data;
   }
+
+  async getBestSalerBooks(): Promise<IPaginationOutput<IBookApi>> {
+    const { data } = await this.axiosInstance.get('/books/best-saler');
+    return data;
+  }
 }

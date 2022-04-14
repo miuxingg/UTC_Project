@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import SelectBox from '../../components/elements/SelectBox';
 import { moneyFormat } from '../../libs/utils';
-import address, { getDistrictsThunk, getWardsThunk } from '../../redux/address';
+import { getDistrictsThunk, getWardsThunk } from '../../redux/address';
 import {
   getDistricts,
-  getProvices,
+  getProvinces,
   getWards,
 } from '../../redux/address/selectors';
 import { allCart } from '../../redux/cart/selectors';
@@ -16,20 +16,23 @@ import Input from '../../components/elements/Input';
 import { createOrder } from '../../redux/order';
 import {
   IOrderInput,
+  IOrderStatus,
   IPaymentMethod,
   IPaymentStatus,
 } from '../../libs/apis/order/types';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { setError, setSuccess } from '../../redux/app';
-import { Routers } from '../../configs/navigator';
-import { useRouter } from 'next/router';
 import { deleteCart } from '../../redux/cart';
 import PaymentGatewayCart from './PaymentGatewayCart';
 
-import { loadStripe } from '@stripe/stripe-js';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { apiSdk } from '../../libs/apis';
 import PaymentForm from '../Payment/PaymentForm';
+import { profileSelector } from '../../redux/auth/selectors';
+import {
+  removeItemDataStorage,
+  LocalStorageKey,
+} from '../../libs/utils/localStorage';
 
 const ButtonSubmit = styled(Button)({
   width: '100%',
@@ -55,9 +58,18 @@ const ButtonSubmit = styled(Button)({
 const Schema = Yup.object().shape({
   firstName: Yup.string().required('Họ không được để trống'),
   lastName: Yup.string().required('Tên không được để trống'),
-  provice: Yup.string().required('Tỉnh / thành phố khồn được để trống'),
-  district: Yup.string().required('Quận/huyện không được để trống'),
-  ward: Yup.string().required('Phường/Xã không được để trống'),
+  province: Yup.object({
+    name: Yup.string().required('Tỉnh / thành phố không được để trống'),
+    code: Yup.number(),
+  }).required('Tỉnh / thành phố không được để trống'),
+  district: Yup.object({
+    name: Yup.string().required('Quận/huyện không được để trống'),
+    code: Yup.number(),
+  }).required('Quận/huyện không được để trống'),
+  ward: Yup.object({
+    name: Yup.string().required('Phường/Xã không được để trống'),
+    code: Yup.number(),
+  }).required('Phường/Xã không được để trống'),
   privateHome: Yup.string().required('Địa chỉ nhà không được để trống'),
   phone: Yup.string()
     .required('Số điện thoại không được để trống')
@@ -65,35 +77,37 @@ const Schema = Yup.object().shape({
   email: Yup.string().required('Email không được để trống'),
 });
 
-const initialValues = {
-  firstName: '',
-  lastName: '',
-  provice: '',
-  district: '',
-  ward: '',
-  privateHome: '',
-  phone: '',
-  email: '',
-};
-
-const findNamebyCode = (address: any[], code: number) => {
+export const findNamebyCode = (address: any[], code: number) => {
   const dataFind = address.find((item) => item.code === code);
   return dataFind?.name || '';
 };
 
 const CheckoutContainer: React.FC = () => {
+  const [isStripePayment, setIsStripePayment] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const router = useRouter();
-  const [isStripePayment, setIsStripePayment] = useState<boolean>(true);
   const [address, setAddress] = useState({
     provice: 1,
     district: 1,
     ward: 1,
   });
   const cartItem = useSelector(allCart);
-  const provices = useSelector(getProvices);
+  const provinces = useSelector(getProvinces);
   const districts = useSelector(getDistricts);
   const wards = useSelector(getWards);
+  const profile = useSelector(profileSelector);
+
+  console.log(profile);
+
+  const initialValues = {
+    firstName: profile?.firstName || '',
+    lastName: profile?.lastName || '',
+    province: profile?.province || { code: 0, name: '' },
+    district: profile?.district || { code: 0, name: '' },
+    ward: profile?.ward || { code: 0, name: '' },
+    privateHome: profile?.privateHome || '',
+    phone: profile?.phoneNumber || '',
+    email: profile?.email || '',
+  };
 
   const totalMoney = useMemo(() => {
     return cartItem.items.reduce((total, current) => {
@@ -184,14 +198,15 @@ const CheckoutContainer: React.FC = () => {
       const orderDetail: IOrderInput = {
         totalMoney: totalMoney,
         discount: 0,
-        status: IPaymentStatus.Pending,
+        status: IOrderStatus.Pending,
+        paymentStatus: IPaymentStatus.Pending,
         paymentMethod: IPaymentMethod.COD,
         shippingMethod: {
           firstName: values.firstName,
           lastName: values.lastName,
-          provice: findNamebyCode(provices, values.provice),
-          district: findNamebyCode(districts, values.district),
-          wards: findNamebyCode(wards, values.ward),
+          provice: values.provice,
+          district: values.district,
+          wards: values.ward,
           privateHome: values.privateHome,
           phoneNumber: values.phone,
           email: values.email,
@@ -206,13 +221,20 @@ const CheckoutContainer: React.FC = () => {
                 'Số tiền thanh toán quá nhỏ để thực hiện bằng phương thức thanh toán này',
             }),
           );
-        }
-        const stripePayment = await handleStripeSubmit(totalMoney, orderDetail);
-        console.log(stripePayment);
-        if (stripePayment) {
-          dispatch(deleteCart({ message: 'remove cart' }));
         } else {
-          dispatch(setError({ message: 'Mua hàng thất bại' }));
+          const stripePayment = await handleStripeSubmit(totalMoney, {
+            ...orderDetail,
+            paymentMethod: IPaymentMethod.VisaCard,
+          });
+          console.log(stripePayment);
+          if (stripePayment) {
+            dispatch(deleteCart({ message: 'remove cart' }));
+            removeItemDataStorage(LocalStorageKey.BookStoreCart);
+          } else {
+            dispatch(
+              setError({ message: 'Mua hàng thất bại. Lỗi thanh toán' }),
+            );
+          }
         }
       } else {
         const response = await dispatch(createOrder(orderDetail));
@@ -221,10 +243,11 @@ const CheckoutContainer: React.FC = () => {
 
         if (dataResult) {
           dispatch(deleteCart({ message: 'remove cart' }));
+          removeItemDataStorage(LocalStorageKey.BookStoreCart);
           dispatch(setSuccess({ message: 'Mua hàng thành công' }));
           // router.push(Routers.home.path);
         } else {
-          dispatch(setError({ message: 'Mua hàng thất bại' }));
+          dispatch(setError({ message: 'Mua hàng thất bại. Lỗi tạo order' }));
         }
       }
     }
@@ -359,14 +382,20 @@ const CheckoutContainer: React.FC = () => {
                               Provices<span>*</span>
                             </label>
                             <SelectBox
-                              items={provices}
+                              items={provinces}
                               label="Provice"
                               onChange={(code: number) => {
                                 handleChangeProvice(code);
-                                setFieldValue('provice', code);
+                                setFieldValue('province', {
+                                  code,
+                                  name: findNamebyCode(provinces, code),
+                                });
                               }}
-                              name="provice"
-                              error={errors.provice}
+                              name="province"
+                              error={
+                                errors.province?.code || errors.province?.name
+                              }
+                              value={values.province.code}
                             />
                           </div>
 
@@ -379,10 +408,16 @@ const CheckoutContainer: React.FC = () => {
                               label="Districts"
                               onChange={(code: number) => {
                                 handleChangeDistrict(code);
-                                setFieldValue('district', code);
+                                setFieldValue('district', {
+                                  code,
+                                  name: findNamebyCode(districts, code),
+                                });
                               }}
                               name="district"
-                              error={errors.district}
+                              error={
+                                errors.district?.code || errors.district?.name
+                              }
+                              value={values.district.code}
                             />
                           </div>
 
@@ -395,10 +430,14 @@ const CheckoutContainer: React.FC = () => {
                               label="Wards"
                               onChange={(code: number) => {
                                 handleChangeWard(code);
-                                setFieldValue('ward', code);
+                                setFieldValue('ward', {
+                                  code,
+                                  name: findNamebyCode(wards, code),
+                                });
                               }}
                               name="ward"
-                              error={errors.ward}
+                              error={errors.ward?.code || errors.ward?.name}
+                              value={values.ward.code}
                             />
                           </div>
                           <div className="input_box">

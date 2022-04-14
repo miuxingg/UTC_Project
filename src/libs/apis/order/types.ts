@@ -20,6 +20,11 @@ export enum IPaymentStatus {
   Rejected = 'rejected',
 }
 
+export enum IOrderStatus {
+  Pending = 'pending',
+  Success = 'success',
+  Rejected = 'rejected',
+}
 export interface IOrderLine {
   bookId: string;
   quantity: number;
@@ -29,7 +34,8 @@ export interface IOrderLine {
 export interface IOrderInput {
   totalMoney: number;
   discount: number;
-  status: IPaymentStatus;
+  status: IOrderStatus;
+  paymentStatus: IPaymentStatus;
   paymentMethod: IPaymentMethod;
   shippingMethod: ShippingMethod;
   orderLines: IOrderLine[];
