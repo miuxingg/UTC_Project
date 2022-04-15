@@ -16,6 +16,7 @@ import { CartApi } from './cart';
 import { CategoryApi } from './category';
 import { OrderApi } from './order';
 import { PaymentApi } from './payment';
+import { ReviewApi } from './review';
 
 class BookStoreApi {
   private nextContext: GetServerSidePropsContext | null = null;
@@ -123,6 +124,7 @@ export namespace apiSdk {
   export const addressApis = new AddressApi(instance);
   export const orderApis = new OrderApi(instance);
   export const payment = new PaymentApi(instance);
+  export const reviewApi = new ReviewApi(instance);
 }
 
 export { setApiContext };

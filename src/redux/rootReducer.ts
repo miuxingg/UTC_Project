@@ -7,6 +7,7 @@ import categoryReducer from './categories';
 import cartReducer from './cart';
 import addressReducer from './address';
 import orderReducer from './order';
+import reviewReducer from './review';
 
 const rootReducer = combineReducers({
   app: appReducer,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   cart: cartReducer,
   address: addressReducer,
   order: orderReducer,
+  review: reviewReducer,
 });
 
 export default rootReducer;
