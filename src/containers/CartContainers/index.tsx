@@ -10,6 +10,7 @@ import CartLine from './CartLine';
 import { useRouter } from 'next/router';
 import { Routers } from '../../configs/navigator';
 import { useTranslation } from 'react-i18next';
+import { authSelector } from '../../redux/auth/selectors';
 
 export const Button = styled('button')({
   background: '#fff none repeat scroll 0 0',
@@ -33,6 +34,8 @@ export const Button = styled('button')({
 
 const CartContainer: React.FC = () => {
   const { t } = useTranslation();
+  const isAuthenticated = useSelector(authSelector);
+  const dispatch = useDispatch();
   const router = useRouter();
   const cartItem = useSelector(allCart);
   const totalMoney = useMemo(() => {
@@ -120,9 +123,9 @@ const CartContainer: React.FC = () => {
                       <li>
                         <Button>{t('cart.title.apply.code')}</Button>
                       </li>
-                      <li>
-                        <Button>{t('cart.title.update.cart')}</Button>
-                      </li>
+                      {/* <li>
+                        <Button onClick={handleUpdateCart}>{t('cart.title.update.cart')}</Button>
+                      </li> */}
                       <li>
                         <Button type="button" onClick={handleCheckout}>
                           {t('cart.title.checkout')}

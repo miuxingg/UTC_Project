@@ -5,6 +5,7 @@ export interface IReviewApi {
   comment: string;
   rating: number;
   user: IProfile;
+  createdAt: Date;
 }
 
 export interface IReviewCreate {

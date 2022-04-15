@@ -27,6 +27,13 @@ export const removeItem = createAsyncThunk('removeItem', async (id: string) => {
   return apiSdk.cartApis.removeItem(id);
 });
 
+export const updateQuantityItem = createAsyncThunk(
+  'updateQuantityItem',
+  async ({ id, quantity }: any) => {
+    return apiSdk.cartApis.updateQuantity(id, quantity);
+  },
+);
+
 export const categorySlice = createGenericSlice({
   name: 'cart',
   initialState,

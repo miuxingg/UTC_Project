@@ -7,9 +7,16 @@ export interface IReview {
   avatar?: string;
   rating: number;
   comment: string;
+  timestamps: string;
 }
 
-const Review: React.FC<IReview> = ({ username, avatar, rating, comment }) => {
+const Review: React.FC<IReview> = ({
+  username,
+  avatar,
+  rating,
+  comment,
+  timestamps,
+}) => {
   return (
     <Box mx={1} my={3}>
       <Box display="flex" justifyContent="flex-start" alignItems="center">
@@ -20,8 +27,12 @@ const Review: React.FC<IReview> = ({ username, avatar, rating, comment }) => {
             'https://static01.nyt.com/images/2021/09/14/science/07CAT-STRIPES/07CAT-STRIPES-mediumSquareAt3X-v2.jpg'
           }
         />
-        <Box ml={2}>
+        <Box ml={2} display="flex" justifyContent="space-between" width="100%">
           <h5>{username}</h5>
+
+          <Box ml={1}>
+            <Typography fontSize="12px">{timestamps}</Typography>
+          </Box>
         </Box>
       </Box>
       <Box ml={3} my={1}>
@@ -32,16 +43,18 @@ const Review: React.FC<IReview> = ({ username, avatar, rating, comment }) => {
               display="flex"
               alignItems="center"
             >
-              <Typography fontWeight={600}>Đánh giá</Typography>
-              <Box mt={1} mx={2}>
-                <Rating
-                  name="size-small"
-                  value={rating}
-                  size="small"
-                  defaultValue={rating}
-                  disabled
-                />
-              </Box>
+              <>
+                <Typography fontWeight={600}>Đánh giá</Typography>
+                <Box mt="3px" mx={2} display="flex">
+                  <Rating
+                    name="size-small"
+                    value={rating}
+                    size="small"
+                    defaultValue={rating}
+                    disabled
+                  />
+                </Box>
+              </>
             </Box>
           </div>
         </div>

@@ -4,10 +4,8 @@ import { useEffect } from 'react';
 import Layout from '../components/templates/Layout';
 import HomePageContainer from '../containers/HomePageContainer';
 import { allBooksByFilter, bookBestSaler, getNewsBook } from '../redux/book';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { getServerSideWithPublicRoute } from '../libs/hocs/getServerSideWithPublicRoute';
-import { getProfile } from '../redux/auth/action';
-import { profileSelector } from '../redux/auth/selectors';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
