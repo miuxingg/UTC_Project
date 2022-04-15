@@ -11,6 +11,7 @@ import { clearMessage } from '../redux/app';
 import { wrapper } from '../redux';
 import Snackbar from '../components/elements/Snackbar';
 import { AuthContainer } from '../containers/AuthContainer';
+import GlobalEvent from '../containers/GlobalEvent';
 
 function BookStoreApplication({ Component, pageProps }: AppProps) {
   const dispatch = useDispatch();
@@ -37,13 +38,15 @@ function BookStoreApplication({ Component, pageProps }: AppProps) {
           {/* <Provider store={store}> */}
 
           <AuthContainer>
-            <Component {...pageProps} />
-            <Snackbar
-              open={notification.open}
-              message={notification.message}
-              onClose={() => dispatch(clearMessage())}
-              type={notification.type}
-            />
+            <GlobalEvent>
+              <Component {...pageProps} />
+              <Snackbar
+                open={notification.open}
+                message={notification.message}
+                onClose={() => dispatch(clearMessage())}
+                type={notification.type}
+              />
+            </GlobalEvent>
           </AuthContainer>
           {/* </Provider> */}
         </ThemeProvider>

@@ -9,7 +9,11 @@ import {
   setItemDataStorage,
 } from '../../../libs/utils/localStorage';
 import { authSelector } from '../../../redux/auth/selectors';
-import { deleteItem, removeItem } from '../../../redux/cart';
+import {
+  deleteItem,
+  removeItem,
+  updateQuantityItem,
+} from '../../../redux/cart';
 import { allCart } from '../../../redux/cart/selectors';
 
 export const Image = styled('img')({
@@ -44,6 +48,23 @@ const CartLine: React.FC<ICartline> = ({ id, item, quantity }) => {
       );
     }
   };
+
+  const handleChangeQuantity = (e: any) => {
+    setQuantityLine(+e.target.value);
+    if (isAuthenticated) {
+      dispatch(updateQuantityItem({ id, quantity: +e.target.value }));
+    } else {
+      const transformCartLocal = cartItem.items.map((item) => {
+        return item.id === id
+          ? { bookId: item.item.id, total: +e.target.value }
+          : { bookId: item.item.id, total: item.quantity };
+      });
+      setItemDataStorage(
+        LocalStorageKey.BookStoreCart,
+        JSON.stringify(transformCartLocal),
+      );
+    }
+  };
   return (
     <tr key={id}>
       <td className="product-thumbnail">
@@ -63,7 +84,7 @@ const CartLine: React.FC<ICartline> = ({ id, item, quantity }) => {
         <input
           type="number"
           defaultValue={quantityLine}
-          onChange={(e) => setQuantityLine(+e.target.value)}
+          onChange={handleChangeQuantity}
         />
       </td>
       <td className="product-subtotal">

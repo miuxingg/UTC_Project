@@ -34,7 +34,7 @@ export const transformDataToCart = (
     let obj: { [key: string]: number } = {};
     const data = JSON.parse(cartLocal);
     data.forEach((item: any) => {
-      obj = { ...obj, [item.bookId]: item.quantity };
+      obj = { ...obj, [item.bookId]: item.total };
     });
     return item.map((item) => {
       return {
@@ -46,7 +46,7 @@ export const transformDataToCart = (
           price: item.price,
           priceUnDiscount: item.priceUnDiscount,
         },
-        quantity: obj[item.id] ?? 1,
+        quantity: obj[item.id] ?? 0,
       };
     });
   }

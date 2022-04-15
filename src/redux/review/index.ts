@@ -34,7 +34,16 @@ export const createReviewOnBook = createAsyncThunk(
 export const reviewSlice = createGenericSlice({
   name: 'review',
   initialState,
-  reducers: {},
+  reducers: {
+    insertNewReview(state, action) {
+      console.log(action.payload);
+
+      state.reviewOnBook = {
+        items: [action.payload, ...(state.reviewOnBook?.items ?? [])],
+        total: (state.reviewOnBook?.total ?? 0) + 1,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllReviewOnBook.fulfilled, (state, action) => {
       state.reviewOnBook = {
@@ -51,6 +60,6 @@ export const reviewSlice = createGenericSlice({
   },
 });
 
-// export const {} = bookSlice.actions;
+export const { insertNewReview } = reviewSlice.actions;
 
 export default reviewSlice.reducer;

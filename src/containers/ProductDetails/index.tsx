@@ -1,7 +1,6 @@
 import { Box, Divider, Rating, styled } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BooksSection } from '../../components/collecttions';
 import Typography from '../../components/elements/Typography';
 import { REVIEW_COUNT } from '../../configs';
 import {
@@ -28,6 +27,7 @@ import { allReviewOnBook } from '../../redux/review/selectors';
 import SliderRange from '../ProductsContainer/SliderRange';
 import ImageSlide from './ImageSlide';
 import Review from './Reviews';
+import dayjs from 'dayjs';
 
 const SeeMore = styled('span')({
   color: 'blue',
@@ -118,7 +118,13 @@ const ProductDetailContainer: React.FC = () => {
 
   const handleSubmitReview = () => {
     if (isAuthenticated) {
-      dispatch(createReviewOnBook({ rating, comment, bookId: bookDetail.id }));
+      dispatch(
+        createReviewOnBook({
+          rating,
+          comment,
+          bookId: bookDetail.id,
+        }),
+      );
     } else {
       dispatch(setError({ message: 'Cần phải đăng nhập để tiếp tục' }));
     }
@@ -168,25 +174,11 @@ const ProductDetailContainer: React.FC = () => {
                   <div className="col-lg-6 col-12">
                     <div className="product__info__main">
                       <h1>{bookDetail.name}</h1>
-                      <div className="product-reviews-summary d-flex">
-                        <ul className="rating-summary d-flex">
-                          <li>
-                            <i className="zmdi zmdi-star-outline" />
-                          </li>
-                          <li>
-                            <i className="zmdi zmdi-star-outline" />
-                          </li>
-                          <li>
-                            <i className="zmdi zmdi-star-outline" />
-                          </li>
-                          <li className="off">
-                            <i className="zmdi zmdi-star-outline" />
-                          </li>
-                          <li className="off">
-                            <i className="zmdi zmdi-star-outline" />
-                          </li>
-                        </ul>
-                      </div>
+                      <Rating
+                        name="size-small"
+                        onChange={handleRatingChange}
+                        size="small"
+                      />
                       <div className="price-box">
                         <span>{bookDetail.price}</span>
                       </div>
@@ -331,6 +323,9 @@ const ProductDetailContainer: React.FC = () => {
                               rating={item.rating}
                               username={`${item.user.firstName} ${item.user.lastName}`}
                               avatar={item.user.avatar}
+                              timestamps={dayjs(item.createdAt).format(
+                                'DD/MM/YYYY',
+                              )}
                             />
                             {i !== reviews.items.length - 1 ? (
                               <Divider />

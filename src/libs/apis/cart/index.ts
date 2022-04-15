@@ -23,4 +23,11 @@ export class CartApi {
     const { data } = await this.axiosInstance.delete(`/cart/${id}`);
     return data;
   }
+
+  async updateQuantity(id: string, quantity: number): Promise<any> {
+    const { data } = await this.axiosInstance.put(`/cart/${id}`, {
+      quantity: quantity,
+    });
+    return data;
+  }
 }
