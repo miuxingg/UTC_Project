@@ -1,7 +1,9 @@
-import { Box } from '@mui/material';
+import { Box, Divider, Rating, styled } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BooksSection } from '../../components/collecttions';
+import Typography from '../../components/elements/Typography';
+import { REVIEW_COUNT } from '../../configs';
 import {
   getItemDataStorage,
   LocalStorageKey,
@@ -21,8 +23,16 @@ import {
   allCategories,
   currentCategories,
 } from '../../redux/categories/selectors';
+import { createReviewOnBook, getMoreReviewOnBook } from '../../redux/review';
+import { allReviewOnBook } from '../../redux/review/selectors';
 import SliderRange from '../ProductsContainer/SliderRange';
-import ImageSlide from './ImageSlide.tsx';
+import ImageSlide from './ImageSlide';
+import Review from './Reviews';
+
+const SeeMore = styled('span')({
+  color: 'blue',
+  cursor: 'pointer',
+});
 
 const ProductDetailContainer: React.FC = () => {
   const dispatch = useDispatch();
@@ -33,6 +43,11 @@ const ProductDetailContainer: React.FC = () => {
   const listCategories = useSelector(allCategories);
   const cloudtag = useSelector(allCloudtag);
   const currentCategoryList = useSelector(currentCategories);
+  const reviews = useSelector(allReviewOnBook);
+
+  const [rating, setRating] = useState<number>(5);
+  const [comment, setComment] = useState<string>('');
+
   const handleAddToCart = () => {
     if (bookDetail.id && quantity) {
       if (isAuthenticated) {
@@ -91,6 +106,32 @@ const ProductDetailContainer: React.FC = () => {
   };
 
   const handleSlideRange = (startPrice: number, endPrice: number) => {};
+
+  const handleRatingChange = (
+    event: React.SyntheticEvent<Element, Event>,
+    value: number | null,
+  ) => {
+    if (value) {
+      setRating(value);
+    }
+  };
+
+  const handleSubmitReview = () => {
+    if (isAuthenticated) {
+      dispatch(createReviewOnBook({ rating, comment, bookId: bookDetail.id }));
+    } else {
+      dispatch(setError({ message: 'Cần phải đăng nhập để tiếp tục' }));
+    }
+  };
+
+  const handleSeeMoreReview = () => {
+    dispatch(
+      getMoreReviewOnBook({
+        idBook: bookDetail.id,
+        queries: { limit: REVIEW_COUNT, offset: reviews.items.length },
+      }),
+    );
+  };
 
   return (
     <div className="wrapper" id="wrapper">
@@ -280,169 +321,63 @@ const ProductDetailContainer: React.FC = () => {
                     id="nav-review"
                     role="tabpanel"
                   >
-                    <div className="review__attribute">
-                      <h1>Customer Reviews</h1>
-                      <h2>Hastech</h2>
-                      <div className="review__ratings__type d-flex">
-                        <div className="review-ratings">
-                          <div className="rating-summary d-flex">
-                            <span>Quality</span>
-                            <ul className="rating d-flex">
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="rating-summary d-flex">
-                            <span>Price</span>
-                            <ul className="rating d-flex">
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="rating-summary d-flex">
-                            <span>value</span>
-                            <ul className="rating d-flex">
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li>
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                        <div className="review-content">
-                          <p>Hastech</p>
-                          <p>Review by Hastech</p>
-                          <p>Posted on 11/6/2018</p>
-                        </div>
-                      </div>
+                    <div>
+                      <h3>Customer Reviews</h3>
+                      {reviews.items.map((item, i) => {
+                        return (
+                          <React.Fragment key={i}>
+                            <Review
+                              comment={item.comment}
+                              rating={item.rating}
+                              username={`${item.user.firstName} ${item.user.lastName}`}
+                              avatar={item.user.avatar}
+                            />
+                            {i !== reviews.items.length - 1 ? (
+                              <Divider />
+                            ) : null}
+                          </React.Fragment>
+                        );
+                      })}
+                      {reviews.total !== reviews.items.length ? (
+                        <SeeMore onClick={handleSeeMoreReview}>
+                          Xem thêm ({reviews.total - reviews.items.length}) bình
+                          luận...
+                        </SeeMore>
+                      ) : null}
                     </div>
                     <div className="review-fieldset">
-                      <h2>You re reviewing:</h2>
-                      <h3>Chaz Kangeroo Hoodie</h3>
-                      <div className="review-field-ratings">
-                        <div className="product-review-table">
-                          <div className="review-field-rating d-flex">
-                            <span>Quality</span>
-                            <ul className="rating d-flex">
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="review-field-rating d-flex">
-                            <span>Price</span>
-                            <ul className="rating d-flex">
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                            </ul>
-                          </div>
-                          <div className="review-field-rating d-flex">
-                            <span>Value</span>
-                            <ul className="rating d-flex">
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                              <li className="off">
-                                <i className="zmdi zmdi-star" />
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
+                      <h3>Your review</h3>
                       <div className="review_form_field">
-                        <div className="input__box">
-                          <span>Nickname</span>
-                          <input
-                            id="nickname_field"
-                            type="text"
-                            name="nickname"
-                          />
+                        <div className="review__ratings__type d-flex">
+                          <div className="review-ratings">
+                            <Box
+                              // className="rating-summary d-flex"
+                              display="flex"
+                              alignItems="center"
+                              mb={3}
+                            >
+                              <Typography fontWeight={600}>Đánh giá</Typography>
+                              <Box mt={1} mx={2}>
+                                <Rating
+                                  name="size-small"
+                                  onChange={handleRatingChange}
+                                  size="small"
+                                />
+                              </Box>
+                            </Box>
+                          </div>
                         </div>
                         <div className="input__box">
-                          <span>Summary</span>
-                          <input
-                            id="summery_field"
-                            type="text"
-                            name="summery"
+                          <Typography fontWeight={600}>Review</Typography>
+                          <textarea
+                            name="review"
+                            onChange={(e) => setComment(e.target.value)}
                           />
-                        </div>
-                        <div className="input__box">
-                          <span>Review</span>
-                          <textarea name="review" defaultValue={''} />
                         </div>
                         <div className="review-form-actions">
-                          <button>Submit Review</button>
+                          <button onClick={handleSubmitReview}>
+                            Submit Review
+                          </button>
                         </div>
                       </div>
                     </div>

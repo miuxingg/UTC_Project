@@ -3,6 +3,8 @@ export const API_BASE_URL =
 
 export const ITEM_PER_PAGE = 3;
 
+export const REVIEW_COUNT = 3;
+
 export enum Language {
   VI = 'vi',
   EN = 'en',

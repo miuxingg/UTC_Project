@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import React from 'react';
 
 const Typo = styled(MuiTypography)({
-  fontFamily: 'Source Sans Pro',
+  fontFamily: 'Roboto',
 });
 const Typograhy: React.FC<TypographyProps> = ({ children, ...props }) => {
   return <Typo {...props}>{children}</Typo>;
