@@ -4,7 +4,7 @@
   "yup.password.not.length": "The password is too short",
   "yup.password.comfirm": "Comfirm password not equal password",
   "home.title.allProduct": "All Products",
-  "home.title.newProduct": "All Products",
+  "home.title.newProduct": "New Products",
   "header.language.vi": "Vietnamese",
   "header.language.en": "English",
   "login.email": "Email",

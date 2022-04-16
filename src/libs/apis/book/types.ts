@@ -13,4 +13,5 @@ export interface IBookApi {
   images: string[];
   status: string;
   quantity: number;
+  summary?: string;
 }

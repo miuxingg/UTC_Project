@@ -9,6 +9,7 @@ import { getServerSideWithPublicRoute } from '../../libs/hocs/getServerSideWithP
 import { BookQueries } from '../../libs/utils/buildQueries';
 import { allBooksByFilter, cloudtag } from '../../redux/book';
 import { getAllCategory } from '../../redux/categories';
+import { getAllPublishers } from '../../redux/publisher';
 
 export const ProductPage: NextPage = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ export const ProductPage: NextPage = () => {
       queries['search'] = search as string;
     }
     dispatch(getAllCategory());
+    dispatch(getAllPublishers());
     dispatch(allBooksByFilter({ ...queries }));
     dispatch(cloudtag());
   }, [dispatch]);

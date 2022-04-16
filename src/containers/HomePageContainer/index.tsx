@@ -38,6 +38,13 @@ const HomePageContainer: React.FC = () => {
                 but the majority have suffered lebmid alteration in some ledmid
                 form"
       />
+      <BooksSection
+        listItem={transformBookCart(listBook.items)}
+        title={t('home.title.allProduct')}
+        description="There are many variations of passages of Lorem Ipsum available,
+                but the majority have suffered lebmid alteration in some ledmid
+                form"
+      />
       <OurBlog />
       <BooksSection
         listItem={transformBookCart(booksBestSaler.items)}

@@ -8,6 +8,7 @@ import cartReducer from './cart';
 import addressReducer from './address';
 import orderReducer from './order';
 import reviewReducer from './review';
+import publisherReducer from './publisher';
 
 const rootReducer = combineReducers({
   app: appReducer,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   address: addressReducer,
   order: orderReducer,
   review: reviewReducer,
+  publisher: publisherReducer,
 });
 
 export default rootReducer;

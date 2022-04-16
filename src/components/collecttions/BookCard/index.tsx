@@ -25,6 +25,7 @@ export interface IBook {
   category?: ICategoryApi[];
   cloudTag?: string[];
   quantity?: number;
+  summary?: string;
 }
 export const BookCart: React.FC<IBook> = ({
   id = '',

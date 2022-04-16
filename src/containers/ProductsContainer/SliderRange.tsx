@@ -7,7 +7,7 @@ const valuetext = (value: number) => {
   return `${value / 10000}đ`;
 };
 export const min = 0;
-export const max = 1000000;
+export const max = 500000;
 const minDistance = 0;
 
 const SliderRangeMui = styled(Slider)({

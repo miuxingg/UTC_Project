@@ -16,6 +16,7 @@ import { CartApi } from './cart';
 import { CategoryApi } from './category';
 import { OrderApi } from './order';
 import { PaymentApi } from './payment';
+import { PublisherApi } from './publisher';
 import { ReviewApi } from './review';
 
 class BookStoreApi {
@@ -125,6 +126,7 @@ export namespace apiSdk {
   export const orderApis = new OrderApi(instance);
   export const payment = new PaymentApi(instance);
   export const reviewApi = new ReviewApi(instance);
+  export const publisherApi = new PublisherApi(instance);
 }
 
 export { setApiContext };

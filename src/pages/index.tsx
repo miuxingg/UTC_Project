@@ -6,12 +6,13 @@ import HomePageContainer from '../containers/HomePageContainer';
 import { allBooksByFilter, bookBestSaler, getNewsBook } from '../redux/book';
 import { useDispatch } from 'react-redux';
 import { getServerSideWithPublicRoute } from '../libs/hocs/getServerSideWithPublicRoute';
+import { BookStatus } from '../libs/utils/buildQueries';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getNewsBook({ limit: 10 }));
+    dispatch(getNewsBook({ limit: 20, status: BookStatus.NEW }));
     dispatch(bookBestSaler());
     dispatch(allBooksByFilter({ limit: 20 }));
   }, [dispatch]);
