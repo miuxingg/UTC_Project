@@ -8,6 +8,7 @@ import { allBooksByFilter } from '../../redux/book';
 import { transformBookCart } from '../../redux/book/dto';
 import { allBookByFilter, allCloudtag } from '../../redux/book/selectors';
 import { allCategories } from '../../redux/categories/selectors';
+import { allPublisher } from '../../redux/publisher/selectors';
 import BooksSectionGrid from './BooksSectionGrid';
 import BooksSectionLine from './BooksSectionLine';
 import SliderRange, { max, min } from './SliderRange';
@@ -26,6 +27,7 @@ const ProductsContainer: React.FC = () => {
   const [queries, setQueries] = useState<BookQueries>({
     search: (search as string) ?? '',
     category: '',
+    publisher: '',
     limit: ITEM_PER_PAGE,
     offset: 0,
     cloudTag: '',
@@ -33,6 +35,7 @@ const ProductsContainer: React.FC = () => {
 
   const cloudtag = useSelector(allCloudtag);
   const listCategories = useSelector(allCategories);
+  const listPublisher = useSelector(allPublisher);
   const listBook = useSelector(allBookByFilter);
 
   // console.log(listBook);
@@ -49,6 +52,18 @@ const ProductsContainer: React.FC = () => {
     } else {
       setQueries((pre) => {
         return { ...pre, category: '' };
+      });
+    }
+  };
+
+  const handlePublisherClick = (id?: string) => {
+    if (id) {
+      setQueries((pre) => {
+        return { ...pre, publisher: id };
+      });
+    } else {
+      setQueries((pre) => {
+        return { ...pre, publisher: '' };
       });
     }
   };
@@ -134,6 +149,29 @@ const ProductsContainer: React.FC = () => {
                       return (
                         <li key={item.id} style={{ cursor: 'pointer' }}>
                           <Box onClick={() => handleCategoryClick(item.id)}>
+                            <a>
+                              {item.name} <span></span>
+                            </a>
+                          </Box>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </aside>
+                <aside className="wedget__categories poroduct--cat">
+                  <h3 className="wedget__title">Product Publisher</h3>
+                  <ul>
+                    <li style={{ cursor: 'pointer' }}>
+                      <Box onClick={() => handlePublisherClick()}>
+                        <a>
+                          Tất cả <span></span>
+                        </a>
+                      </Box>
+                    </li>
+                    {listPublisher.items.map((item) => {
+                      return (
+                        <li key={item.id} style={{ cursor: 'pointer' }}>
+                          <Box onClick={() => handlePublisherClick(item.id)}>
                             <a>
                               {item.name} <span></span>
                             </a>

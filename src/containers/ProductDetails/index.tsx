@@ -10,14 +10,12 @@ import {
 } from '../../libs/utils/localStorage';
 import { setError, setSuccess } from '../../redux/app';
 import { authSelector } from '../../redux/auth/selectors';
-import { transformBookCart } from '../../redux/book/dto';
 import {
   allCloudtag,
   bookDetailSelector,
   newBook,
 } from '../../redux/book/selectors';
 import { addItemToCart, createCartItem } from '../../redux/cart';
-import { getCategoryByIds } from '../../redux/categories';
 import {
   allCategories,
   currentCategories,
@@ -28,6 +26,7 @@ import SliderRange from '../ProductsContainer/SliderRange';
 import ImageSlide from './ImageSlide';
 import Review from './Reviews';
 import dayjs from 'dayjs';
+import { moneyFormat } from '../../libs/utils';
 
 const SeeMore = styled('span')({
   color: 'blue',
@@ -49,7 +48,7 @@ const ProductDetailContainer: React.FC = () => {
   const [comment, setComment] = useState<string>('');
 
   const handleAddToCart = () => {
-    if (bookDetail.id && quantity) {
+    if (bookDetail.id && quantity > 0) {
       if (isAuthenticated) {
         dispatch(
           createCartItem({
@@ -101,7 +100,9 @@ const ProductDetailContainer: React.FC = () => {
         dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
       }
     } else {
-      dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
+      if (quantity <= 0) {
+        dispatch(setError({ message: 'Số lượng không hợp lệ' }));
+      } else dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
     }
   };
 
@@ -174,13 +175,16 @@ const ProductDetailContainer: React.FC = () => {
                   <div className="col-lg-6 col-12">
                     <div className="product__info__main">
                       <h1>{bookDetail.name}</h1>
-                      <Rating
+                      {/* <Rating
                         name="size-small"
                         onChange={handleRatingChange}
                         size="small"
-                      />
+                      /> */}
+                      <Typography fontSize="14px">
+                        {bookDetail.author}
+                      </Typography>
                       <div className="price-box">
-                        <span>{bookDetail.price}</span>
+                        <span>{moneyFormat(bookDetail.price)}</span>
                       </div>
                       <div className="product__overview">
                         <aside className="wedget__categories poroduct--tag">
@@ -230,7 +234,7 @@ const ProductDetailContainer: React.FC = () => {
                                 return (
                                   <a key={item.id}>
                                     {item.name}&nbsp;
-                                    {i !== currentCategoryList.length - 1
+                                    {i !== bookDetail?.category?.length! - 1
                                       ? ', '
                                       : null}
                                   </a>
@@ -284,6 +288,14 @@ const ProductDetailContainer: React.FC = () => {
                   <a
                     className="nav-item nav-link"
                     data-toggle="tab"
+                    href="#nav-summary"
+                    role="tab"
+                  >
+                    Summary
+                  </a>
+                  <a
+                    className="nav-item nav-link"
+                    data-toggle="tab"
                     href="#nav-review"
                     role="tab"
                   >
@@ -299,6 +311,30 @@ const ProductDetailContainer: React.FC = () => {
                   >
                     <div className="description__attribute">
                       <p>{bookDetail.description}</p>
+                      {/* <ul>
+                        <li>• Two-tone gray heather hoodie.</li>
+                        <li>• Drawstring-adjustable hood. </li>
+                        <li>• Machine wash/dry.</li>
+                      </ul> */}
+                    </div>
+                  </div>
+                  {/* End Single Tab Content */}
+                  {/* Start Single Tab Content */}
+                  <div
+                    className="pro__tab_label tab-pane fade"
+                    id="nav-summary"
+                    role="tabpanel"
+                  >
+                    <div className="description__attribute">
+                      <p>
+                        <pre>
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: bookDetail?.summary || '',
+                            }}
+                          />
+                        </pre>
+                      </p>
                       {/* <ul>
                         <li>• Two-tone gray heather hoodie.</li>
                         <li>• Drawstring-adjustable hood. </li>

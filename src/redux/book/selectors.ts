@@ -32,6 +32,7 @@ export const bookDetailSelector = (state: TRootState): IBook => {
       images: [],
       status: '',
       quantity: 0,
+      summary: '',
     }
   );
 };
