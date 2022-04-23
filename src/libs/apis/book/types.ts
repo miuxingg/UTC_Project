@@ -14,4 +14,24 @@ export interface IBookApi {
   status: string;
   quantity: number;
   summary?: string;
+  isCombo?: boolean;
+  books?: IBookInCombo[];
+}
+
+export interface IBookInCombo {
+  id: string;
+  name: string;
+  thumbnail: string;
+  author: string;
+}
+
+export interface ICheckQuantityBook {
+  id: string;
+  name: string;
+  isQuantity: boolean;
+}
+
+export interface ICheckQuantityInput {
+  bookId: string;
+  quantity: number;
 }

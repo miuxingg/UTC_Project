@@ -33,6 +33,10 @@ import {
   removeItemDataStorage,
   LocalStorageKey,
 } from '../../libs/utils/localStorage';
+import { checkQuantityBook } from '../../redux/book';
+import { ICheckQuantityBook } from '../../libs/apis/book/types';
+import { shipAmount } from '../../configs/types';
+import { useTranslation } from 'react-i18next';
 
 const ButtonSubmit = styled(Button)({
   width: '100%',
@@ -83,6 +87,7 @@ export const findNamebyCode = (address: any[], code: number) => {
 };
 
 const CheckoutContainer: React.FC = () => {
+  const { t } = useTranslation();
   const [isStripePayment, setIsStripePayment] = useState<boolean>(false);
   const dispatch = useDispatch();
   const [address, setAddress] = useState({
@@ -95,8 +100,6 @@ const CheckoutContainer: React.FC = () => {
   const districts = useSelector(getDistricts);
   const wards = useSelector(getWards);
   const profile = useSelector(profileSelector);
-
-  console.log(profile);
 
   const initialValues = {
     firstName: profile?.firstName || '',
@@ -168,7 +171,11 @@ const CheckoutContainer: React.FC = () => {
               orderDetail,
             });
             if (response) {
-              dispatch(setSuccess({ message: 'Thanh toán thành công' }));
+              dispatch(
+                setSuccess({
+                  message: t('notify.add-to-cart.checkout.success'),
+                }),
+              );
               return true;
             }
           } catch (err) {
@@ -193,61 +200,78 @@ const CheckoutContainer: React.FC = () => {
       },
     );
     if (!orderLines.length) {
-      dispatch(setError({ message: 'Không có sản phẩm nào để thanh toán' }));
+      dispatch(setError({ message: t('notify.checkout.empty-product') }));
     } else {
-      const orderDetail: IOrderInput = {
-        totalMoney: totalMoney,
-        discount: 0,
-        status: IOrderStatus.Pending,
-        paymentStatus: IPaymentStatus.Pending,
-        paymentMethod: IPaymentMethod.COD,
-        shippingMethod: {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          provice: values.provice,
-          district: values.district,
-          wards: values.ward,
-          privateHome: values.privateHome,
-          phoneNumber: values.phone,
-          email: values.email,
-        },
-        orderLines,
-      };
-      if (isStripePayment) {
-        if (totalMoney <= 10000) {
-          dispatch(
-            setError({
-              message:
-                'Số tiền thanh toán quá nhỏ để thực hiện bằng phương thức thanh toán này',
-            }),
-          );
+      const checkoutLines = orderLines.map((line) => {
+        return { bookId: line.bookId, quantity: line.quantity };
+      });
+      const dataCheckQuantity = await dispatch(
+        checkQuantityBook(checkoutLines),
+      );
+      const dataCheckQuantityResult: ICheckQuantityBook[] = unwrapResult(
+        dataCheckQuantity as any,
+      );
+      const dataBookFail = dataCheckQuantityResult.filter(
+        (item) => !item.isQuantity,
+      );
+
+      if (dataBookFail.length) {
+        dispatch(
+          setError({ message: t('notify.checkout.product-not-enough') }),
+        );
+      } else {
+        const orderDetail: IOrderInput = {
+          totalMoney: totalMoney,
+          discount: 0,
+          status: IOrderStatus.Pending,
+          paymentStatus: IPaymentStatus.Pending,
+          paymentMethod: IPaymentMethod.COD,
+          shippingMethod: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            province: values.province,
+            district: values.district,
+            wards: values.ward,
+            privateHome: values.privateHome,
+            phoneNumber: values.phone,
+            email: values.email,
+            amount: shipAmount,
+          },
+          orderLines,
+        };
+        if (isStripePayment) {
+          if (totalMoney <= 10000) {
+            dispatch(
+              setError({
+                message: t('notify.checkout.payment-amount-small'),
+              }),
+            );
+          } else {
+            const stripePayment = await handleStripeSubmit(totalMoney, {
+              ...orderDetail,
+              paymentMethod: IPaymentMethod.VisaCard,
+            });
+            console.log(stripePayment);
+            if (stripePayment) {
+              dispatch(deleteCart({ message: 'remove cart' }));
+              removeItemDataStorage(LocalStorageKey.BookStoreCart);
+            } else {
+              dispatch(setError({ message: t('notify.checkout.error') }));
+            }
+          }
         } else {
-          const stripePayment = await handleStripeSubmit(totalMoney, {
-            ...orderDetail,
-            paymentMethod: IPaymentMethod.VisaCard,
-          });
-          console.log(stripePayment);
-          if (stripePayment) {
+          const response = await dispatch(createOrder(orderDetail));
+          const dataResult: any = unwrapResult(response as any);
+          console.log(dataResult);
+
+          if (dataResult) {
             dispatch(deleteCart({ message: 'remove cart' }));
             removeItemDataStorage(LocalStorageKey.BookStoreCart);
+            dispatch(setSuccess({ message: t('notify.checkout.success') }));
+            // router.push(Routers.home.path);
           } else {
-            dispatch(
-              setError({ message: 'Mua hàng thất bại. Lỗi thanh toán' }),
-            );
+            dispatch(setError({ message: t('notify.checkout.error') }));
           }
-        }
-      } else {
-        const response = await dispatch(createOrder(orderDetail));
-        const dataResult: any = unwrapResult(response as any);
-        console.log(dataResult);
-
-        if (dataResult) {
-          dispatch(deleteCart({ message: 'remove cart' }));
-          removeItemDataStorage(LocalStorageKey.BookStoreCart);
-          dispatch(setSuccess({ message: 'Mua hàng thành công' }));
-          // router.push(Routers.home.path);
-        } else {
-          dispatch(setError({ message: 'Mua hàng thất bại. Lỗi tạo order' }));
         }
       }
     }
@@ -291,47 +315,6 @@ const CheckoutContainer: React.FC = () => {
                     <div className="col-lg-12">
                       <div className="wn_checkout_wrap">
                         <div className="checkout_info">
-                          <span>Returning customer ?</span>
-                          <a className="showlogin" href="#">
-                            Click here to login
-                          </a>
-                        </div>
-                        <div className="checkout_login">
-                          <form className="wn__checkout__form" action="#">
-                            <p>
-                              If you have shopped with us before, please enter
-                              your details in the boxes below. If you are a new
-                              customer please proceed to the Billing &amp;
-                              Shipping section.
-                            </p>
-                            <div className="input__box">
-                              <label>
-                                Username or email <span>*</span>
-                              </label>
-                              <input type="text" />
-                            </div>
-                            <div className="input__box">
-                              <label>
-                                password <span>*</span>
-                              </label>
-                              <input type="password" />
-                            </div>
-                            <div className="form__btn">
-                              <button>Login</button>
-                              <label className="label-for-checkbox">
-                                <input
-                                  id="rememberme"
-                                  name="rememberme"
-                                  defaultValue="forever"
-                                  type="checkbox"
-                                />
-                                <span>Remember me</span>
-                              </label>
-                              <a href="#">Lost your password?</a>
-                            </div>
-                          </form>
-                        </div>
-                        <div className="checkout_info">
                           <span>Have a coupon? </span>
                           <a className="showcoupon" href="#">
                             Click here to enter your code
@@ -351,39 +334,44 @@ const CheckoutContainer: React.FC = () => {
                   <div className="row">
                     <div className="col-lg-6 col-12">
                       <div className="customer_details">
-                        <h3>Shipping details</h3>
+                        <h3>{t('check-out.shipping.title')}</h3>
                         <div className="customar__field">
                           <div className="margin_between">
                             <div className="input_box space_between">
                               <label>
-                                First name <span>*</span>
+                                {t('check-out.shipping.first-name')}{' '}
+                                <span>*</span>
                               </label>
                               <Input
                                 type="text"
                                 name="firstName"
                                 onChange={handleChange}
                                 error={errors.firstName}
+                                value={values.firstName}
                               />
                             </div>
                             <div className="input_box space_between">
                               <label>
-                                last name <span>*</span>
+                                {t('check-out.shipping.last-name')}{' '}
+                                <span>*</span>
                               </label>
                               <Input
                                 type="text"
                                 name="lastName"
                                 onChange={handleChange}
                                 error={errors.lastName}
+                                value={values.lastName}
                               />
                             </div>
                           </div>
                           <div className="input_box">
                             <label>
-                              Provices<span>*</span>
+                              {t('check-out.shipping.province')}
+                              <span>*</span>
                             </label>
                             <SelectBox
                               items={provinces}
-                              label="Provice"
+                              label={t('check-out.shipping.province')}
                               onChange={(code: number) => {
                                 handleChangeProvice(code);
                                 setFieldValue('province', {
@@ -401,11 +389,12 @@ const CheckoutContainer: React.FC = () => {
 
                           <div className="input_box">
                             <label>
-                              Districts<span>*</span>
+                              {t('check-out.shipping.districts')}
+                              <span>*</span>
                             </label>
                             <SelectBox
                               items={districts}
-                              label="Districts"
+                              label={t('check-out.shipping.districts')}
                               onChange={(code: number) => {
                                 handleChangeDistrict(code);
                                 setFieldValue('district', {
@@ -423,11 +412,12 @@ const CheckoutContainer: React.FC = () => {
 
                           <div className="input_box">
                             <label>
-                              Wards<span>*</span>
+                              {t('check-out.shipping.wards')}
+                              <span>*</span>
                             </label>
                             <SelectBox
                               items={wards}
-                              label="Wards"
+                              label={t('check-out.shipping.wards')}
                               onChange={(code: number) => {
                                 handleChangeWard(code);
                                 setFieldValue('ward', {
@@ -442,36 +432,40 @@ const CheckoutContainer: React.FC = () => {
                           </div>
                           <div className="input_box">
                             <label>
-                              Private home <span>*</span>
+                              {t('check-out.shipping.private-home')}{' '}
+                              <span>*</span>
                             </label>
                             <Input
                               type="text"
                               name="privateHome"
                               onChange={handleChange}
                               error={errors.privateHome}
+                              value={values.privateHome}
                             />
                           </div>
                           <div className="margin_between">
                             <div className="input_box space_between">
                               <label>
-                                Phone <span>*</span>
+                                {t('check-out.shipping.phone')} <span>*</span>
                               </label>
                               <Input
                                 type="text"
                                 name="phone"
                                 onChange={handleChange}
                                 error={errors.phone}
+                                value={values.phone}
                               />
                             </div>
                             <div className="input_box space_between">
                               <label>
-                                Email address <span>*</span>
+                                {t('check-out.shipping.emails')} <span>*</span>
                               </label>
                               <Input
                                 type="email"
                                 name="email"
                                 onChange={handleChange}
                                 error={errors.email}
+                                value={values.email}
                               />
                             </div>
                           </div>
@@ -493,10 +487,12 @@ const CheckoutContainer: React.FC = () => {
                     </div>
                     <div className="col-lg-6 col-12 md-mt-40 sm-mt-40">
                       <div className="wn__order__box">
-                        <h3 className="onder__title">Your order</h3>
+                        <h3 className="onder__title">
+                          {t('check-out.order.your-order')}
+                        </h3>
                         <ul className="order__total">
-                          <li>Product</li>
-                          <li>Total</li>
+                          <li>{t('check-out.order.products')}</li>
+                          <li>{t('check-out.order.total')}</li>
                         </ul>
                         <ul className="order_product">
                           {cartItem.items.map((item) => {
@@ -512,41 +508,28 @@ const CheckoutContainer: React.FC = () => {
                         </ul>
                         <ul className="shipping__method">
                           <li>
-                            Cart Subtotal <span>{moneyFormat(totalMoney)}</span>
+                            {t('check-out.order.cart-sub-total')}{' '}
+                            <span>{moneyFormat(totalMoney)}</span>
                           </li>
                           <li>
-                            Shipping
+                            {t('check-out.order.shipping')}
                             <ul>
                               <li>
-                                <input
-                                  name="shipping_method[0]"
-                                  data-index={0}
-                                  defaultValue="legacy_flat_rate"
-                                  defaultChecked
-                                  type="radio"
-                                />
-                                <label>Flat Rate: $48.00</label>
-                              </li>
-                              <li>
-                                <input
-                                  name="shipping_method[0]"
-                                  data-index={0}
-                                  defaultValue="legacy_flat_rate"
-                                  defaultChecked
-                                  type="radio"
-                                />
-                                <label>Flat Rate: $48.00</label>
+                                <label>{moneyFormat(shipAmount)}</label>
                               </li>
                             </ul>
                           </li>
                         </ul>
                         <ul className="total__amount">
                           <li>
-                            Order Total <span>{moneyFormat(totalMoney)}</span>
+                            {t('check-out.order.order-total')}
+                            <span>{moneyFormat(totalMoney + shipAmount)}</span>
                           </li>
                         </ul>
                       </div>
-                      <ButtonSubmit type="submit">Check out</ButtonSubmit>
+                      <ButtonSubmit type="submit">
+                        {t('check-out.order.check-out')}
+                      </ButtonSubmit>
                     </div>
                   </div>
                 </div>

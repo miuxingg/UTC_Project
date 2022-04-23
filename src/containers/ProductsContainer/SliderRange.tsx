@@ -1,6 +1,7 @@
 import { Box, Button as ButtonMui, Slider, styled } from '@mui/material';
 import { height } from '@mui/system';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { moneyFormat } from '../../libs/utils';
 
 const valuetext = (value: number) => {
@@ -62,6 +63,7 @@ export interface ISlideRange {
 }
 
 const SliderRange: React.FC<ISlideRange> = ({ onFilter }) => {
+  const { t } = useTranslation();
   const [value1, setValue1] = React.useState<number[]>([min, max]);
 
   const handleChange1 = (
@@ -108,7 +110,7 @@ const SliderRange: React.FC<ISlideRange> = ({ onFilter }) => {
         marks={marks}
         disableSwap
       />
-      <Button onClick={handleFilterPrice}>Filter</Button>
+      <Button onClick={handleFilterPrice}>{t('product.filter.filter')}</Button>
     </Box>
   );
 };

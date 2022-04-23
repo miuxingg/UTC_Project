@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Routers } from '../../../configs/navigator';
+import { IBookInCombo } from '../../../libs/apis/book/types';
 import { ICategoryApi } from '../../../libs/apis/category/types';
 import {
   getItemDataStorage,
@@ -26,6 +28,8 @@ export interface IBook {
   cloudTag?: string[];
   quantity?: number;
   summary?: string;
+  isCombo?: boolean;
+  books?: IBookInCombo[];
 }
 export const BookCart: React.FC<IBook> = ({
   id = '',
@@ -36,6 +40,7 @@ export const BookCart: React.FC<IBook> = ({
   thumbnail = '',
 }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const isAuthenticated = useSelector(authSelector);
 
   const handleAddToCart = () => {
@@ -47,14 +52,14 @@ export const BookCart: React.FC<IBook> = ({
             quantity: 1,
           }),
         );
-        dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+        dispatch(setSuccess({ message: t('notify.add-to-cart.success') }));
       } else {
-        dispatch(setError({ message: 'Thêm vào giỏ hàng thất bại' }));
+        dispatch(setError({ message: t('notify.add-to-cart.error') }));
       }
     } else {
       const cartLocal = getItemDataStorage(LocalStorageKey.BookStoreCart);
       const currentCart = cartLocal ? JSON.parse(cartLocal) : [];
-      const isBookOnCart = currentCart.find((item: any) => item.bookId === id);
+      const isBookOnCart = currentCart.find((item: any) => item?.bookId === id);
       if (!isBookOnCart) {
         currentCart.push({
           bookId: id,
@@ -77,9 +82,9 @@ export const BookCart: React.FC<IBook> = ({
             },
           }),
         );
-        dispatch(setSuccess({ message: 'Thêm vào giỏ hàng thành công' }));
+        dispatch(setSuccess({ message: t('notify.add-to-cart.success') }));
       } else {
-        dispatch(setWarning({ message: 'Sản phẩm đã tồn tại' }));
+        dispatch(setWarning({ message: t('notify.add-to-cart.exist') }));
       }
     }
   };

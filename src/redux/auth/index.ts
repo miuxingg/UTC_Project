@@ -15,7 +15,11 @@ export const initialState: IAuthState = {};
 const authSlice = createGenericSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    setProfile(state, action) {
+      state.profile = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(loginLocal.rejected, () => {
       console.error('Login Failed');
@@ -42,4 +46,5 @@ const authSlice = createGenericSlice({
 });
 
 export { authorized, handleVerifyEmail, loginLocal, registerLocal };
+export const { setProfile } = authSlice.actions;
 export default authSlice.reducer;

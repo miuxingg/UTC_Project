@@ -1,12 +1,17 @@
+import { BaseQuery } from '../../utils/buildQueries';
+import { IAddressApi } from '../address/types';
+import { IBookApi } from '../book/types';
+
 export interface ShippingMethod {
   firstName?: string;
   lastName?: string;
-  provice?: string;
-  district?: string;
-  wards?: string;
+  province?: IAddressApi;
+  district?: IAddressApi;
+  wards?: IAddressApi;
   privateHome?: string;
   phoneNumber?: string;
   email?: string;
+  amount?: number;
 }
 
 export enum IPaymentMethod {
@@ -24,6 +29,7 @@ export enum IOrderStatus {
   Pending = 'pending',
   Success = 'success',
   Rejected = 'rejected',
+  Shipping = 'shipping',
 }
 export interface IOrderLine {
   bookId: string;
@@ -39,4 +45,26 @@ export interface IOrderInput {
   paymentMethod: IPaymentMethod;
   shippingMethod: ShippingMethod;
   orderLines: IOrderLine[];
+}
+
+export interface IGetOrderInput extends BaseQuery {
+  status: IOrderStatus;
+}
+
+export interface IOrderLineOutput {
+  id: string;
+  price: number;
+  quantity: number;
+  book: IBookApi[];
+}
+
+export interface IOrderOutput {
+  id: string;
+  totalMoney: number;
+  discount: number;
+  paymentStatus: string;
+  status: string;
+  shippingMethod: ShippingMethod;
+  orderLines: IOrderLineOutput[];
+  createdAt: Date;
 }

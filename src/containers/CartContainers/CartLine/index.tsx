@@ -12,6 +12,7 @@ import { authSelector } from '../../../redux/auth/selectors';
 import {
   deleteItem,
   removeItem,
+  updateQuantityCart,
   updateQuantityItem,
 } from '../../../redux/cart';
 import { allCart } from '../../../redux/cart/selectors';
@@ -50,19 +51,23 @@ const CartLine: React.FC<ICartline> = ({ id, item, quantity }) => {
   };
 
   const handleChangeQuantity = (e: any) => {
-    setQuantityLine(+e.target.value);
+    const value = +e.target.value > 0 ? +e.target.value : 1;
+    setQuantityLine(value);
+
     if (isAuthenticated) {
-      dispatch(updateQuantityItem({ id, quantity: +e.target.value }));
+      dispatch(updateQuantityItem({ id, quantity: value }));
+      dispatch(updateQuantityCart({ id, quantity: value }));
     } else {
       const transformCartLocal = cartItem.items.map((item) => {
         return item.id === id
-          ? { bookId: item.item.id, total: +e.target.value }
+          ? { bookId: item.item.id, total: value }
           : { bookId: item.item.id, total: item.quantity };
       });
       setItemDataStorage(
         LocalStorageKey.BookStoreCart,
         JSON.stringify(transformCartLocal),
       );
+      dispatch(updateQuantityCart({ id, quantity: value }));
     }
   };
   return (
@@ -84,6 +89,7 @@ const CartLine: React.FC<ICartline> = ({ id, item, quantity }) => {
         <input
           type="number"
           defaultValue={quantityLine}
+          value={quantityLine}
           onChange={handleChangeQuantity}
         />
       </td>

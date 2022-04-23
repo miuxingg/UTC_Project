@@ -28,37 +28,34 @@ const appSlice = createGenericSlice({
   reducers: {
     setSuccess(state, action: PayloadAction<IAppMessage>) {
       state.notification = {
-        message: action.payload.message,
+        message: action.payload?.message,
         open: true,
         type: 'success',
       };
     },
     setWarning(state, action: PayloadAction<IAppMessage>) {
       state.notification = {
-        message: action.payload.message,
+        message: action.payload?.message,
         open: true,
         type: 'warning',
       };
     },
     setError(state, action: PayloadAction<IError>) {
-      const [message, params = ''] = action.payload.message.split(':');
-      const arrParams = params.split(',');
+      // const [message, params = ''] = action.payload.message.split(':');
+      // const arrParams = params.split(',');
 
-      let translateParams = {};
-      (arrParams || []).forEach((param, idx) => {
-        const paramTransform = `fields.${param.trim()}`;
-        translateParams = {
-          ...translateParams,
-          [idx]: translate(paramTransform),
-        };
-      });
-      const trasnlateMessage = translate(
-        `error.code.${message}`,
-        translateParams,
-      );
+      // let translateParams = {};
+      // (arrParams || []).forEach((param, idx) => {
+      //   const paramTransform = `fields.${param.trim()}`;
+      //   translateParams = {
+      //     ...translateParams,
+      //     [idx]: translate(paramTransform),
+      //   };
+      // });
+      // const trasnlateMessage = translate(`${message}`, translateParams);
 
       state.notification = {
-        message: trasnlateMessage,
+        message: action.payload.message,
         open: true,
         type: 'error',
       };

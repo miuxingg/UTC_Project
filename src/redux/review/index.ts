@@ -36,8 +36,6 @@ export const reviewSlice = createGenericSlice({
   initialState,
   reducers: {
     insertNewReview(state, action) {
-      console.log(action.payload);
-
       state.reviewOnBook = {
         items: [action.payload, ...(state.reviewOnBook?.items ?? [])],
         total: (state.reviewOnBook?.total ?? 0) + 1,

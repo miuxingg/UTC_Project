@@ -1,6 +1,7 @@
 import { Box, Button, Pagination } from '@mui/material';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { ITEM_PER_PAGE } from '../../configs';
 import { BookQueries } from '../../libs/utils/buildQueries';
@@ -15,6 +16,7 @@ import SliderRange, { max, min } from './SliderRange';
 
 const ProductsContainer: React.FC = () => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { search } = router.query;
   const dispatch = useDispatch();
   // const [filterPrice, setFilterPrice] = useState<{
@@ -136,12 +138,14 @@ const ProductsContainer: React.FC = () => {
             <div className="col-lg-3 col-12 order-2 order-lg-1 md-mt-40 sm-mt-40">
               <div className="shop__sidebar">
                 <aside className="wedget__categories poroduct--cat">
-                  <h3 className="wedget__title">Product Categories</h3>
+                  <h3 className="wedget__title">
+                    {t('product.filter.category')}
+                  </h3>
                   <ul>
                     <li style={{ cursor: 'pointer' }}>
                       <Box onClick={() => handleCategoryClick()}>
                         <a>
-                          Tất cả <span></span>
+                          {t('product.filter.all')} <span></span>
                         </a>
                       </Box>
                     </li>
@@ -159,12 +163,15 @@ const ProductsContainer: React.FC = () => {
                   </ul>
                 </aside>
                 <aside className="wedget__categories poroduct--cat">
-                  <h3 className="wedget__title">Product Publisher</h3>
+                  <h3 className="wedget__title">
+                    {t('product.filter.publisher')}
+                  </h3>
                   <ul>
                     <li style={{ cursor: 'pointer' }}>
                       <Box onClick={() => handlePublisherClick()}>
                         <a>
-                          Tất cả <span></span>
+                          {t('product.filter.all')}
+                          <span></span>
                         </a>
                       </Box>
                     </li>
@@ -182,7 +189,7 @@ const ProductsContainer: React.FC = () => {
                   </ul>
                 </aside>
                 <aside className="wedget__categories pro--range">
-                  <h3 className="wedget__title">Filter by price</h3>
+                  <h3 className="wedget__title">{t('product.filter.price')}</h3>
                   <div className="content-shopby">
                     <div className="price_filter s-filter clear">
                       {/* <form action="#" method="GET">
@@ -206,7 +213,9 @@ const ProductsContainer: React.FC = () => {
                   </div>
                 </aside>
                 <aside className="wedget__categories poroduct--tag">
-                  <h3 className="wedget__title">Product Tags</h3>
+                  <h3 className="wedget__title">
+                    {t('product.filter.cloud-tag')}
+                  </h3>
                   <ul>
                     {cloudtag.items.map((item, i) => {
                       return (
