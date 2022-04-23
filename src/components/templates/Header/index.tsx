@@ -34,8 +34,13 @@ export const transformDataToCart = (
     let obj: { [key: string]: number } = {};
     const data = JSON.parse(cartLocal);
     data.forEach((item: any) => {
-      obj = { ...obj, [item.bookId]: item.total };
+      obj = {
+        ...obj,
+        [item.bookId]: data.find((_data: any) => _data.bookId === item.bookId)
+          .quantity,
+      };
     });
+
     return item.map((item) => {
       return {
         id: item.id,
@@ -264,9 +269,11 @@ const Header: React.FC<IHeader> = ({ bookCartLocal }) => {
                           </div>
                         </div>
                         <div className="mini_action cart">
-                          <a className="cart__btn">
-                            {t('header.cart.view-cart')}
-                          </a>
+                          <Link href={Routers.cart.path}>
+                            <a className="cart__btn">
+                              {t('header.cart.view-cart')}
+                            </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -355,10 +362,13 @@ const Header: React.FC<IHeader> = ({ bookCartLocal }) => {
                                           <a>{t('header.profile.profile')}</a>
                                         </Link>
                                       </span>
+                                      <span>
+                                        <Link href={Routers.myOrder.path}>
+                                          <a>{t('header.profile.history')}</a>
+                                        </Link>
+                                      </span>
                                       <span onClick={handleLogout}>
-                                        {/* <Link href={Routers.register.path}> */}
                                         <a>{t('header.profile.logout')}</a>
-                                        {/* </Link> */}
                                       </span>
                                     </>
                                   ) : (

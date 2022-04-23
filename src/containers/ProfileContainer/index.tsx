@@ -1,4 +1,4 @@
-import { Box, Button, styled } from '@mui/material';
+import { Box, Button, CircularProgress, styled } from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 import InputElement from '../../components/elements/Input';
@@ -23,6 +23,16 @@ import { unwrapResult } from '@reduxjs/toolkit';
 import { setSuccess } from '../../redux/app';
 
 const Camera = styled(AddAPhotoIcon)({
+  width: 35,
+  height: 35,
+  cursor: 'pointer',
+  color: '#ff0099',
+  position: 'absolute',
+  top: '70%',
+  right: '-5px',
+});
+
+const LoadingAvatar = styled(CircularProgress)({
   width: 35,
   height: 35,
   cursor: 'pointer',
@@ -106,6 +116,7 @@ const ProfileContainer: React.FC<IProfileContainer> = ({}) => {
     district: 1,
     ward: 1,
   });
+  const [isLoading, setIsLoading] = useState<number>(100);
 
   const initialValues = {
     firstName: profile?.firstName || '',
@@ -154,6 +165,7 @@ const ProfileContainer: React.FC<IProfileContainer> = ({}) => {
       (snapshot) => {
         const prog = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log(prog);
+        setIsLoading(prog);
       },
       (err) => {
         return null;
@@ -187,7 +199,12 @@ const ProfileContainer: React.FC<IProfileContainer> = ({}) => {
     <Box maxWidth={900} margin="auto" my={10}>
       <Box width="100%" display="flex" justifyContent="center">
         <Avatar avatar={avatar ?? '/images/avatar_default.jpeg'}>
-          <Camera onClick={() => cameraRef.current.click()} />
+          {isLoading >= 100 ? (
+            <Camera onClick={() => cameraRef.current.click()} />
+          ) : (
+            <LoadingAvatar />
+          )}
+
           <input
             type="file"
             accept="image/*"

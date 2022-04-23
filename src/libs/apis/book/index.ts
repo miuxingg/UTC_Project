@@ -3,7 +3,7 @@ import { Pagination } from '@mui/material';
 import { AxiosInstance } from 'axios';
 import { IPaginationOutput } from '../../../configs/types';
 import { BookQueries } from '../../utils/buildQueries';
-import { IBookApi } from './types';
+import { IBookApi, ICheckQuantityBook, ICheckQuantityInput } from './types';
 
 export class BookApi {
   constructor(private axiosInstance: AxiosInstance) {}
@@ -36,6 +36,16 @@ export class BookApi {
 
   async getBestSalerBooks(): Promise<IPaginationOutput<IBookApi>> {
     const { data } = await this.axiosInstance.get('/books/best-saler');
+    return data;
+  }
+
+  async checkQuantityBooks(
+    input: ICheckQuantityInput[],
+  ): Promise<ICheckQuantityBook[]> {
+    const { data } = await this.axiosInstance.post(
+      '/books/check-quantity',
+      input,
+    );
     return data;
   }
 }

@@ -27,6 +27,8 @@ import ImageSlide from './ImageSlide';
 import Review from './Reviews';
 import dayjs from 'dayjs';
 import { moneyFormat } from '../../libs/utils';
+import BookInCombo, { ListBookInCombo } from './Combo';
+import { useTranslation } from 'react-i18next';
 
 const SeeMore = styled('span')({
   color: 'blue',
@@ -34,14 +36,15 @@ const SeeMore = styled('span')({
 });
 
 const ProductDetailContainer: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(authSelector);
   const [quantity, setQuantity] = useState<number>(1);
   const bookDetail = useSelector(bookDetailSelector);
-  const newBookSelector = useSelector(newBook);
+  // const newBookSelector = useSelector(newBook);
   const listCategories = useSelector(allCategories);
   const cloudtag = useSelector(allCloudtag);
-  const currentCategoryList = useSelector(currentCategories);
+  // const currentCategoryList = useSelector(currentCategories);
   const reviews = useSelector(allReviewOnBook);
 
   const [rating, setRating] = useState<number>(5);
@@ -218,7 +221,7 @@ const ProductDetailContainer: React.FC = () => {
                             title="Add to Cart"
                             onClick={() => handleAddToCart()}
                           >
-                            Add to Cart
+                            {t('product-detail.add-cart')}
                           </button>
                         </div>
                         <div className="product-addto-links clearfix">
@@ -228,7 +231,7 @@ const ProductDetailContainer: React.FC = () => {
                       </div>
                       <div className="product_meta">
                         <span className="posted_in">
-                          Categories:&nbsp;
+                          {t('product-detail.category')}:&nbsp;
                           {bookDetail?.category
                             ? bookDetail.category.map((item, i) => {
                                 return (
@@ -245,7 +248,9 @@ const ProductDetailContainer: React.FC = () => {
                       </div>
                       <div className="product-share">
                         <ul>
-                          <li className="categories-title">Share :</li>
+                          <li className="categories-title">
+                            {t('product-detail.share')} :
+                          </li>
                           <li>
                             <a href="#">
                               <i className="icon-social-twitter icons" />
@@ -272,6 +277,17 @@ const ProductDetailContainer: React.FC = () => {
                   </div>
                 </div>
               </div>
+              {bookDetail.isCombo ? (
+                <Box mt={6} mb={4}>
+                  <Box>
+                    <Typography fontWeight={600} fontSize={24} mb={3}>
+                      {t('product-detail.combo')}
+                    </Typography>
+                  </Box>
+                  <ListBookInCombo list={bookDetail.books || []} />
+                </Box>
+              ) : null}
+
               <div className="product__info__detailed">
                 <div
                   className="pro_details_nav nav justify-content-start"
@@ -283,7 +299,7 @@ const ProductDetailContainer: React.FC = () => {
                     href="#nav-details"
                     role="tab"
                   >
-                    Details
+                    {t('product-detail.detail')}
                   </a>
                   <a
                     className="nav-item nav-link"
@@ -291,7 +307,7 @@ const ProductDetailContainer: React.FC = () => {
                     href="#nav-summary"
                     role="tab"
                   >
-                    Summary
+                    {t('product-detail.summary')}
                   </a>
                   <a
                     className="nav-item nav-link"
@@ -299,7 +315,7 @@ const ProductDetailContainer: React.FC = () => {
                     href="#nav-review"
                     role="tab"
                   >
-                    Reviews
+                    {t('product-detail.review')}
                   </a>
                 </div>
                 <div className="tab__container">
@@ -350,7 +366,7 @@ const ProductDetailContainer: React.FC = () => {
                     role="tabpanel"
                   >
                     <div>
-                      <h3>Customer Reviews</h3>
+                      <h3>{t('product-detail.review.custom-review')}</h3>
                       {reviews.items.map((item, i) => {
                         return (
                           <React.Fragment key={i}>
@@ -371,23 +387,21 @@ const ProductDetailContainer: React.FC = () => {
                       })}
                       {reviews.total !== reviews.items.length ? (
                         <SeeMore onClick={handleSeeMoreReview}>
-                          Xem thêm ({reviews.total - reviews.items.length}) bình
-                          luận...
+                          {t('product-detail.review.see-more', {
+                            total: reviews.total - reviews.items.length,
+                          })}
                         </SeeMore>
                       ) : null}
                     </div>
                     <div className="review-fieldset">
-                      <h3>Your review</h3>
+                      <h3>{t('product-detail.review.your-review')}</h3>
                       <div className="review_form_field">
                         <div className="review__ratings__type d-flex">
                           <div className="review-ratings">
-                            <Box
-                              // className="rating-summary d-flex"
-                              display="flex"
-                              alignItems="center"
-                              mb={3}
-                            >
-                              <Typography fontWeight={600}>Đánh giá</Typography>
+                            <Box display="flex" alignItems="center" mb={3}>
+                              <Typography fontWeight={600}>
+                                {t('product-detail.review.rating')}
+                              </Typography>
                               <Box mt={1} mx={2}>
                                 <Rating
                                   name="size-small"
@@ -399,7 +413,9 @@ const ProductDetailContainer: React.FC = () => {
                           </div>
                         </div>
                         <div className="input__box">
-                          <Typography fontWeight={600}>Review</Typography>
+                          <Typography fontWeight={600}>
+                            {t('product-detail.review.review-content')}
+                          </Typography>
                           <textarea
                             name="review"
                             onChange={(e) => setComment(e.target.value)}
@@ -407,7 +423,7 @@ const ProductDetailContainer: React.FC = () => {
                         </div>
                         <div className="review-form-actions">
                           <button onClick={handleSubmitReview}>
-                            Submit Review
+                            {t('product-detail.review.submit-review')}
                           </button>
                         </div>
                       </div>
@@ -433,7 +449,7 @@ const ProductDetailContainer: React.FC = () => {
                 </Box>
               </div> */}
             </div>
-            <div className="col-lg-3 col-12 md-mt-40 sm-mt-40">
+            {/* <div className="col-lg-3 col-12 md-mt-40 sm-mt-40">
               <div className="shop__sidebar">
                 <aside className="wedget__categories poroduct--cat">
                   <h3 className="wedget__title">Product Categories</h3>
@@ -454,29 +470,10 @@ const ProductDetailContainer: React.FC = () => {
                   <div className="content-shopby">
                     <div className="price_filter s-filter clear">
                       <SliderRange onFilter={handleSlideRange} />
-                      {/* <div className="price--filter">
-                        <a href="#">Filter</a>
-                      </div> */}
                     </div>
                   </div>
                 </aside>
-                {/* <aside className="wedget__categories poroduct--compare">
-                  <h3 className="wedget__title">Compare</h3>
-                  <ul>
-                    <li>
-                      <a href="#">x</a>
-                      <a href="#">Condimentum posuere</a>
-                    </li>
-                    <li>
-                      <a href="#">x</a>
-                      <a href="#">Condimentum posuere</a>
-                    </li>
-                    <li>
-                      <a href="#">x</a>
-                      <a href="#">Dignissim venenatis</a>
-                    </li>
-                  </ul>
-                </aside> */}
+
                 <aside className="wedget__categories poroduct--tag">
                   <h3 className="wedget__title">Product Tags</h3>
                   <ul>
@@ -490,75 +487,10 @@ const ProductDetailContainer: React.FC = () => {
                   </ul>
                 </aside>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
-      {/* End main Content */}
-      {/* Start Search Popup */}
-      <div className="box-search-content search_active block-bg close__top">
-        <form id="search_mini_form--2" className="minisearch" action="#">
-          <div className="field__search">
-            <input type="text" placeholder="Search entire store here..." />
-            <div className="action">
-              <a href="#">
-                <i className="zmdi zmdi-search" />
-              </a>
-            </div>
-          </div>
-        </form>
-        <div className="close__wrap">
-          <span>close</span>
-        </div>
-      </div>
-      {/* End Search Popup */}
-      {/* QUICKVIEW PRODUCT */}
-      <div id="quickview-wrapper">
-        {/* Modal */}
-        <div
-          className="modal fade"
-          id="productmodal"
-          tabIndex={-1}
-          role="dialog"
-        >
-          <div className="modal-dialog modal__container" role="document">
-            <div className="modal-content">
-              <div className="modal-header modal__header">
-                <button
-                  type="button"
-                  className="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">×</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className="modal-product">
-                  {/* Start product images */}
-                  <div className="product-images">
-                    <div className="main-image images">
-                      <img
-                        alt="big images"
-                        src="images/product/big-img/1.jpg"
-                      />
-                    </div>
-                  </div>
-                  {/* end product images */}
-
-                  {/* .product-info */}
-                </div>
-                {/* .modal-product */}
-              </div>
-              {/* .modal-body */}
-            </div>
-            {/* .modal-content */}
-          </div>
-          {/* .modal-dialog */}
-        </div>
-        {/* END Modal */}
-      </div>
-      {/* END QUICKVIEW PRODUCT */}
     </div>
   );
 };

@@ -30,7 +30,8 @@ export const removeItem = createAsyncThunk('removeItem', async (id: string) => {
 export const updateQuantityItem = createAsyncThunk(
   'updateQuantityItem',
   async ({ id, quantity }: any) => {
-    return apiSdk.cartApis.updateQuantity(id, quantity);
+    await apiSdk.cartApis.updateQuantity(id, quantity);
+    return { id, quantity };
   },
 );
 
@@ -53,9 +54,10 @@ export const categorySlice = createGenericSlice({
       const current = state.cartItems?.items.filter((item) => {
         return item.id !== action.payload.id;
       });
+      const newCart = [...(current ?? []), action.payload];
       state.cartItems = {
-        items: [...(current ?? []), action.payload],
-        total: [...(current ?? []), action.payload].length,
+        items: newCart,
+        total: newCart.length,
       };
     },
 
@@ -67,6 +69,22 @@ export const categorySlice = createGenericSlice({
           ) ?? [],
         total: state.cartItems?.total ?? 0,
       };
+    },
+    updateQuantityCart(state, action) {
+      const newState = state.cartItems?.items.map((item) => {
+        return {
+          ...item,
+          quantity:
+            item.id === action.payload.id
+              ? action.payload.quantity
+              : item.quantity,
+        };
+      });
+      state.cartItems = {
+        items: newState ?? [],
+        total: state.cartItems?.total ?? 0,
+      };
+      console.log(state.cartItems);
     },
   },
   extraReducers: (builder) => {
@@ -95,7 +113,12 @@ export const categorySlice = createGenericSlice({
   },
 });
 
-export const { deleteCart, setCart, deleteItem, addItemToCart } =
-  categorySlice.actions;
+export const {
+  deleteCart,
+  setCart,
+  deleteItem,
+  addItemToCart,
+  updateQuantityCart,
+} = categorySlice.actions;
 
 export default categorySlice.reducer;

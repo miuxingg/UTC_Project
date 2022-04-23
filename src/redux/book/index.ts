@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiSdk } from '../../libs/apis';
+import { ICheckQuantityInput } from '../../libs/apis/book/types';
 import { BookQueries } from '../../libs/utils/buildQueries';
 import { createGenericSlice } from '../../libs/utils/createGenericSlice';
 import { authorized } from '../auth/action';
@@ -45,6 +46,14 @@ export const cloudtag = createAsyncThunk('cloudtag', async () => {
   const data = await apiSdk.bookApis.getCloundTag();
   return data;
 });
+
+export const checkQuantityBook = createAsyncThunk(
+  'checkQuantityBook',
+  async (input: ICheckQuantityInput[]) => {
+    const data = await apiSdk.bookApis.checkQuantityBooks(input);
+    return data;
+  },
+);
 
 export const bookSlice = createGenericSlice({
   name: 'books',

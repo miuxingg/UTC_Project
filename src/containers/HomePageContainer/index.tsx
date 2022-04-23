@@ -25,33 +25,25 @@ const HomePageContainer: React.FC = () => {
       <BooksSection
         listItem={transformBookCart(newBookSelector.items)}
         title={t('home.title.newProduct')}
-        description="There are many variations of passages of Lorem Ipsum available,
-                but the majority have suffered lebmid alteration in some ledmid
-                form"
+        description={t('home.description.new-product')}
       />
       <NewsLetter />
 
       <MultipleBookSlider
         listItem={transformBookCart(listBook.items)}
         title={t('home.title.allProduct')}
-        description="There are many variations of passages of Lorem Ipsum available,
-                but the majority have suffered lebmid alteration in some ledmid
-                form"
+        description={t('home.description.all-products')}
       />
       <BooksSection
         listItem={transformBookCart(listBook.items)}
-        title={t('home.title.allProduct')}
-        description="There are many variations of passages of Lorem Ipsum available,
-                but the majority have suffered lebmid alteration in some ledmid
-                form"
+        title={t('home.title.combo')}
+        description={t('home.description.combo')}
       />
       <OurBlog />
       <BooksSection
         listItem={transformBookCart(booksBestSaler.items)}
-        title="Best Seller"
-        description="There are many variations of passages of Lorem Ipsum available,
-                but the majority have suffered lebmid alteration in some ledmid
-                form"
+        title={t('home.title.best-saler')}
+        description={t('home.description.best-saler')}
       />
     </>
   );
