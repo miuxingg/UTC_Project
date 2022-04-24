@@ -1,9 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiSdk } from '../../libs/apis';
-import { ICheckQuantityInput } from '../../libs/apis/book/types';
+import { IBookApi, ICheckQuantityInput } from '../../libs/apis/book/types';
 import { BookQueries } from '../../libs/utils/buildQueries';
 import { createGenericSlice } from '../../libs/utils/createGenericSlice';
 import { authorized } from '../auth/action';
+import { toggleFavorite } from '../favorite';
 import { IBookState } from './types';
 
 export const initialState: IBookState = {};
@@ -91,6 +92,42 @@ export const bookSlice = createGenericSlice({
         items: action.payload.items,
         total: action.payload.total,
       };
+    });
+
+    builder.addCase(toggleFavorite.fulfilled, (state, action) => {
+      const allBooks = state.allBooks?.items.map((item) => {
+        return item.id === action.payload.bookId
+          ? { ...item, isFavorite: action.payload.status }
+          : { ...item };
+      });
+      state.allBooks = {
+        items: allBooks ?? [],
+        total: state.allBooks?.total ?? 0,
+      };
+
+      const bookBestSaler = state.bookBestSaler?.items.map((item) => {
+        return item.id === action.payload.bookId
+          ? { ...item, isFavorite: action.payload.status }
+          : { ...item };
+      });
+      state.bookBestSaler = {
+        items: bookBestSaler ?? [],
+        total: state.bookBestSaler?.total ?? 0,
+      };
+
+      const newBook = state.newBook?.items.map((item) => {
+        return item.id === action.payload.bookId
+          ? { ...item, isFavorite: action.payload.status }
+          : { ...item };
+      });
+      state.newBook = {
+        items: newBook ?? [],
+        total: state.newBook?.total ?? 0,
+      };
+
+      let bookDetail = state.bookDetail;
+      if (bookDetail) bookDetail.isFavorite = action.payload.status;
+      state.bookDetail = bookDetail;
     });
   },
 });

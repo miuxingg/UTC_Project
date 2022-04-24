@@ -1,4 +1,5 @@
 {
+  "unAuthenticated": "UnAuthenticated",
   "password": "Password",
   "yup.empty": "{{field}} empty",
   "yup.password.not.length": "The password is too short",

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { Routers } from '../../../configs/navigator';
@@ -13,6 +13,7 @@ import {
 import { setSuccess, setError, setWarning } from '../../../redux/app';
 import { authSelector } from '../../../redux/auth/selectors';
 import { addItemToCart, createCartItem } from '../../../redux/cart';
+import { toggleFavorite } from '../../../redux/favorite';
 
 export interface IBook {
   id: string;
@@ -30,6 +31,7 @@ export interface IBook {
   summary?: string;
   isCombo?: boolean;
   books?: IBookInCombo[];
+  isFavorite?: boolean;
 }
 export const BookCart: React.FC<IBook> = ({
   id = '',
@@ -38,10 +40,12 @@ export const BookCart: React.FC<IBook> = ({
   price = 0,
   priceUnDiscount = 0,
   thumbnail = '',
+  isFavorite = false,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const isAuthenticated = useSelector(authSelector);
+  const [favoriteHover, setFavoriteHover] = useState<boolean>(false);
 
   const handleAddToCart = () => {
     if (isAuthenticated) {
@@ -86,6 +90,14 @@ export const BookCart: React.FC<IBook> = ({
       } else {
         dispatch(setWarning({ message: t('notify.add-to-cart.exist') }));
       }
+    }
+  };
+
+  const handleToggleFavoriteClick = () => {
+    if (!isAuthenticated) {
+      dispatch(setError({ message: t('unAuthenticated') }));
+    } else {
+      dispatch(toggleFavorite(id));
     }
   };
   return (
@@ -143,11 +155,23 @@ export const BookCart: React.FC<IBook> = ({
                   </div>
                 </li>
                 <li>
-                  <Link href="/">
-                    <a className="compare" title="Favorite">
-                      <i className="bi bi-heart-beat" />
-                    </a>
-                  </Link>
+                  {/* <Link href="/"> */}
+                  <a
+                    onClick={handleToggleFavoriteClick}
+                    className="compare"
+                    title="Favorite"
+                    style={{
+                      backgroundColor:
+                        isFavorite || favoriteHover ? '#ce7852' : '#f5f5f5',
+                      color: isFavorite || favoriteHover ? '#fff' : '#333',
+                      cursor: 'pointer',
+                    }}
+                    onMouseEnter={() => setFavoriteHover(true)}
+                    onMouseLeave={() => setFavoriteHover(false)}
+                  >
+                    <i className="bi bi-heart-beat" />
+                  </a>
+                  {/* </Link> */}
                 </li>
                 <li>
                   <Link href="/">

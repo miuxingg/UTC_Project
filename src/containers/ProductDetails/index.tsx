@@ -29,6 +29,7 @@ import dayjs from 'dayjs';
 import { moneyFormat } from '../../libs/utils';
 import BookInCombo, { ListBookInCombo } from './Combo';
 import { useTranslation } from 'react-i18next';
+import { toggleFavorite } from '../../redux/favorite';
 
 const SeeMore = styled('span')({
   color: 'blue',
@@ -41,14 +42,12 @@ const ProductDetailContainer: React.FC = () => {
   const isAuthenticated = useSelector(authSelector);
   const [quantity, setQuantity] = useState<number>(1);
   const bookDetail = useSelector(bookDetailSelector);
-  // const newBookSelector = useSelector(newBook);
-  const listCategories = useSelector(allCategories);
-  const cloudtag = useSelector(allCloudtag);
-  // const currentCategoryList = useSelector(currentCategories);
+  // const newBookSelector = useSelector(newBook);;
   const reviews = useSelector(allReviewOnBook);
 
   const [rating, setRating] = useState<number>(5);
   const [comment, setComment] = useState<string>('');
+  const [favoriteHover, setFavoriteHover] = useState<boolean>(false);
 
   const handleAddToCart = () => {
     if (bookDetail.id && quantity > 0) {
@@ -143,6 +142,14 @@ const ProductDetailContainer: React.FC = () => {
     );
   };
 
+  const handleToggleFavoriteClick = () => {
+    if (!isAuthenticated) {
+      dispatch(setError({ message: t('unAuthenticated') }));
+    } else {
+      dispatch(toggleFavorite(bookDetail.id));
+    }
+  };
+
   return (
     <div className="wrapper" id="wrapper">
       {/* Start Bradcaump area */}
@@ -225,7 +232,27 @@ const ProductDetailContainer: React.FC = () => {
                           </button>
                         </div>
                         <div className="product-addto-links clearfix">
-                          <a className="wishlist" href="#" />
+                          <a
+                            className="wishlist"
+                            onClick={handleToggleFavoriteClick}
+                            style={{
+                              backgroundColor:
+                                bookDetail.isFavorite || favoriteHover
+                                  ? '#e59285'
+                                  : '#fff',
+                              // color:
+                              //   bookDetail.isFavorite || favoriteHover
+                              //     ? '#fff'
+                              //     : '#333',
+                              borderColor:
+                                bookDetail.isFavorite || favoriteHover
+                                  ? '#e59285'
+                                  : '#ebebeb',
+                              cursor: 'pointer',
+                            }}
+                            onMouseEnter={() => setFavoriteHover(true)}
+                            onMouseLeave={() => setFavoriteHover(false)}
+                          />
                           <a className="compare" href="#" />
                         </div>
                       </div>

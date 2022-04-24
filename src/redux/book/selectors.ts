@@ -35,6 +35,7 @@ export const bookDetailSelector = (state: TRootState): IBook => {
       summary: '',
       isCombo: false,
       books: [],
+      isFavorite: false,
     }
   );
 };
