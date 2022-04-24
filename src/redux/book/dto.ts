@@ -18,6 +18,7 @@ export const transformBookCart = (items: IBookApi[]): IBook[] => {
       status: book.status,
       summary: book?.summary,
       isFavorite: book?.isFavorite,
+      rating: book?.rating,
     };
   });
 };
