@@ -185,11 +185,13 @@ const ProductDetailContainer: React.FC = () => {
                   <div className="col-lg-6 col-12">
                     <div className="product__info__main">
                       <h1>{bookDetail.name}</h1>
-                      {/* <Rating
+                      <Rating
                         name="size-small"
-                        onChange={handleRatingChange}
+                        value={bookDetail.rating}
                         size="small"
-                      /> */}
+                        defaultValue={bookDetail.rating}
+                        disabled
+                      />
                       <Typography fontSize="14px">
                         {bookDetail.author}
                       </Typography>

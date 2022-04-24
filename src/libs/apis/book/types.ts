@@ -17,6 +17,7 @@ export interface IBookApi {
   isCombo?: boolean;
   books?: IBookInCombo[];
   isFavorite?: boolean;
+  rating?: number;
 }
 
 export interface IBookInCombo {

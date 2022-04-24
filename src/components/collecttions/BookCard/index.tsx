@@ -1,3 +1,4 @@
+import { Rating } from '@mui/material';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +33,7 @@ export interface IBook {
   isCombo?: boolean;
   books?: IBookInCombo[];
   isFavorite?: boolean;
+  rating?: number;
 }
 export const BookCart: React.FC<IBook> = ({
   id = '',
@@ -41,6 +43,7 @@ export const BookCart: React.FC<IBook> = ({
   priceUnDiscount = 0,
   thumbnail = '',
   isFavorite = false,
+  rating = 0,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -188,7 +191,14 @@ export const BookCart: React.FC<IBook> = ({
             </div>
           </div>
           <div className="product__hover--content">
-            <ul className="rating d-flex">
+            <Rating
+              name="size-small"
+              value={rating}
+              size="small"
+              defaultValue={rating}
+              disabled
+            />
+            {/* <ul className="rating d-flex">
               <li className="on">
                 <i className="fa fa-star-o" />
               </li>
@@ -204,7 +214,7 @@ export const BookCart: React.FC<IBook> = ({
               <li>
                 <i className="fa fa-star-o" />
               </li>
-            </ul>
+            </ul> */}
           </div>
         </div>
         {/* </div> */}
