@@ -1,4 +1,5 @@
 {
+  "unAuthenticated": "Bạn chưa đăng nhập",
   "password": "Mật khẩu",
   "yup.empty": "{{field}} không được để trống",
   "yup.password.not.length": "Mật khẩu quá ngắn",

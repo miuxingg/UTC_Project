@@ -14,6 +14,7 @@ import { AuthApi } from './auth';
 import { BookApi } from './book';
 import { CartApi } from './cart';
 import { CategoryApi } from './category';
+import { FavoriteApi } from './favorite';
 import { OrderApi } from './order';
 import { PaymentApi } from './payment';
 import { PublisherApi } from './publisher';
@@ -127,6 +128,7 @@ export namespace apiSdk {
   export const payment = new PaymentApi(instance);
   export const reviewApi = new ReviewApi(instance);
   export const publisherApi = new PublisherApi(instance);
+  export const favoriteApi = new FavoriteApi(instance);
 }
 
 export { setApiContext };
