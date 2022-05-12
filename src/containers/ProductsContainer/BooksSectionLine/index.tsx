@@ -14,10 +14,13 @@ const BooksSectionLine: React.FC<IBookSectionLine> = ({ listItem }) => {
           <Box my={2} key={item.id}>
             <BookLineItem
               {...item}
+              id={item.id}
+              rating={item?.rating ?? 0}
               name={item.name}
               image={item.thumbnail}
               price={item.price}
               description={item.description}
+              isFavorite={!!item?.isFavorite}
             />
           </Box>
         );

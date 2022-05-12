@@ -10,12 +10,14 @@ import { transformBookCart } from '../../redux/book/dto';
 import {
   allBookByFilter,
   bookBestSaler,
+  booksByCombos,
   newBook,
 } from '../../redux/book/selectors';
 
 const HomePageContainer: React.FC = () => {
   const { t } = useTranslation();
   const newBookSelector = useSelector(newBook);
+  const booksByCombosSelector = useSelector(booksByCombos);
   const listBook = useSelector(allBookByFilter);
   const booksBestSaler = useSelector(bookBestSaler);
 
@@ -35,7 +37,7 @@ const HomePageContainer: React.FC = () => {
         description={t('home.description.all-products')}
       />
       <BooksSection
-        listItem={transformBookCart(listBook.items)}
+        listItem={transformBookCart(booksByCombosSelector.items)}
         title={t('home.title.combo')}
         description={t('home.description.combo')}
       />

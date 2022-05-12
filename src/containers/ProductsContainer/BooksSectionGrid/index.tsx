@@ -10,7 +10,7 @@ const BooksSectionGrid: React.FC<IBookSectionGrid> = ({ listItem }) => {
     <Box ml={3} display="flex" flexWrap="wrap">
       {listItem.map((item, i) => {
         return (
-          <Box mx={1} key={item.id} width="270px" height="500px">
+          <Box mx={1} key={item.id} width="270px" height="400px">
             <BookCart
               {...item}
               name={item.name}

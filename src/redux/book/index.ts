@@ -17,6 +17,14 @@ export const getNewsBook = createAsyncThunk(
   },
 );
 
+export const getBookByCombos = createAsyncThunk(
+  'getBookByCombos',
+  async (queries?: BookQueries) => {
+    const data = await apiSdk.bookApis.getBookByCombos(queries);
+    return data;
+  },
+);
+
 export const allBooksByFilter = createAsyncThunk(
   'allBooksByFilter',
   async (queries?: BookQueries) => {
@@ -63,6 +71,13 @@ export const bookSlice = createGenericSlice({
   extraReducers: (builder) => {
     builder.addCase(getNewsBook.fulfilled, (state, action) => {
       state.newBook = {
+        items: action.payload.items,
+        total: action.payload.total,
+      };
+    });
+
+    builder.addCase(getBookByCombos.fulfilled, (state, action) => {
+      state.bookByCombos = {
         items: action.payload.items,
         total: action.payload.total,
       };

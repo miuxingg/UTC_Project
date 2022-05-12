@@ -29,6 +29,7 @@ export const AuthContainer = React.memo(function AuthContainer({ children }) {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(getProfile());
+
       // dispatch(fetchNotifications());
     }
   }, [dispatch, isAuthenticated]);
