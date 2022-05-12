@@ -17,6 +17,15 @@ export class BookApi {
     return data;
   }
 
+  async getBookByCombos(
+    queries?: BookQueries,
+  ): Promise<IPaginationOutput<IBookApi>> {
+    const { data } = await this.axiosInstance.get('/books/combos', {
+      params: { ...queries },
+    });
+    return data;
+  }
+
   async getBookById(id: string): Promise<IBookApi> {
     const { data } = await this.axiosInstance.get('/books/' + id);
     return data;

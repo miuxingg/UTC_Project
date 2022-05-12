@@ -5,6 +5,10 @@ export const newBook = (state: TRootState) => {
   return state.books.newBook ?? { total: 0, items: [] };
 };
 
+export const booksByCombos = (state: TRootState) => {
+  return state.books.bookByCombos ?? { total: 0, items: [] };
+};
+
 export const allBookByFilter = (state: TRootState) => {
   return state.books.allBooks ?? { total: 0, items: [] };
 };

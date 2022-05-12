@@ -103,13 +103,20 @@ export const BookCart: React.FC<IBook> = ({
       dispatch(toggleFavorite(id));
     }
   };
+
   return (
     <>
       <div className="product product__style--3">
         {/* <div className="col-lg-3 col-md-4 col-sm-6 col-12"> */}
-        <div className="product__thumb">
+        <div
+          className="product__thumb"
+          style={{ minHeight: 270, maxHeight: 270 }}
+        >
           <Link href={`${Routers.products.path}/${id}`}>
-            <a className="first__img">
+            <a
+              className="first__img"
+              style={{ minHeight: 270, maxHeight: 270 }}
+            >
               <img
                 src={thumbnail ? thumbnail : 'images/books/1.jpg'}
                 alt="product image"

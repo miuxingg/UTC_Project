@@ -33,7 +33,16 @@ export const getOrderByStatus = createAsyncThunk(
 export const orderSlice = createGenericSlice({
   name: 'order',
   initialState,
-  reducers: {},
+  reducers: {
+    updateOrderStatus(state, action) {
+      state.ordersByStatus = {
+        items: (state.ordersByStatus?.items ?? []).filter(
+          (item) => item.id !== action.payload.id,
+        ),
+        total: state.ordersByStatus?.total ?? 0,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getOrderByStatus.fulfilled, (state, action) => {
       state.ordersByStatus = action.payload;
@@ -41,6 +50,6 @@ export const orderSlice = createGenericSlice({
   },
 });
 
-// export const {} = bookSlice.actions;
+export const { updateOrderStatus } = orderSlice.actions;
 
 export default orderSlice.reducer;

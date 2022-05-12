@@ -47,7 +47,13 @@ export const BooksSection: React.FC<IBookSection> = ({
             <SimpleSlider>
               {data.map((item, index) => {
                 return (
-                  <Box maxWidth={270} key={index}>
+                  <Box
+                    maxWidth={270}
+                    minWidth={270}
+                    // minHeight={380}
+                    // maxHeight={380}
+                    key={index}
+                  >
                     <BookCard {...item} />
                   </Box>
                 );

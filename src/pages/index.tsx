@@ -3,7 +3,12 @@ import { NextPage } from 'next';
 import { useEffect } from 'react';
 import Layout from '../components/templates/Layout';
 import HomePageContainer from '../containers/HomePageContainer';
-import { allBooksByFilter, bookBestSaler, getNewsBook } from '../redux/book';
+import {
+  allBooksByFilter,
+  bookBestSaler,
+  getBookByCombos,
+  getNewsBook,
+} from '../redux/book';
 import { useDispatch } from 'react-redux';
 import { getServerSideWithPublicRoute } from '../libs/hocs/getServerSideWithPublicRoute';
 import { BookStatus } from '../libs/utils/buildQueries';
@@ -15,6 +20,7 @@ const Home: NextPage = () => {
     dispatch(getNewsBook({ limit: 20, status: BookStatus.NEW }));
     dispatch(bookBestSaler());
     dispatch(allBooksByFilter({ limit: 20 }));
+    dispatch(getBookByCombos({ limit: 20 }));
   }, [dispatch]);
   return (
     <>
