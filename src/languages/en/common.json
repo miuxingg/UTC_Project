@@ -27,6 +27,8 @@
   "register.submit": "Register",
   "register.first-name": "First name",
   "register.last-name": "Last name",
+  "register.email-verify-1": "You have successfully registered an account. Please check ",
+  "register.email-verify-2": "for verification",
   "cart.title.image": "Image",
   "cart.title.product": "Product",
   "cart.title.price": "Price",
