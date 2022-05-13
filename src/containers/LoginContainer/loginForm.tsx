@@ -45,18 +45,7 @@ const LoginForm: React.FC = () => {
         };
       });
     }
-    // if (originalProfileResult.statusCode === HTTP_STATUS.BAD_REQUEST) {
-    //   setErrorMessage((pre) => {
-    //     return {
-    //       ...pre,
-    //       [originalProfileResult.field!]: originalProfileResult.message,
-    //     };
-    //   });
-    // }
   };
-  // const onChange = (e: any) => {
-  //   console.log(e);
-  // };
   return (
     <div className="col-lg-6 col-12">
       <div className="my__account__wrapper">

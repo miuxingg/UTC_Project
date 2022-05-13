@@ -1,15 +1,9 @@
-import { Link as RouterLink } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import { Card, Link, Container, Typography } from '@mui/material';
-// hooks
-// import useResponsive from '../hooks/useResponsive';
-// components
-// sections
-import { LoginForm } from './auth/login';
-import AuthSocial from './auth/AuthSocial';
-
-// ----------------------------------------------------------------------
+import { Card, Container, Typography } from '@mui/material';
+import AuthSocial from '../AuthSocial';
+import { useTranslation } from 'react-i18next';
+import RegisterForm from './RegisterForm';
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -54,35 +48,31 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function Login() {
-  //   const smUp = useResponsive('up', 'sm');
-
-  //   const mdUp = useResponsive('up', 'md');
-
+export const RegisterContainer: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <RootStyle>
       <SectionStyle>
         <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
           Hi, Welcome Back
         </Typography>
-        <img src="/images/illustration_login.png" alt="login" />
+        <img src="/images/illustration_register.png" alt="register" />
       </SectionStyle>
 
       <Container maxWidth="sm">
         <ContentStyle>
           <Typography variant="h4" gutterBottom>
-            Sign in to Minimal
+            {t('login.sign-in')}
           </Typography>
-
           <Typography sx={{ color: 'text.secondary', mb: 5 }}>
-            Enter your details below.
+            {/* Enter your details below. */}
           </Typography>
-
           <AuthSocial />
-
-          <LoginForm />
+          <RegisterForm />
         </ContentStyle>
       </Container>
     </RootStyle>
   );
-}
+};
+
+export default RegisterContainer;

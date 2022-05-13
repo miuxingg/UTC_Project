@@ -1,11 +1,11 @@
 import { NextPage } from 'next';
 import React from 'react';
-import Login from '../../containers/BlogContainer';
+import LoginContainer from '../../containers/AuthContainer/auth/login';
 
 const Blog: NextPage = () => {
   return (
     <>
-      <Login />
+      <LoginContainer />
     </>
   );
 };
