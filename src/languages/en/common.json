@@ -20,6 +20,10 @@
   "login.remember": "Remember me",
   "login.lost-password": "Lost your password?",
   "login.sign-in": "Sign in",
+  "login.forgot-password-button": "Submit",
+  "forgot-password": "Forgot Password",
+  "forgot-content-1": "Please check ",
+  "forgot-content-2": "to receive a new password",
   "incorrect.email": "Incorrect Email",
   "incorrect.password": "Incorrect Password",
   "register.register": "Register",
@@ -119,5 +123,13 @@
   "notify.checkout.success": "Checkout success",
   "notify.checkout.empty-product": "Cart empty",
   "notify.checkout.product-not-enough": "Product quantity is not enough",
-  "notify.checkout.payment-amount-small": "The payment amount is too small to make using this payment method"
+  "notify.checkout.payment-amount-small": "The payment amount is too small to make using this payment method",
+  "submit.update": "Submit",
+  "change-password": "Change password",
+  "change-password.current": "Current password",
+  "change-password.new": "New password",
+  "change-password.comfirm": "Comfirm new password",
+  "change-password.link-to-profile": "Profile",
+  "change-password.success": "Change password success",
+  "incorrect.duplicatePassword": "The new password cannot be the same as the current password"
 }

@@ -20,6 +20,10 @@
   "login.remember": "Ghi nhớ",
   "login.lost-password": "Quên mật khẩu?",
   "login.sign-in": "Đăng nhập",
+  "forgot-password": "Quên mật khẩu",
+  "forgot-content-1": "Bạn vui lòng vào địa chỉ ",
+  "forgot-content-2": "để nhận mật khẩu mới",
+  "login.forgot-password-button": "Xác nhận",
   "incorrect.email": "Email không tồn tại",
   "incorrect.password": "Mật khẩu không chính xác",
   "register.register": "Đăng kí",
@@ -120,5 +124,13 @@
   "notify.checkout.error": "Mua hàng thất bại. Lỗi thanh toán",
   "notify.checkout.empty-product": "Không có sản phẩm nào để thanh toán",
   "notify.checkout.product-not-enough": "Số lượng sản phẩm không đủ",
-  "notify.checkout.payment-amount-small": "Số tiền thanh toán quá nhỏ để thực hiện bằng phương thức thanh toán này"
+  "notify.checkout.payment-amount-small": "Số tiền thanh toán quá nhỏ để thực hiện bằng phương thức thanh toán này",
+  "submit.update": "Cập nhật",
+  "change-password": "Đổi mật khẩu",
+  "change-password.current": "Mật khẩu hiện tại",
+  "change-password.new": "Mật khẩu mới",
+  "change-password.comfirm": "Xác nhận mật khẩu mới",
+  "change-password.link-to-profile": "Trang cá nhân",
+  "change-password.success": "Đổi mật khẩu thành công",
+  "incorrect.duplicatePassword": "Mật khẩu mới không được giống mật khẩu cũ"
 }

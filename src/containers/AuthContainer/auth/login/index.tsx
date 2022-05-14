@@ -4,6 +4,8 @@ import { Card, Container, Typography } from '@mui/material';
 import LoginForm from './LoginForm';
 import AuthSocial from '../AuthSocial';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+import ForgotPassword from './forgot-password';
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -50,6 +52,7 @@ const ContentStyle = styled('div')(({ theme }) => ({
 
 export const LoginContainer: React.FC = () => {
   const { t } = useTranslation();
+  const [isForgot, setIsForgot] = useState<boolean>(false);
   return (
     <RootStyle>
       <SectionStyle>
@@ -62,7 +65,7 @@ export const LoginContainer: React.FC = () => {
       <Container maxWidth="sm">
         <ContentStyle>
           <Typography variant="h4" gutterBottom>
-            {t('login.sign-in')}
+            {isForgot ? t('forgot-password') : t('login.sign-in')}
           </Typography>
 
           <Typography sx={{ color: 'text.secondary', mb: 5 }}>
@@ -70,8 +73,11 @@ export const LoginContainer: React.FC = () => {
           </Typography>
 
           <AuthSocial />
-
-          <LoginForm />
+          {isForgot ? (
+            <ForgotPassword onLoginClick={() => setIsForgot(false)} />
+          ) : (
+            <LoginForm onForgotPassword={() => setIsForgot(true)} />
+          )}
         </ContentStyle>
       </Container>
     </RootStyle>

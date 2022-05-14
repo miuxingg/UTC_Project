@@ -62,7 +62,7 @@ export const RegisterContainer: React.FC = () => {
       <Container maxWidth="sm">
         <ContentStyle>
           <Typography variant="h4" gutterBottom>
-            {t('login.sign-in')}
+            {t('register.register')}
           </Typography>
           <Typography sx={{ color: 'text.secondary', mb: 5 }}>
             {/* Enter your details below. */}

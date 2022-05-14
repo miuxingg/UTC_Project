@@ -68,3 +68,30 @@ export const handleVerifyEmail = createAsyncThunk(
 export const getProfile = createAsyncThunk('auth/getProfile', async () => {
   return await apiSdk.authApis.getProfile();
 });
+
+export const forgotPassword = createAsyncThunk(
+  'auth/forgotPassword',
+  async (input: { email: string }) => {
+    try {
+      const data = await apiSdk.authApis.forgotPassword(input);
+      return data;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async ({ currentPassword, newPassword }: any, { dispatch }) => {
+    try {
+      const data = await apiSdk.authApis.changePassword(
+        currentPassword,
+        newPassword,
+      );
+      return data;
+    } catch (error) {
+      return error;
+    }
+  },
+);
