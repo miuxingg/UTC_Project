@@ -28,7 +28,10 @@ const LoginSchema = Yup.object().shape({
     .min(6, 'yup.password.not.length'),
 });
 
-export const LoginForm: React.FC = () => {
+interface ILoginForm {
+  onForgotPassword?: () => void;
+}
+export const LoginForm: React.FC<ILoginForm> = ({ onForgotPassword }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
@@ -144,7 +147,9 @@ export const LoginForm: React.FC = () => {
                 label={String(t('login.remember'))}
               />
 
-              <a>{t('login.lost-password')}</a>
+              <a onClick={onForgotPassword} style={{ cursor: 'pointer' }}>
+                {t('login.lost-password')}
+              </a>
             </Stack>
 
             <LoadingButton

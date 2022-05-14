@@ -39,4 +39,20 @@ export class AuthApi {
     const { data } = await this.axiosInstance.get('/auth/profile');
     return data;
   }
+
+  async forgotPassword(input: { email: string }) {
+    const { data } = await this.axiosInstance.post(
+      '/auth/forgot-password',
+      input,
+    );
+    return data;
+  }
+
+  async changePassword(currentPassword: string, newPassword: string) {
+    const { data } = await this.axiosInstance.post('/auth/change-password', {
+      currentPassword,
+      newPassword,
+    });
+    return data;
+  }
 }
