@@ -84,7 +84,6 @@ export const categorySlice = createGenericSlice({
         items: newState ?? [],
         total: state.cartItems?.total ?? 0,
       };
-      console.log(state.cartItems);
     },
   },
   extraReducers: (builder) => {

@@ -1,15 +1,26 @@
 // material
 import { Stack, Button, Divider, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import { loginGoogle } from '../../../redux/auth/action';
 // component
 import Iconify from './Iconify';
 
 // ----------------------------------------------------------------------
-
-export default function AuthSocial() {
+export const AuthSocial: React.FC = () => {
+  const dispatch = useDispatch();
+  const handleLoginGoogle = () => {
+    dispatch(loginGoogle());
+  };
   return (
     <>
       <Stack direction="row" spacing={2}>
-        <Button fullWidth size="large" color="inherit" variant="outlined">
+        <Button
+          fullWidth
+          size="large"
+          color="inherit"
+          variant="outlined"
+          onClick={handleLoginGoogle}
+        >
           <Iconify
             icon="eva:google-fill"
             color="#DF3E30"
@@ -44,4 +55,6 @@ export default function AuthSocial() {
       </Divider>
     </>
   );
-}
+};
+
+export default AuthSocial;

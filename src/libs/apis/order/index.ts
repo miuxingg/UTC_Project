@@ -1,7 +1,12 @@
 /* eslint-disable require-jsdoc */
 import { AxiosInstance } from 'axios';
 import { IPaginationOutput } from '../../../configs/types';
-import { IGetOrderInput, IOrderInput, IOrderOutput } from './types';
+import {
+  IGetOrderInput,
+  IOrderInput,
+  IOrderOutput,
+  IOrderStatus,
+} from './types';
 
 export class OrderApi {
   constructor(private axiosInstance: AxiosInstance) {}
@@ -16,6 +21,16 @@ export class OrderApi {
   ): Promise<IPaginationOutput<IOrderOutput>> {
     const { data } = await this.axiosInstance.get('/order', {
       params: { ...queries },
+    });
+    return data;
+  }
+
+  async updateStatusOrder(
+    id: string,
+    status: IOrderStatus,
+  ): Promise<IOrderOutput> {
+    const { data } = await this.axiosInstance.put(`/order/status/${id}`, {
+      status,
     });
     return data;
   }

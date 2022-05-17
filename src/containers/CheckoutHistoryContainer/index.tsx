@@ -172,10 +172,16 @@ const CheckoutHistoryContainer: React.FC = memo(() => {
                     <TableCell align="center">
                       {t('checkout-history.table.total-amount')}
                     </TableCell>
+                    {statusMapping(step) !== IOrderStatus.Pending ? null : (
+                      <TableCell align="center">
+                        {t('checkout-history.table.action')}
+                      </TableCell>
+                    )}
                   </TableRow>
                 </TableHead>
                 <HistoryLine
                   lines={transfromOrderHistory(orderHistory?.items || [])}
+                  status={statusMapping(step)}
                 />
               </Table>
             </TableContainer>

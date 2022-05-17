@@ -16,6 +16,12 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useTranslation } from 'react-i18next';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { IOrderStatus } from '../../libs/apis/order/types';
+import PopupBase from '../../components/elements/PopupBase';
+import RemoveConfirm from './Popup/RemoveComfirm';
+import { useDispatch } from 'react-redux';
+import { updateOrderStatusThunk } from '../../redux/order';
 
 const IconButtonMui = styled(IconButton)({
   ':focus': {
@@ -38,6 +44,7 @@ export interface IHistoryBookLine {
   createdAt: Date;
   address: string;
   total: number;
+  status: IOrderStatus;
   books: IHistoryBookDetail[];
 }
 
@@ -48,9 +55,19 @@ const Row: React.FC<IHistoryBookLine> = ({
   total,
   books,
   stt,
+  status,
 }) => {
   const [open, setOpen] = React.useState(false);
+  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const [openPopup, setOpenPopup] = React.useState<boolean>(false);
+  const [currentId, setCurrentId] = React.useState<string>('');
+  const handleAcceptRemove = () => {
+    dispatch(
+      updateOrderStatusThunk({ id: currentId, status: IOrderStatus.Rejected }),
+    );
+    setOpenPopup(false);
+  };
   return (
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
@@ -72,6 +89,18 @@ const Row: React.FC<IHistoryBookLine> = ({
         </TableCell>
         <TableCell align="center">{address}</TableCell>
         <TableCell align="center">{moneyFormat(total)}</TableCell>
+        {status === IOrderStatus.Pending ? (
+          <TableCell align="center">
+            <IconButtonMui
+              onClick={() => {
+                setOpenPopup(true);
+                setCurrentId(id);
+              }}
+            >
+              <DeleteForeverIcon style={{ color: 'red' }} />
+            </IconButtonMui>
+          </TableCell>
+        ) : null}
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -121,19 +150,30 @@ const Row: React.FC<IHistoryBookLine> = ({
           </Collapse>
         </TableCell>
       </TableRow>
+      {openPopup ? (
+        <RemoveConfirm
+          open={true}
+          id={currentId}
+          onAccept={handleAcceptRemove}
+          onClose={() => {
+            setOpenPopup(false);
+          }}
+        ></RemoveConfirm>
+      ) : null}
     </React.Fragment>
   );
 };
 
 interface IHistoryBook {
   lines: IHistoryBookLine[];
+  status: IOrderStatus;
 }
-export const HistoryLine: React.FC<IHistoryBook> = ({ lines }) => {
+export const HistoryLine: React.FC<IHistoryBook> = ({ lines, status }) => {
   return (
     <>
       <TableBody>
         {lines.map((item, i) => {
-          return <Row {...item} key={i} />;
+          return <Row {...item} key={i} status={status} />;
         })}
       </TableBody>
     </>
