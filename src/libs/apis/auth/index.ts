@@ -30,8 +30,6 @@ export class AuthApi {
 
   async updateProfile(input: IProfile): Promise<IProfile> {
     const { data } = await this.axiosInstance.put('/auth', { ...input });
-    console.log(data);
-
     return data;
   }
 
@@ -53,6 +51,11 @@ export class AuthApi {
       currentPassword,
       newPassword,
     });
+    return data;
+  }
+
+  async loginGoogle(): Promise<IAuthenticated> {
+    const { data } = await this.axiosInstance.get('/auth/login-google/');
     return data;
   }
 }

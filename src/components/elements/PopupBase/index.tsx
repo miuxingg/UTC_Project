@@ -14,8 +14,7 @@ interface IPopupBase extends BoxProps {
   open?: boolean;
   children?: React.ReactNode;
 }
-const PopupBase: React.FC<IPopupBase> = (props) => {
-  const [open, setOpen] = useState<boolean>(props?.open || false);
+export const PopupBase: React.FC<IPopupBase> = (props) => {
   return (
     <>
       {/* {open ? (

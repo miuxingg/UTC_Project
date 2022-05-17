@@ -95,3 +95,18 @@ export const changePassword = createAsyncThunk(
     }
   },
 );
+
+export const loginGoogle = createAsyncThunk(
+  'auth/loginGoogle',
+  async ({}, { dispatch }) => {
+    try {
+      const token = await apiSdk.authApis.loginGoogle();
+      setToken(token);
+      dispatch(authorized());
+      dispatch(setSuccess({ message: 'Login Success' }));
+      window?.location.replace('/');
+    } catch (err: any) {
+      return err;
+    }
+  },
+);
