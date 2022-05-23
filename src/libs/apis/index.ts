@@ -11,6 +11,7 @@ import { Routers } from '../../configs/navigator';
 import { getCookies, removeCookie } from '../utils/cookies';
 import { AddressApi } from './address';
 import { AuthApi } from './auth';
+import { BlogApi } from './blog';
 import { BookApi } from './book';
 import { CartApi } from './cart';
 import { CategoryApi } from './category';
@@ -129,6 +130,7 @@ export namespace apiSdk {
   export const reviewApi = new ReviewApi(instance);
   export const publisherApi = new PublisherApi(instance);
   export const favoriteApi = new FavoriteApi(instance);
+  export const blogApi = new BlogApi(instance);
 }
 
 export { setApiContext };

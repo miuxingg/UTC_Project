@@ -12,6 +12,8 @@ import {
 import { useDispatch } from 'react-redux';
 import { getServerSideWithPublicRoute } from '../libs/hocs/getServerSideWithPublicRoute';
 import { BookStatus } from '../libs/utils/buildQueries';
+import { apiSdk } from '../libs/apis';
+import { getAllBlog } from '../redux/blog';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
@@ -33,6 +35,8 @@ const Home: NextPage = () => {
 
 export const getServerSideProps = getServerSideWithPublicRoute(
   async (ctx, store) => {
+    const blog = await apiSdk.blogApi.getAllBlog({ limit: 3 });
+    store.dispatch(getAllBlog(blog));
     return {
       props: {},
     };

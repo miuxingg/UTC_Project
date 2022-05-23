@@ -6,6 +6,7 @@ import MultipleBookSlider from '../../components/collecttions/MultipleBookSlider
 import NewsLetter from '../../components/collecttions/NewsLetter';
 import { Slider } from '../../components/collecttions/Slider';
 import OurBlog from '../../components/templates/OurBlog';
+import { allBlog } from '../../redux/blog/selectors';
 import { transformBookCart } from '../../redux/book/dto';
 import {
   allBookByFilter,
@@ -20,6 +21,7 @@ const HomePageContainer: React.FC = () => {
   const booksByCombosSelector = useSelector(booksByCombos);
   const listBook = useSelector(allBookByFilter);
   const booksBestSaler = useSelector(bookBestSaler);
+  const blogList = useSelector(allBlog);
 
   return (
     <>
@@ -41,7 +43,7 @@ const HomePageContainer: React.FC = () => {
         title={t('home.title.combo')}
         description={t('home.description.combo')}
       />
-      <OurBlog />
+      {blogList.length ? <OurBlog blogList={blogList} /> : null}
       <BooksSection
         listItem={transformBookCart(booksBestSaler.items)}
         title={t('home.title.best-saler')}
