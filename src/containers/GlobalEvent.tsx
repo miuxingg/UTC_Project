@@ -8,8 +8,6 @@ import socket, { EventNames } from '../socket-sdk';
 export const GlobalEvent = React.memo(function GlobalEvent({ children }) {
   const dispatch = useDispatch();
   const profile = useSelector(profileSelector);
-  console.log(profile);
-
   const handleNewReview = useCallback(
     (data: any) => {
       dispatch(
