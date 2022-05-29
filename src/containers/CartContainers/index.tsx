@@ -63,7 +63,7 @@ const CartContainer: React.FC = () => {
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
-              <div className="bradcaump__inner text-center">
+              {/* <div className="bradcaump__inner text-center">
                 <h2 className="bradcaump-title">Shopping Cart</h2>
                 <nav className="bradcaump-content">
                   <a className="breadcrumb_item" href="index.html">
@@ -72,7 +72,7 @@ const CartContainer: React.FC = () => {
                   <span className="brd-separetor">/</span>
                   <span className="breadcrumb_item active">Shopping Cart</span>
                 </nav>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

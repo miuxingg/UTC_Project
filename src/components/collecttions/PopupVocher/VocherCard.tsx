@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { IVoucherApi } from '../../../libs/apis/voucher/types';
+import { moneyFormat } from '../../../libs/utils';
 import Typography from '../../elements/Typography';
 
 const Wrapper = styled(Box)({
@@ -51,7 +52,7 @@ const VocherCard: React.FC<IVoucherCard> = ({
         {name}
       </Typography>
       <Typography fontSize="14px" fontWeight="500">
-        {priceDiscound}
+        {moneyFormat(priceDiscound)}
       </Typography>
       <Typography fontSize="12px">
         {t('voucher.expire')}: {t('voucher.expire-from')}
