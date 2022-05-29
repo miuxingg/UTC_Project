@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { profileSelector } from '../redux/auth/selectors';
 import { updateOrderStatus } from '../redux/order';
 import { insertNewReview } from '../redux/review';
+import { addVoucher, removeVoucher } from '../redux/voucher';
 import socket, { EventNames } from '../socket-sdk';
 
 export const GlobalEvent = React.memo(function GlobalEvent({ children }) {
@@ -32,14 +33,36 @@ export const GlobalEvent = React.memo(function GlobalEvent({ children }) {
     },
     [dispatch],
   );
+
+  const handleUpdateVoucherReady = useCallback(
+    (data: any) => {
+      dispatch(addVoucher(data?.data));
+    },
+    [dispatch],
+  );
+
+  const handleUpdateVoucherExpire = useCallback(
+    (data: any) => {
+      dispatch(removeVoucher(data?.data));
+    },
+    [dispatch],
+  );
+
   useEffect(() => {
     socket.connect();
-
     socket.joinRoom(profile?.id ?? '');
     socket.registerListener(EventNames.NewReview, handleNewReview);
     socket.registerListener(
       EventNames.UpdateOrderStatus,
       handleUpdateOrderStatus,
+    );
+    socket.registerListener(
+      EventNames.UpdateVoucherReady,
+      handleUpdateVoucherReady,
+    );
+    socket.registerListener(
+      EventNames.UpdateVoucherExpire,
+      handleUpdateVoucherExpire,
     );
     return () => {
       socket.unregisterListener(EventNames.NewReview, handleNewReview);
@@ -48,8 +71,18 @@ export const GlobalEvent = React.memo(function GlobalEvent({ children }) {
         EventNames.UpdateOrderStatus,
         handleUpdateOrderStatus,
       );
+
+      socket.unregisterListener(
+        EventNames.UpdateVoucherReady,
+        handleUpdateVoucherReady,
+      );
+
+      socket.unregisterListener(
+        EventNames.UpdateVoucherExpire,
+        handleUpdateVoucherExpire,
+      );
       socket.leaveRoom(profile?.id ?? '');
     };
-  }, [profile?.id, handleNewReview, handleUpdateOrderStatus]);
+  }, [profile?.id, handleNewReview, handleUpdateOrderStatus, handleUpdateVoucherReady, handleUpdateVoucherExpire]);
   return <>{children}</>;
 });

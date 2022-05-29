@@ -25,6 +25,16 @@ export const voucherSlice = createGenericSlice({
         total: action.payload.total,
       };
     },
+    removeVoucher(state, action) {
+      const newVouchers = (state?.vouchers?.items || []).filter(({ id }) => {
+        return id !== action.payload.id;
+      });
+      state.vouchers = { items: newVouchers, total: newVouchers.length };
+    },
+    addVoucher(state, action) {
+      const newVouchers = [...(state?.vouchers?.items || []), action.payload];
+      state.vouchers = { items: newVouchers, total: newVouchers.length };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getAllVoucherThunk.fulfilled, (state, action) => {
@@ -36,6 +46,6 @@ export const voucherSlice = createGenericSlice({
   },
 });
 
-export const { getvoucher } = voucherSlice.actions;
+export const { getvoucher, removeVoucher, addVoucher } = voucherSlice.actions;
 
 export default voucherSlice.reducer;
