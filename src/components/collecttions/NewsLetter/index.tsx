@@ -2,7 +2,15 @@ import React from 'react';
 
 const NewsLetter: React.FC = () => {
   return (
-    <section className="wn__newsletter__area bg-image--2">
+    <section
+      className="wn__newsletter__area"
+      style={{
+        backgroundImage: `url(images/bg/bg2.jpg)`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center',
+      }}
+    >
       <div className="container">
         <div className="row">
           <div className="col-lg-7 offset-lg-5 col-md-12 col-12 ptb--150">

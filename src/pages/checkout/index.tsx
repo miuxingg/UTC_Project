@@ -12,6 +12,7 @@ import {
   getWardsThunk,
 } from '../../redux/address';
 import { setProfile } from '../../redux/auth';
+import { getvoucher } from '../../redux/voucher';
 
 const CheckOutPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -35,8 +36,12 @@ export const getServerSideProps = getServerSideWithPublicRoute(
     // store.dispatch(getProvices);
     // store.dispatch(getProvices);
 
-    const profile = await apiSdk.authApis.getProfile();
+    const [profile, vouchers] = await Promise.all([
+      apiSdk.authApis.getProfile(),
+      apiSdk.voucherApi.getAllVoucher(),
+    ]);
     store.dispatch(setProfile(profile));
+    store.dispatch(getvoucher(vouchers));
     return {
       props: {},
     };

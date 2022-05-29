@@ -120,6 +120,7 @@
   "check-out.order.total": "Total",
   "check-out.order.cart-sub-total": "Cart subtotal",
   "check-out.order.shipping": "Shipping",
+  "check-out.order.discount": "Discount",
   "check-out.order.order-total": "Order total",
   "check-out.order.check-out": "Check out",
   "notify.add-to-cart.error": "Add to cart error",
@@ -137,5 +138,12 @@
   "change-password.comfirm": "Comfirm new password",
   "change-password.link-to-profile": "Profile",
   "change-password.success": "Change password success",
-  "incorrect.duplicatePassword": "The new password cannot be the same as the current password"
+  "incorrect.duplicatePassword": "The new password cannot be the same as the current password",
+  "voucher.title": "Shop voucher",
+  "voucher.click-here": "Click here",
+  "voucher.list-voucher": "List voucher",
+  "voucher.expire": "Valid ",
+  "voucher.expire-from": "from ",
+  "voucher.expire-to": "to ",
+  "voucher.submit": "Submit"
 }

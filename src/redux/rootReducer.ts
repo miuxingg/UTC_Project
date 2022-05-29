@@ -10,6 +10,7 @@ import orderReducer from './order';
 import reviewReducer from './review';
 import publisherReducer from './publisher';
 import blogReducer from './blog';
+import voucherReducer from './voucher';
 
 const rootReducer = combineReducers({
   app: appReducer,
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   review: reviewReducer,
   publisher: publisherReducer,
   blog: blogReducer,
+  voucher: voucherReducer,
 });
 
 export default rootReducer;

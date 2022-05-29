@@ -20,6 +20,7 @@ import { OrderApi } from './order';
 import { PaymentApi } from './payment';
 import { PublisherApi } from './publisher';
 import { ReviewApi } from './review';
+import { VoucherApi } from './voucher';
 
 class BookStoreApi {
   private nextContext: GetServerSidePropsContext | null = null;
@@ -131,6 +132,7 @@ export namespace apiSdk {
   export const publisherApi = new PublisherApi(instance);
   export const favoriteApi = new FavoriteApi(instance);
   export const blogApi = new BlogApi(instance);
+  export const voucherApi = new VoucherApi(instance);
 }
 
 export { setApiContext };

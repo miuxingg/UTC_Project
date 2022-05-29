@@ -121,6 +121,7 @@
   "check-out.order.cart-sub-total": "Tổng tiền",
   "notify.add-to-cart.success": "Thêm vào giỏ hàng thành công",
   "check-out.order.shipping": "Chi phí giao",
+  "check-out.order.discount": "Giảm giá",
   "check-out.order.order-total": "Thành tiền",
   "check-out.order.check-out": "Thanh toán",
   "error.add-to-cart.error": "Thêm vào giỏ hàng thất bại",
@@ -138,5 +139,12 @@
   "change-password.comfirm": "Xác nhận mật khẩu mới",
   "change-password.link-to-profile": "Trang cá nhân",
   "change-password.success": "Đổi mật khẩu thành công",
-  "incorrect.duplicatePassword": "Mật khẩu mới không được giống mật khẩu cũ"
+  "incorrect.duplicatePassword": "Mật khẩu mới không được giống mật khẩu cũ",
+  "voucher.title": "Áp dụng mã giảm giá",
+  "voucher.click-here": "Vào đây để chọn",
+  "voucher.list-voucher": "Danh sách mã giảm giá",
+  "voucher.expire": "Có giá trị ",
+  "voucher.expire-from": "từ ",
+  "voucher.expire-to": "đến ",
+  "voucher.submit": "Áp dụng"
 }

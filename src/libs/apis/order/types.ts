@@ -63,7 +63,7 @@ export interface IOrderOutput {
   totalMoney: number;
   discount: number;
   paymentStatus: string;
-  status: string;
+  status: IOrderStatus;
   shippingMethod: ShippingMethod;
   orderLines: IOrderLineOutput[];
   createdAt: Date;
