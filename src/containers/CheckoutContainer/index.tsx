@@ -37,6 +37,9 @@ import { checkQuantityBook } from '../../redux/book';
 import { ICheckQuantityBook } from '../../libs/apis/book/types';
 import { shipAmount } from '../../configs/types';
 import { useTranslation } from 'react-i18next';
+import PopupVocher from '../../components/collecttions/PopupVocher';
+import { allVoucherSelector } from '../../redux/voucher/selectors';
+import { IVoucherApi } from '../../libs/apis/voucher/types';
 
 const ButtonSubmit = styled(Button)({
   width: '100%',
@@ -95,11 +98,14 @@ const CheckoutContainer: React.FC = () => {
     district: 1,
     ward: 1,
   });
+
+  const [voucherSelected, setVoucherSelected] = useState<IVoucherApi>();
   const cartItem = useSelector(allCart);
   const provinces = useSelector(getProvinces);
   const districts = useSelector(getDistricts);
   const wards = useSelector(getWards);
   const profile = useSelector(profileSelector);
+  const vouchers = useSelector(allVoucherSelector);
 
   const initialValues = {
     firstName: profile?.firstName || '',
@@ -110,6 +116,10 @@ const CheckoutContainer: React.FC = () => {
     privateHome: profile?.privateHome || '',
     phone: profile?.phoneNumber || '',
     email: profile?.email || '',
+  };
+
+  const handleChooseVoucher = (value: IVoucherApi) => {
+    setVoucherSelected(value);
   };
 
   const totalMoney = useMemo(() => {
@@ -220,9 +230,11 @@ const CheckoutContainer: React.FC = () => {
           setError({ message: t('notify.checkout.product-not-enough') }),
         );
       } else {
+        const discount = voucherSelected?.priceDiscound || 0;
+        const paymentUnDiscound = totalMoney + shipAmount;
         const orderDetail: IOrderInput = {
-          totalMoney: totalMoney,
-          discount: 0,
+          totalMoney: paymentUnDiscound,
+          discount: discount,
           status: IOrderStatus.Pending,
           paymentStatus: IPaymentStatus.Pending,
           paymentMethod: IPaymentMethod.COD,
@@ -240,17 +252,20 @@ const CheckoutContainer: React.FC = () => {
           orderLines,
         };
         if (isStripePayment) {
-          if (totalMoney <= 10000) {
+          if (paymentUnDiscound - discount <= 10000) {
             dispatch(
               setError({
                 message: t('notify.checkout.payment-amount-small'),
               }),
             );
           } else {
-            const stripePayment = await handleStripeSubmit(totalMoney, {
-              ...orderDetail,
-              paymentMethod: IPaymentMethod.VisaCard,
-            });
+            const stripePayment = await handleStripeSubmit(
+              paymentUnDiscound - discount,
+              {
+                ...orderDetail,
+                paymentMethod: IPaymentMethod.VisaCard,
+              },
+            );
             console.log(stripePayment);
             if (stripePayment) {
               dispatch(deleteCart({ message: 'remove cart' }));
@@ -280,11 +295,19 @@ const CheckoutContainer: React.FC = () => {
   return (
     <div className="wrapper" id="wrapper">
       {/* Start Bradcaump area */}
-      <div className="ht__bradcaump__area bg-image--4">
+      <div
+        className="ht__bradcaump__area"
+        style={{
+          backgroundImage: 'url(images/bg/banner-checkout.png)',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+        }}
+      >
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
-              <div className="bradcaump__inner text-center">
+              {/* <div className="bradcaump__inner text-center">
                 <h2 className="bradcaump-title">Checkout</h2>
                 <nav className="bradcaump-content">
                   <a className="breadcrumb_item" href="index.html">
@@ -293,7 +316,7 @@ const CheckoutContainer: React.FC = () => {
                   <span className="brd-separetor">/</span>
                   <span className="breadcrumb_item active">Checkout</span>
                 </nav>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -312,7 +335,11 @@ const CheckoutContainer: React.FC = () => {
               <form onSubmit={handleSubmit}>
                 <div className="container">
                   <div className="row">
-                    <div className="col-lg-12">
+                    <PopupVocher
+                      listVoucher={vouchers?.items ?? []}
+                      onClick={handleChooseVoucher}
+                    />
+                    {/* <div className="col-lg-12">
                       <div className="wn_checkout_wrap">
                         <div className="checkout_info">
                           <span>Have a coupon? </span>
@@ -329,7 +356,7 @@ const CheckoutContainer: React.FC = () => {
                           </form>
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                   <div className="row">
                     <div className="col-lg-6 col-12">
@@ -512,6 +539,18 @@ const CheckoutContainer: React.FC = () => {
                             <span>{moneyFormat(totalMoney)}</span>
                           </li>
                           <li>
+                            {t('check-out.order.discount')}
+                            <ul>
+                              <li>
+                                <label>
+                                  {moneyFormat(
+                                    voucherSelected?.priceDiscound || 0,
+                                  )}
+                                </label>
+                              </li>
+                            </ul>
+                          </li>
+                          <li>
                             {t('check-out.order.shipping')}
                             <ul>
                               <li>
@@ -523,7 +562,13 @@ const CheckoutContainer: React.FC = () => {
                         <ul className="total__amount">
                           <li>
                             {t('check-out.order.order-total')}
-                            <span>{moneyFormat(totalMoney + shipAmount)}</span>
+                            <span>
+                              {moneyFormat(
+                                totalMoney +
+                                  shipAmount -
+                                  (voucherSelected?.priceDiscound || 0),
+                              )}
+                            </span>
                           </li>
                         </ul>
                       </div>

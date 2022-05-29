@@ -11,14 +11,12 @@ import {
   styled,
   Table,
   TableHead,
-  Typography,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useTranslation } from 'react-i18next';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { IOrderStatus } from '../../libs/apis/order/types';
-import PopupBase from '../../components/elements/PopupBase';
 import RemoveConfirm from './Popup/RemoveComfirm';
 import { useDispatch } from 'react-redux';
 import { updateOrderStatusThunk } from '../../redux/order';
@@ -44,7 +42,7 @@ export interface IHistoryBookLine {
   createdAt: Date;
   address: string;
   total: number;
-  status: IOrderStatus;
+  status?: IOrderStatus;
   books: IHistoryBookDetail[];
 }
 

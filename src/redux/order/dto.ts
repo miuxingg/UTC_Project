@@ -15,6 +15,7 @@ export const transfromOrderHistory = (
         item?.shippingMethod.province?.name ?? ''
       }`,
       total: item.totalMoney,
+      status: item.status,
       books: item.orderLines.map((line, i) => {
         return {
           id: line.id,

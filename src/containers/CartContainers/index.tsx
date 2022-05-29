@@ -51,7 +51,15 @@ const CartContainer: React.FC = () => {
   return (
     <div className="wrapper" id="wrapper">
       {/* Start Bradcaump area */}
-      <div className="ht__bradcaump__area bg-image--3">
+      <div
+        className="ht__bradcaump__area"
+        style={{
+          backgroundImage: 'url(images/bg/banner-cart.jpg)',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+        }}
+      >
         <div className="container">
           <div className="row">
             <div className="col-lg-12">
@@ -116,13 +124,16 @@ const CartContainer: React.FC = () => {
                     </table>
                   </div>
                   <div className="cartbox__btn">
-                    <ul className="cart__btn__list d-flex flex-wrap flex-md-nowrap flex-lg-nowrap justify-content-between">
-                      <li>
+                    <ul
+                      className="cart__btn__list d-flex flex-wrap flex-md-nowrap flex-lg-nowrap justify-content-between"
+                      style={{ justifyContent: 'flex-end !important' }}
+                    >
+                      {/* <li>
                         <Button>{t('cart.title.coupon.code')}</Button>
                       </li>
                       <li>
                         <Button>{t('cart.title.apply.code')}</Button>
-                      </li>
+                      </li> */}
                       {/* <li>
                         <Button onClick={handleUpdateCart}>{t('cart.title.update.cart')}</Button>
                       </li> */}
@@ -142,17 +153,17 @@ const CartContainer: React.FC = () => {
               <div className="cartbox__total__area">
                 <div className="cartbox-total d-flex justify-content-between">
                   <ul className="cart__total__list">
-                    <li>{t('cart.title.cart.total')}</li>
-                    <li>{t('cart.title.sub.total')}</li>
+                    {/* <li>{t('cart.title.cart.total')}</li> */}
+                    {/* <li>{t('cart.title.sub.total')}</li> */}
                   </ul>
                   <ul className="cart__total__tk">
-                    <li>{moneyFormat(totalMoney)}</li>
-                    <li>$70</li>
+                    {/* <li>{moneyFormat(totalMoney)}</li> */}
+                    {/* <li>$70</li> */}
                   </ul>
                 </div>
                 <div className="cart__total__amount">
                   <span>{t('cart.title.grand.total')}</span>
-                  <span>$140</span>
+                  <span>{moneyFormat(totalMoney)}</span>
                 </div>
               </div>
             </div>
