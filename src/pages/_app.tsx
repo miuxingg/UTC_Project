@@ -35,8 +35,6 @@ function BookStoreApplication({ Component, pageProps }: AppProps) {
       <I18nextProvider i18n={i18n}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {/* <Provider store={store}> */}
-
           <AuthContainer>
             <GlobalEvent>
               <Component {...pageProps} />
@@ -48,7 +46,6 @@ function BookStoreApplication({ Component, pageProps }: AppProps) {
               />
             </GlobalEvent>
           </AuthContainer>
-          {/* </Provider> */}
         </ThemeProvider>
       </I18nextProvider>
     </React.Fragment>
