@@ -3,22 +3,22 @@
 
 echo "Styling"
 
-npm run check-types || 
-(
-    echo "Checking"
-    false;
-)
+# npm run check-types || 
+# (
+#     echo "Checking"
+#     false;
+# )
 
-npm run check-format || 
-(
-    echo "Checking"
-    false;
-)
+# npm run check-format || 
+# (
+#     echo "Checking"
+#     false;
+# )
 
-npm run check-lint || 
-(
-    echo "Checking"
-    false;
-)
+# npm run check-lint || 
+# (
+#     echo "Checking"
+#     false;
+# )
 
 echo "Checking"
